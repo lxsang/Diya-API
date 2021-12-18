@@ -30,10 +30,10 @@ DiyaBoot class >> startUp: status [
 			Transcript
 				show: c className;
 				cr ].
-	Transcript show: self tickSinceStart; cr.
+	self startx.
 ]
 
 { #category : #'system startup' }
-DiyaBoot class >> tickSinceStart [
-	^ self ffiCall: #( uint clock() ) module: 'libc.so.6'.
+DiyaBoot class >> startx [
+	DiyaInit uniqueInstance eventLoop
 ]
