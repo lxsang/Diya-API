@@ -87,7 +87,7 @@ ImageInitializer >> preloadSystem: loaded [
 
 { #category : #activation }
 ImageInitializer >> snap [
-	|pkg|
+	Smalltalk globals at: #codeName put: 'diya'.
 	self class removeFromSystem.
 	Smalltalk garbageCollect.
 	Smalltalk snapshot: true andQuit: false.

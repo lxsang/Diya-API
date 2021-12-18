@@ -20,6 +20,11 @@ DiyaBoot class >> initialize [
 
 { #category : #'system startup' }
 DiyaBoot class >> startUp: status [
+	"
+	As is the entry point for Diya, it need to be disabled
+	when inside the SDK image.
+	"
+	((Smalltalk globals at:#codeName ifAbsent:[nil]) = 'diya') ifFalse: [^self].
 	self getLoadedClasses
 		do: [ :c | 
 			Transcript
