@@ -87,7 +87,10 @@ DiyaBoot >> createWindow [
 { #category : #events }
 DiyaBoot >> init [
 	| status nvdrivers |
-	Transcript show:'System: ', (Smalltalk globals at: #CODENAME),'-v',(Smalltalk  globals at: #VERSION);cr.
+	Transcript show:'System: ',
+		(Smalltalk globals at: #CODENAME ifAbsent:['']),
+		'-v',(Smalltalk  globals at: #VERSION ifAbsent: ['']);
+		cr.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
@@ -108,10 +111,10 @@ DiyaBoot >> initialize [
 DiyaBoot >> processEvent: event [
 	|mappedEvt|
 	mappedEvt := event mapped.
-	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. running := false. ].
-	mappedEvt type = SDL_QUIT ifTrue:[ running:= false ].
-	mappedEvt type = SDL_FINGERDOWN ifTrue:[self setCursorPosition: mappedEvt ].
-	mappedEvt type = SDL_FINGERMOTION ifTrue:[self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. ^running := false. ].
+	mappedEvt type = SDL_QUIT ifTrue:[ ^running:= false ].
+	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
 ]
 
 { #category : #events }
