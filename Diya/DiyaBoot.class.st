@@ -128,10 +128,18 @@ DiyaBoot >> run: screenSize [
 
 { #category : #running }
 DiyaBoot >> run: screenSize app: application [
+	"
+	this function should be used only in
+	SDK environment, in real embeded system
+	it is always the #run command that is executed
+	automatically.
+	"
 	self init.
 	display w: screenSize x.
 	display h: screenSize y.
-	self startx 
+	self startx.
+	self class reset.
+	Smalltalk garbageCollect.
 ]
 
 { #category : #events }
@@ -184,6 +192,4 @@ DiyaBoot >> startx [
 	renderer destroy.
 	window destroy.
 	SDL2 quit.
-	self class reset.
-	Smalltalk garbageCollect.
 ]
