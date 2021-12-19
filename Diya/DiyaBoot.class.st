@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'running',
 		'window',
-		'renderer'
+		'renderer',
+		'display'
 	],
 	#classVars : [
 		'singleton'
@@ -13,7 +14,7 @@ Class {
 		'SDL2Constants',
 		'SDL2Types'
 	],
-	#category : #'Diya-Core'
+	#category : #'Diya-Runtime'
 }
 
 { #category : #'instance creation' }
@@ -23,7 +24,7 @@ DiyaBoot class >> startUp: status [
 
 { #category : #'instance creation' }
 DiyaBoot class >> startx [
-	self uniqueInstance eventLoop
+	self uniqueInstance run
 ]
 
 { #category : #'instance creation' }
@@ -75,8 +76,8 @@ DiyaBoot >> createWindow [
 	handle := SDL2 createWindow: 'Diya test'
 			x: 0
 			y: 0
-			width: 480
-			height: 640
+			width: display w
+			height: display h
 			flags: SDL_WINDOW_SHOWN.
 	handle ifNil: [ ^self error: SDL2 getErrorMessage ].
 	"handle fullscreen: SDL_WINDOW_FULLSCREEN."
@@ -84,28 +85,18 @@ DiyaBoot >> createWindow [
 ]
 
 { #category : #events }
-DiyaBoot >> eventLoop [
-	| dm|
-	self init.
-	Transcript show: 'Current selected video driver ', (SDL2 SDLGetCurrentVideoDriver); cr.
-	dm := SDL_DisplayMode externalNew autoRelease.
-	SDL2 SDLGetCurrentDisplayMode: dm from:0.
-	Transcript show: dm w asString, 'x',dm h asString;cr. 
-	window := self createWindow.
-	renderer := self createRenderer.
-	self render: renderer.
-	renderer destroy.
-	window destroy.
-	SDL2 quit.
-	Transcript show: 'System quit'
-]
-
-{ #category : #events }
 DiyaBoot >> init [
-	| tmp1 |
-	tmp1 := SDL2 init: SDL_INIT_EVERYTHING.
-	tmp1 = 0
-		ifFalse: [ ^ self error: SDL2 getErrorMessage ]
+	| status nvdrivers |
+	Transcript show:'System: ', (Smalltalk globals at: #CODENAME),'-v',(Smalltalk  globals at: #VERSION);cr.
+	status := SDL2 init: SDL_INIT_EVERYTHING.
+	status = 0
+		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
+	nvdrivers := SDL2 SDLGetNumVideoDrivers.
+	Transcript show: 'Supported video dirvers:'.
+	0 to: nvdrivers -1 do: [ :i |
+		Transcript show: (SDL2 SDLGetVideoDriver: i), ' '.
+	].
+	Transcript cr.
 ]
 
 { #category : #events }
@@ -119,8 +110,8 @@ DiyaBoot >> processEvent: event [
 	mappedEvt := event mapped.
 	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. running := false. ].
 	mappedEvt type = SDL_QUIT ifTrue:[ running:= false ].
-	mappedEvt type = SDL_FINGERDOWN ifTrue:[window warpMouseX:((mappedEvt x)* 480 )Y: ((mappedEvt y) * 640)].
-	mappedEvt type = SDL_FINGERMOTION ifTrue:[window warpMouseX:((mappedEvt x)* 480 )Y: ((mappedEvt y) * 640)].
+	mappedEvt type = SDL_FINGERDOWN ifTrue:[self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_FINGERMOTION ifTrue:[self setCursorPosition: mappedEvt ].
 ]
 
 { #category : #events }
@@ -133,16 +124,42 @@ DiyaBoot >> randomColorChannel [
 ]
 
 { #category : #events }
-DiyaBoot >> render: renderer [
+DiyaBoot >> render [
 	|event|
 	event := SDL_Event new.
 	[ running ] whileTrue: [ 
 		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
 			self processEvent: event
 		].
-		renderer drawColorR: self randomColorChannel  g: self randomColorChannel  b: self randomColorChannel a: 255.
+		renderer drawColorR: self randomColorChannel
+				g: self randomColorChannel
+				b: self randomColorChannel
+				a: 255.
 		renderer clear.
 		renderer present.
 		SDL2 delay: 50. 
 	].
+]
+
+{ #category : #events }
+DiyaBoot >> run [
+	self init.
+	Transcript show: 'Current selected video driver: ', (SDL2 SDLGetCurrentVideoDriver); cr.
+	display := SDL_DisplayMode externalNew autoRelease.
+	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	Transcript show:'Display resolution: ', display w asString, 'x',display h asString;cr. 
+	window := self createWindow.
+	renderer := self createRenderer.
+	self render.
+	renderer destroy.
+	window destroy.
+	SDL2 quit.
+	Transcript show: 'System quit'; cr.
+]
+
+{ #category : #events }
+DiyaBoot >> setCursorPosition: mappedEvt [
+	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
+	window warpMouseX:((mappedEvt x)* (display w) )
+			Y: ((mappedEvt y) * (display h))
 ]

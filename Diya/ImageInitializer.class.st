@@ -87,7 +87,8 @@ ImageInitializer >> preloadSystem: loaded [
 
 { #category : #activation }
 ImageInitializer >> snap [
-	Smalltalk globals at: #codeName put: 'diya'.
+	Smalltalk globals at: #CODENAME put: 'diya'.
+	Smalltalk globals at: #VERSION put: '0.1.0'.
 	self class removeFromSystem.
 	Smalltalk addToStartUpList: DiyaBoot.
 	Smalltalk garbageCollect.
