@@ -78,7 +78,7 @@ DiyaBoot >> createRenderer [
 { #category : #events }
 DiyaBoot >> createWindow [
 	|handle|
-	handle := SDL2 createWindow: 'Diya test'
+	handle := SDL2 createWindow: 'Diya'
 			x: 0
 			y: 0
 			width: display w
@@ -187,4 +187,6 @@ DiyaBoot >> startx [
 	window destroy.
 	SDL2 quit.
 	Transcript show: 'System quit'; cr.
+	self class reset.
+	Smalltalk garbageCollect.
 ]
