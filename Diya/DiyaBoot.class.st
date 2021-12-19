@@ -18,6 +18,11 @@ Class {
 }
 
 { #category : #'instance creation' }
+DiyaBoot class >> reset [
+	singleton := nil
+]
+
+{ #category : #'instance creation' }
 DiyaBoot class >> startUp: status [
 	self startx.
 ]
@@ -87,7 +92,10 @@ DiyaBoot >> createWindow [
 { #category : #events }
 DiyaBoot >> init [
 	| status nvdrivers |
-	Transcript show:'System: ', (Smalltalk globals at: #CODENAME),'-v',(Smalltalk  globals at: #VERSION);cr.
+	Transcript show:'System: ',
+		(Smalltalk globals at: #CODENAME ifAbsent:['']),
+		'-v',(Smalltalk  globals at: #VERSION ifAbsent: ['']);
+		cr.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
@@ -97,6 +105,9 @@ DiyaBoot >> init [
 		Transcript show: (SDL2 SDLGetVideoDriver: i), ' '.
 	].
 	Transcript cr.
+	Transcript show: 'Current selected video driver: ',
+				(SDL2 SDLGetCurrentVideoDriver);
+				cr.
 ]
 
 { #category : #events }
@@ -108,10 +119,10 @@ DiyaBoot >> initialize [
 DiyaBoot >> processEvent: event [
 	|mappedEvt|
 	mappedEvt := event mapped.
-	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. running := false. ].
-	mappedEvt type = SDL_QUIT ifTrue:[ running:= false ].
-	mappedEvt type = SDL_FINGERDOWN ifTrue:[self setCursorPosition: mappedEvt ].
-	mappedEvt type = SDL_FINGERMOTION ifTrue:[self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. ^running := false. ].
+	mappedEvt type = SDL_QUIT ifTrue:[ ^running:= false ].
+	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
 ]
 
 { #category : #events }
@@ -144,9 +155,30 @@ DiyaBoot >> render [
 { #category : #events }
 DiyaBoot >> run [
 	self init.
-	Transcript show: 'Current selected video driver: ', (SDL2 SDLGetCurrentVideoDriver); cr.
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	self startx 
+]
+
+{ #category : #events }
+DiyaBoot >> run: screenSize [
+	self init.
+	display := SDL_DisplayMode externalNew autoRelease.
+	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	display w: screenSize x.
+	display h: screenSize y.
+	self startx 
+]
+
+{ #category : #events }
+DiyaBoot >> setCursorPosition: mappedEvt [
+	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
+	window warpMouseX:((mappedEvt x)* (display w) )
+			Y: ((mappedEvt y) * (display h))
+]
+
+{ #category : #events }
+DiyaBoot >> startx [
 	Transcript show:'Display resolution: ', display w asString, 'x',display h asString;cr. 
 	window := self createWindow.
 	renderer := self createRenderer.
@@ -155,11 +187,4 @@ DiyaBoot >> run [
 	window destroy.
 	SDL2 quit.
 	Transcript show: 'System quit'; cr.
-]
-
-{ #category : #events }
-DiyaBoot >> setCursorPosition: mappedEvt [
-	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
-	window warpMouseX:((mappedEvt x)* (display w) )
-			Y: ((mappedEvt y) * (display h))
 ]
