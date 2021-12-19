@@ -18,6 +18,11 @@ Class {
 }
 
 { #category : #'instance creation' }
+DiyaBoot class >> reset [
+	singleton := nil
+]
+
+{ #category : #'instance creation' }
 DiyaBoot class >> startUp: status [
 	self startx.
 ]
