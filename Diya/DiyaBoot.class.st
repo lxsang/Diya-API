@@ -72,7 +72,10 @@ DiyaBoot >> init [
 
 { #category : #events }
 DiyaBoot >> initialize [
-	running := true
+	running := true.
+	display := nil.
+	window := nil.
+	renderer := nil.
 ]
 
 { #category : #events }
@@ -139,8 +142,8 @@ DiyaBoot >> setCursorPosition: mappedEvt [
 
 { #category : #logging }
 DiyaBoot >> showSystemInfo [
-	|stream numdriver rinfo |
-	stream := String new writeStream.
+	|stream numdriver rinfo|
+	stream := (String new: 255) writeStream.
 	stream nextPutAll:'System: ';
 			nextPutAll:(Smalltalk globals at: #CODENAME ifAbsent:['']);
 			nextPutAll: '-v';
@@ -167,12 +170,13 @@ DiyaBoot >> showSystemInfo [
 		nextPutAll:display w asString;
 		nextPutAll: 'x';
 		nextPutAll: display h asString; cr. 
-	Transcript show: stream contents
+	self stdout nextPutAll: stream contents
 	
 ]
 
 { #category : #events }
 DiyaBoot >> startx [
+	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	window := self createWindow.
 	renderer := self createRenderer.
 	self showSystemInfo.
