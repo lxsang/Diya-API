@@ -31,6 +31,11 @@ SDL2 class >> SDLGetNumVideoDrivers [
 ]
 
 { #category : #'*Diya' }
+SDL2 class >> SDLGetRendererDriverInfo: info from: index [
+	^self ffiCall: #(int SDL_GetRenderDriverInfo(int index, SDL_RendererInfo * info))
+]
+
+{ #category : #'*Diya' }
 SDL2 class >> SDLGetVideoDriver: index [
 	^self ffiCall: #(const char* SDL_GetVideoDriver(int index))
 	

@@ -89,7 +89,7 @@ ImageInitializer >> preloadSystem: loaded [
 ImageInitializer >> snap [
 	Smalltalk globals at: #codeName put: 'diya'.
 	self class removeFromSystem.
-	Smalltalk addToShutDownList: DiyaBoot.
+	Smalltalk addToStartUpList: DiyaBoot.
 	Smalltalk garbageCollect.
 	Smalltalk snapshot: true andQuit: true.
 	
