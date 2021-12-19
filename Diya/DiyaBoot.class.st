@@ -39,38 +39,9 @@ DiyaBoot class >> uniqueInstance [
 ]
 
 { #category : #events }
-DiyaBoot >> checkDrivers [
-	|ndriver usableDrivers|
-	ndriver  := SDL2 SDLGetNumVideoDrivers.
-	usableDrivers := OrderedCollection new.
-	Transcript show: 'Available drivers: '.
-	0 to: ndriver - 1 do: [ :i | |dname|
-		dname := SDL2 SDLGetVideoDriver: i.
-		Transcript show: dname, ' '.
-		(SDL2 SDLVideoInit: dname) = 0 ifTrue:[
-			usableDrivers add: dname.
-			SDL2 SDLVideoQuit 
-		]
-	].
-	Transcript cr.
-	
-]
-
-{ #category : #events }
 DiyaBoot >> createRenderer [
-	|numdriver rinfo|
-	numdriver := SDL2 SDLGetNumRenderDrivers.
-	Transcript show: 'SDL_RENDER_DRIVER available:'.
-	rinfo := SDL_RendererInfo externalNew autoRelease.
-	0 to: numdriver - 1 do:[:i|
-		SDL2 SDLGetRendererDriverInfo: rinfo from: i.
-		 Transcript show: rinfo name readString, ' '.
-	].
-	Transcript cr.
 	renderer := window primCreateRenderer: -1 flags: SDL_RENDERER_ACCELERATED.
 	renderer ifNil: [ ^self error: SDL2 getErrorMessage ].
-	renderer primGetRendererInfo: rinfo.
-	Transcript show: 'SDL_RENDER_DRIVER selected: ', rinfo name readString;cr.
 	^renderer 
 	
 ]
@@ -91,23 +62,12 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> init [
-	| status nvdrivers |
-	Transcript show:'System: ',
-		(Smalltalk globals at: #CODENAME ifAbsent:['']),
-		'-v',(Smalltalk  globals at: #VERSION ifAbsent: ['']);
-		cr.
+	| status |
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
-	nvdrivers := SDL2 SDLGetNumVideoDrivers.
-	Transcript show: 'Supported video dirvers:'.
-	0 to: nvdrivers -1 do: [ :i |
-		Transcript show: (SDL2 SDLGetVideoDriver: i), ' '.
-	].
-	Transcript cr.
-	Transcript show: 'Current selected video driver: ',
-				(SDL2 SDLGetCurrentVideoDriver);
-				cr.
+	display := SDL_DisplayMode externalNew autoRelease.
+	SDL2 SDLGetCurrentDisplayMode: display from:0.
 ]
 
 { #category : #events }
@@ -155,16 +115,17 @@ DiyaBoot >> render [
 { #category : #events }
 DiyaBoot >> run [
 	self init.
-	display := SDL_DisplayMode externalNew autoRelease.
-	SDL2 SDLGetCurrentDisplayMode: display from:0.
-	self startx 
+	self startx. 
 ]
 
-{ #category : #events }
+{ #category : #running }
 DiyaBoot >> run: screenSize [
+	self run: screenSize app: nil
+]
+
+{ #category : #running }
+DiyaBoot >> run: screenSize app: application [
 	self init.
-	display := SDL_DisplayMode externalNew autoRelease.
-	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	display w: screenSize x.
 	display h: screenSize y.
 	self startx 
@@ -172,21 +133,53 @@ DiyaBoot >> run: screenSize [
 
 { #category : #events }
 DiyaBoot >> setCursorPosition: mappedEvt [
-	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
 	window warpMouseX:((mappedEvt x)* (display w) )
 			Y: ((mappedEvt y) * (display h))
 ]
 
+{ #category : #logging }
+DiyaBoot >> showSystemInfo [
+	|stream numdriver rinfo |
+	stream := String new writeStream.
+	stream nextPutAll:'System: ';
+			nextPutAll:(Smalltalk globals at: #CODENAME ifAbsent:['']);
+			nextPutAll: '-v';
+			nextPutAll:(Smalltalk  globals at: #VERSION ifAbsent: ['']);cr.
+	numdriver := SDL2 SDLGetNumVideoDrivers.
+	stream nextPutAll: 'Supported video dirvers:'.
+	0 to: numdriver -1 do: [ :i |
+		stream nextPutAll: (SDL2 SDLGetVideoDriver: i); nextPutAll: ' '.
+	].
+	stream cr.
+	stream nextPutAll: 'Current selected video driver: ';
+			nextPutAll:(SDL2 SDLGetCurrentVideoDriver);cr.
+	numdriver := SDL2 SDLGetNumRenderDrivers.
+	stream nextPutAll: 'SDL_RENDER_DRIVER available:'.
+	rinfo := SDL_RendererInfo externalNew autoRelease.
+	0 to: numdriver - 1 do:[:i|
+		SDL2 SDLGetRendererDriverInfo: rinfo from: i.
+		 stream nextPutAll:  rinfo name readString; nextPutAll:' '.
+	].
+	stream cr.
+	renderer primGetRendererInfo: rinfo.
+	stream nextPutAll: 'SDL_RENDER_DRIVER selected: '; nextPutAll: rinfo name readString; cr.
+	stream nextPutAll:'Display resolution: ';
+		nextPutAll:display w asString;
+		nextPutAll: 'x';
+		nextPutAll: display h asString; cr. 
+	Transcript show: stream contents
+	
+]
+
 { #category : #events }
 DiyaBoot >> startx [
-	Transcript show:'Display resolution: ', display w asString, 'x',display h asString;cr. 
 	window := self createWindow.
 	renderer := self createRenderer.
+	self showSystemInfo.
 	self render.
 	renderer destroy.
 	window destroy.
 	SDL2 quit.
-	Transcript show: 'System quit'; cr.
 	self class reset.
 	Smalltalk garbageCollect.
 ]
