@@ -37,12 +37,15 @@ DiyaInit >> checkDrivers [
 
 { #category : #events }
 DiyaInit >> eventLoop [
-	|status|
+	|status dm|
 	self checkDrivers.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0 ifFalse:[
 		^ self error: SDL2 getErrorMessage.
 	].
 	Transcript show: 'Current selected video driver ', (SDL2 SDLGetCurrentVideoDriver); cr.
+	dm := SDL_DisplayMode new.
+	SDL2 SDLGetCurrentDisplayMode: dm from:0.
+	Transcript show: dm w asString, 'x',dm h asString;cr. 
 	SDL2 quit
 ]

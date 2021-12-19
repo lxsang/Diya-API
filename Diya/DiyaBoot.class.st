@@ -13,11 +13,6 @@ DiyaBoot class >> getLoadedClasses [
 				ifFalse: [ c ] ]
 ]
 
-{ #category : #'class initialization' }
-DiyaBoot class >> initialize [
-	Smalltalk addToStartUpList: DiyaBoot 
-]
-
 { #category : #'system startup' }
 DiyaBoot class >> startUp: status [
 	"
