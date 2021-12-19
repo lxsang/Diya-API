@@ -105,6 +105,9 @@ DiyaBoot >> init [
 		Transcript show: (SDL2 SDLGetVideoDriver: i), ' '.
 	].
 	Transcript cr.
+	Transcript show: 'Current selected video driver: ',
+				(SDL2 SDLGetCurrentVideoDriver);
+				cr.
 ]
 
 { #category : #events }
