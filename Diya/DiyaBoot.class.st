@@ -155,9 +155,30 @@ DiyaBoot >> render [
 { #category : #events }
 DiyaBoot >> run [
 	self init.
-	Transcript show: 'Current selected video driver: ', (SDL2 SDLGetCurrentVideoDriver); cr.
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	self startx 
+]
+
+{ #category : #events }
+DiyaBoot >> run: screenSize [
+	self init.
+	display := SDL_DisplayMode externalNew autoRelease.
+	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	display w: screenSize x.
+	display h: screenSize y.
+	self startx 
+]
+
+{ #category : #events }
+DiyaBoot >> setCursorPosition: mappedEvt [
+	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
+	window warpMouseX:((mappedEvt x)* (display w) )
+			Y: ((mappedEvt y) * (display h))
+]
+
+{ #category : #events }
+DiyaBoot >> startx [
 	Transcript show:'Display resolution: ', display w asString, 'x',display h asString;cr. 
 	window := self createWindow.
 	renderer := self createRenderer.
@@ -166,11 +187,4 @@ DiyaBoot >> run [
 	window destroy.
 	SDL2 quit.
 	Transcript show: 'System quit'; cr.
-]
-
-{ #category : #events }
-DiyaBoot >> setCursorPosition: mappedEvt [
-	Transcript show: 'x: ', mappedEvt x asString, ' - y: ', mappedEvt y asString; cr.
-	window warpMouseX:((mappedEvt x)* (display w) )
-			Y: ((mappedEvt y) * (display h))
 ]
