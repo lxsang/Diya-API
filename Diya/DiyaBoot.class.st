@@ -5,12 +5,15 @@ Class {
 		'running',
 		'window',
 		'renderer',
+		'context',
 		'display'
 	],
 	#classVars : [
 		'singleton'
 	],
 	#pools : [
+		'OpenGLConstants',
+		'OpenGLTypes',
 		'SDL2Constants',
 		'SDL2Types'
 	],
@@ -39,6 +42,14 @@ DiyaBoot class >> uniqueInstance [
 ]
 
 { #category : #events }
+DiyaBoot >> createGLContext [
+	context :=  SDL2 glCreateContext:  window.
+	context ifNil: [ ^self error: SDL2 getErrorMessage ].
+	^context 
+	
+]
+
+{ #category : #events }
 DiyaBoot >> createRenderer [
 	renderer := window primCreateRenderer: -1 flags: SDL_RENDERER_ACCELERATED.
 	renderer ifNil: [ ^self error: SDL2 getErrorMessage ].
@@ -48,16 +59,15 @@ DiyaBoot >> createRenderer [
 
 { #category : #events }
 DiyaBoot >> createWindow [
-	|handle|
-	handle := SDL2 createWindow: 'Diya'
+	window := SDL2 createWindow: 'Diya'
 			x: 0
 			y: 0
 			width: display w
 			height: display h
-			flags: SDL_WINDOW_SHOWN.
-	handle ifNil: [ ^self error: SDL2 getErrorMessage ].
+			flags: SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL.
+	window ifNil: [ ^self error: SDL2 getErrorMessage ].
 	"handle fullscreen: SDL_WINDOW_FULLSCREEN."
-	^handle
+	^window
 ]
 
 { #category : #events }
@@ -75,7 +85,7 @@ DiyaBoot >> initialize [
 	running := true.
 	display := nil.
 	window := nil.
-	renderer := nil.
+	context := nil.
 ]
 
 { #category : #events }
@@ -105,12 +115,8 @@ DiyaBoot >> render [
 		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
 			self processEvent: event
 		].
-		renderer drawColorR: self randomColorChannel
-				g: self randomColorChannel
-				b: self randomColorChannel
-				a: 255.
-		renderer clear.
-		renderer present.
+		self step.
+		SDL2 glSwapWindow: window.
 		SDL2 delay: 50. 
 	].
 ]
@@ -134,6 +140,8 @@ DiyaBoot >> run: screenSize app: application [
 	it is always the #run command that is executed
 	automatically.
 	"
+	OpenGLTypes initialize.
+	OpenGLConstants initialize.
 	self init.
 	display w: screenSize x.
 	display h: screenSize y.
@@ -172,8 +180,10 @@ DiyaBoot >> showSystemInfo [
 		 stream nextPutAll:  rinfo name readString; nextPutAll:' '.
 	].
 	stream cr.
-	renderer primGetRendererInfo: rinfo.
-	stream nextPutAll: 'SDL_RENDER_DRIVER selected: '; nextPutAll: rinfo name readString; cr.
+	renderer ifNotNil:[
+		renderer primGetRendererInfo: rinfo.
+		stream nextPutAll: 'SDL_RENDER_DRIVER selected: '; nextPutAll: rinfo name readString; cr.
+	].
 	stream nextPutAll:'Display resolution: ';
 		nextPutAll:display w asString;
 		nextPutAll: 'x';
@@ -185,11 +195,23 @@ DiyaBoot >> showSystemInfo [
 { #category : #events }
 DiyaBoot >> startx [
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
-	window := self createWindow.
-	renderer := self createRenderer.
+	self createWindow.
+	self createGLContext.
+	"self createRenderer."
 	self showSystemInfo.
 	self render.
-	renderer destroy.
+	context delete.
 	window destroy.
 	SDL2 quit.
+]
+
+{ #category : #events }
+DiyaBoot >> step [
+	OpenGL begin: GL_TRIANGLES.
+	"draw a simple triangle here"
+	OpenGL color3fR: 0.1 G:0.2  B: 0.3.
+	OpenGL vertex3fX: 0 Y: 0  Z: 0.
+	OpenGL vertex3fX: 1 Y: 0  Z: 0.
+	OpenGL vertex3fX: 0 Y: 1  Z: 0.  
+	OpenGL end.
 ]

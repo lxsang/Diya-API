@@ -10,6 +10,11 @@ DiyaFFIBase class >> checkSymbol [
 ]
 
 { #category : #accessing }
+DiyaFFIBase class >> ffiLibraryName [
+	^ self moduleName 
+]
+
+{ #category : #accessing }
 DiyaFFIBase class >> libNames [
 	^self subclassResponsibility
 ]
@@ -22,4 +27,9 @@ DiyaFFIBase class >> moduleName [
 		].
 	].
 	self error: 'Unable to find FFI library (', self checkSymbol, ')'.
+]
+
+{ #category : #'library path' }
+DiyaFFIBase >> ffiLibraryName [ 
+	^self class ffiLibraryName
 ]
