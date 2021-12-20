@@ -21,6 +21,11 @@ Class {
 }
 
 { #category : #'instance creation' }
+DiyaBoot class >> new [
+	self error: 'Use #uniqueInstance'
+]
+
+{ #category : #'instance creation' }
 DiyaBoot class >> reset [
 	singleton := nil
 ]
@@ -37,7 +42,7 @@ DiyaBoot class >> startx [
 
 { #category : #'instance creation' }
 DiyaBoot class >> uniqueInstance [ 
-	singleton ifNil: [ singleton := self new ].
+	singleton ifNil: [ singleton := super new ].
 	^ singleton
 ]
 

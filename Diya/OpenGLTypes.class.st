@@ -5,6 +5,7 @@ Class {
 		'GLbitfield',
 		'GLboolean',
 		'GLbyte',
+		'GLchar',
 		'GLclampd',
 		'GLclampf',
 		'GLdouble',
@@ -50,4 +51,5 @@ OpenGLTypes class >> initialize [
 	GLuint := #uint32.
 	GLuint64 := #uint64.
 	GLushort := #uint16.
+	GLchar := #char.
 ]
