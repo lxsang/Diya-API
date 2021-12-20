@@ -197,16 +197,21 @@ DiyaBoot >> startx [
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
-	"self createRenderer."
+	self createRenderer.
 	self showSystemInfo.
 	self render.
 	context delete.
+	renderer destroy.
 	window destroy.
 	SDL2 quit.
 ]
 
 { #category : #events }
 DiyaBoot >> step [
+	"renderer drawColorR: 0
+				g: 0
+				b: 0
+				a: 255."
 	OpenGL begin: GL_TRIANGLES.
 	"draw a simple triangle here"
 	OpenGL color3fR: 0.1 G:0.2  B: 0.3.
