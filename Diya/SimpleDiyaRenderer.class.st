@@ -42,7 +42,7 @@ SimpleDiyaRenderer >> render [
 
 { #category : #deleting }
 SimpleDiyaRenderer >> setup [ 
-	 bufferData
+bufferData
 		at: 1 put: -1.0;
 		at: 2 put: -1.0;
 		at: 3 put: 0;
@@ -55,5 +55,4 @@ SimpleDiyaRenderer >> setup [
 	arrayBuffer 	bind.
 	vertexBuffer bind: GL_ARRAY_BUFFER.
 	vertexBuffer data: GL_ARRAY_BUFFER data:bufferData  usage: GL_STATIC_DRAW.
-	shader compile.
 ]

@@ -8,6 +8,7 @@ Class {
 		'GL_ACTIVE_UNIFORMS',
 		'GL_ACTIVE_UNIFORM_MAX_LENGTH',
 		'GL_ARRAY_BUFFER',
+		'GL_ARRAY_BUFFER_BINDING',
 		'GL_ATTACHED_SHADERS',
 		'GL_BYTE',
 		'GL_COLOR_BUFFER_BIT',
@@ -77,7 +78,8 @@ OpenGLConstants class >> initCommonConstants [
 	GL_UNIFORM_BUFFER := 16r8A11.
 	GL_STATIC_DRAW := 16r88E4.
 	GL_FALSE := 0.
-	GL_TRUE := 1
+	GL_TRUE := 1.
+	GL_ARRAY_BUFFER_BINDING := 16r8894
 ]
 
 { #category : #'class initialization' }
@@ -129,4 +131,5 @@ OpenGLConstants class >> initialize [
 	self initCommonMode.
 	self initCommonMask.
 	self initCommonShader.
+	self initCommonConstants
 ]

@@ -73,7 +73,7 @@ OpenGLVertexArray >> bind [
 
 { #category : #accessing }
 OpenGLVertexArray >> delete [
-	OpenGLVertexArray deteleVertexArraysSize:1 arrays: vertexArrayID.
+	OpenGLVertexArray deteleVertexArraysSize:1 arrays: vertexArrayID getHandle.
 	vertexArrayID at: 1 put: -1
 ]
 
@@ -92,7 +92,7 @@ OpenGLVertexArray >> initialize [
 	vertexArrayID := FFIExternalArray externalNewType: GLint size:1. 
 	vertexArrayID autoRelease.
 	vertexArrayID at:1 put: -1.
-	OpenGLVertexArray genVertexArraysSize: 1 arrays: vertexArrayID.
+	OpenGLVertexArray genVertexArraysSize: 1 arrays: vertexArrayID getHandle.
 	 
 ]
 

@@ -15,7 +15,7 @@ OpenGL class >> begin: mode [
 
 { #category : #accessing }
 OpenGL class >> checkSymbol [
-	^#glBegin
+	^#glDrawArrays
 ]
 
 { #category : #'as yet unclassified' }
@@ -41,6 +41,11 @@ OpenGL class >> drawArrays: mode first: idx count:n [
 { #category : #accessing }
 OpenGL class >> end [
 	^ self ffiCall: #(void glEnd( void ))
+]
+
+{ #category : #'as yet unclassified' }
+OpenGL class >> getIntegerv: pname data: data [
+	^self ffiCall: #(void glGetIntegerv(	GLenum pname,GLint * data))
 ]
 
 { #category : #accessing }

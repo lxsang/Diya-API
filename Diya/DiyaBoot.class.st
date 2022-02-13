@@ -134,6 +134,7 @@ DiyaBoot >> render:sr [
 		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
 			self processEvent: event
 		].
+		OpenGL viewportX: 0 Y:0 W: display w H: display h .
 		sr render.
 		SDL2 glSwapWindow: window.
 		SDL2 delay: 50. 

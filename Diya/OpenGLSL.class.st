@@ -115,10 +115,12 @@ OpenGLSL class >> vertextShader [
 
 { #category : #compiling }
 OpenGLSL >> checkStatus:status of: id [
-	|infoLength buffer|
+	|infoLength buffer result|
+	result  := FFIExternalArray externalNewType: GLint size: 1.
 	infoLength := FFIExternalArray externalNewType: GLint size: 1.
 	infoLength autoRelease.
-	OpenGLSL getShaderiv: id parameterName: status  params: nil.
+	result autoRelease.
+	OpenGLSL getShaderiv: id parameterName: status  params: result getHandle.
 	OpenGLSL getShaderiv: id parameterName: GL_INFO_LOG_LENGTH params:  infoLength getHandle.
 	(infoLength at:1) > 0 ifTrue: [
 		"report the error"
