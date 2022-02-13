@@ -94,13 +94,18 @@ OpenGLSL class >> reset [
 
 { #category : #'as yet unclassified' }
 OpenGLSL class >> setShaderSourceFor: shader count: n string: s length: l [
-	^ self ffiCall: #(void glShaderSource(	GLuint shader,GLsizei n,const char ** s,const GLint *l))
+	^ self ffiCall: #(void glShaderSource(	GLuint shader,GLsizei n,const void* s,const GLint *l))
 ]
 
 { #category : #'instance creation' }
 OpenGLSL class >> uniqueInstance [
 	singleton ifNil: [ singleton := super new. singleton compile ].
 	^ singleton
+]
+
+{ #category : #'as yet unclassified' }
+OpenGLSL class >> useProgram:program [
+	^self ffiCall:#(void glUseProgram(GLuint program))
 ]
 
 { #category : #accessing }
@@ -111,10 +116,10 @@ OpenGLSL class >> vertextShader [
 { #category : #compiling }
 OpenGLSL >> checkStatus:status of: id [
 	|infoLength buffer|
-	infoLength := FFIExternalArray externalNewType: #GLint size: 1.
+	infoLength := FFIExternalArray externalNewType: GLint size: 1.
 	infoLength autoRelease.
 	OpenGLSL getShaderiv: id parameterName: status  params: nil.
-	OpenGLSL getShaderiv: id parameterName: GL_INFO_LOG_LENGTH params:  infoLength.
+	OpenGLSL getShaderiv: id parameterName: GL_INFO_LOG_LENGTH params:  infoLength getHandle.
 	(infoLength at:1) > 0 ifTrue: [
 		"report the error"
 		buffer := ByteArray new:(infoLength at: 1).
@@ -143,7 +148,8 @@ OpenGLSL >> compile [
 	self checkStatus: GL_LINK_STATUS of: programID.
 	OpenGLSL detachShaderFrom: programID  shader: vertexShaderID.
 	OpenGLSL detachShaderFrom: programID  shader: fragmentShaderID.
-	
+	OpenGLSL deleteShader: vertexShaderID.
+	OpenGLSL deleteShader: fragmentShaderID 
 ]
 
 { #category : #compiling }
@@ -167,28 +173,16 @@ OpenGLSL >> delete [
 	OpenGLSL deleteProgram: programID
 ]
 
-{ #category : #'library path' }
-OpenGLSL >> ffiLibraryName [
-	^self class ffiLibraryName 
-]
-
 { #category : #compiling }
 OpenGLSL >> getSourcePtr: string for: shaderId [
-	|cstr i ptr |
-	cstr :=  FFIExternalArray externalNewType: #uint8 size: string size + 1.
-	cstr autoRelease.
-	i := 1.
-	(string asByteArray copyWith: 0) do: [ :e|
-		cstr at: i put: e.
-		i := i+1.
-	].
-	ptr := FFIExternalArray externalNewType: #GLintptr size:  1.
-	ptr autoRelease.
-	ptr at: 1 put: cstr pointer value.
-	OpenGLSL setShaderSourceFor: shaderId count: 1 string: ptr  length: nil.
+	|xarray|
+	xarray := FFIExternalArray externalNewType: 'char*' size: 1. 
+	xarray at:1 put: (ExternalAddress fromString: string). 
+	xarray autoRelease.
+	OpenGLSL setShaderSourceFor: shaderId count: 1 string: xarray getHandle length: nil.
 ]
 
 { #category : #'submorphs-add/remove' }
 OpenGLSL >> use [
-	^self ffiCall: #(void glUseProgram(	GLuint program)) 
+	^OpenGLSL useProgram: programID 
 ]

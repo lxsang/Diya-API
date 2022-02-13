@@ -33,6 +33,11 @@ OpenGL class >> color3fR: red G: green B: blue [
 	^self ffiCall: #(void glColor3f(GLfloat red,GLfloat green,GLfloat blue))
 ]
 
+{ #category : #'as yet unclassified' }
+OpenGL class >> drawArrays: mode first: idx count:n [
+	^self ffiCall: #(void glDrawArrays(GLenum mode,GLint idx,GLsizei n))
+]
+
 { #category : #accessing }
 OpenGL class >> end [
 	^ self ffiCall: #(void glEnd( void ))

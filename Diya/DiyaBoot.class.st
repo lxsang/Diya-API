@@ -127,6 +127,20 @@ DiyaBoot >> render [
 ]
 
 { #category : #events }
+DiyaBoot >> render:sr [
+	|event|
+	event := SDL_Event new.
+	[ running ] whileTrue: [ 
+		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
+			self processEvent: event
+		].
+		sr render.
+		SDL2 glSwapWindow: window.
+		SDL2 delay: 50. 
+	].
+]
+
+{ #category : #events }
 DiyaBoot >> run [
 	self init.
 	self startx. 
@@ -199,12 +213,16 @@ DiyaBoot >> showSystemInfo [
 
 { #category : #events }
 DiyaBoot >> startx [
+	|sr|
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
 	self createRenderer.
 	self showSystemInfo.
-	self render.
+	sr := SimpleDiyaRenderer new.
+	sr setup.
+	self render:sr.
+	sr destroy.
 	context delete.
 	renderer destroy.
 	window destroy.
