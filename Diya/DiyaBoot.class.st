@@ -1,15 +1,13 @@
 Class {
 	#name : #DiyaBoot,
-	#superclass : #DiyaBaseObject,
+	#superclass : #DiyaSingleton,
 	#instVars : [
 		'running',
 		'window',
 		'renderer',
 		'context',
-		'display'
-	],
-	#classVars : [
-		'singleton'
+		'display',
+		'clock'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -21,16 +19,6 @@ Class {
 }
 
 { #category : #'instance creation' }
-DiyaBoot class >> new [
-	self error: 'Use #uniqueInstance'
-]
-
-{ #category : #'instance creation' }
-DiyaBoot class >> reset [
-	singleton := nil
-]
-
-{ #category : #'instance creation' }
 DiyaBoot class >> startUp: status [
 	self startx.
 ]
@@ -38,12 +26,6 @@ DiyaBoot class >> startUp: status [
 { #category : #'instance creation' }
 DiyaBoot class >> startx [
 	self uniqueInstance run
-]
-
-{ #category : #'instance creation' }
-DiyaBoot class >> uniqueInstance [ 
-	singleton ifNil: [ singleton := super new ].
-	^ singleton
 ]
 
 { #category : #events }
@@ -91,6 +73,7 @@ DiyaBoot >> initialize [
 	display := nil.
 	window := nil.
 	context := nil.
+	clock := DiyaClock uniqueInstance.
 ]
 
 { #category : #events }
@@ -101,6 +84,7 @@ DiyaBoot >> processEvent: event [
 	mappedEvt type = SDL_QUIT ifTrue:[ ^running:= false ].
 	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
 	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
+	mappedEvt type = SDL_MOUSEMOTION ifTrue:[DiyaRendererContext uniqueInstance mouse: mappedEvt].
 ]
 
 { #category : #events }
@@ -167,6 +151,8 @@ DiyaBoot >> run: screenSize app: application [
 	display h: screenSize y.
 	self startx.
 	self class reset.
+	DiyaClock reset.
+	DiyaRendererContext reset.
 	Smalltalk garbageCollect.
 ]
 
@@ -220,6 +206,7 @@ DiyaBoot >> startx [
 	self createGLContext.
 	self createRenderer.
 	self showSystemInfo.
+	DiyaRendererContext uniqueInstance display: display.
 	sr := SimpleDiyaRenderer new.
 	sr setup.
 	self render:sr.

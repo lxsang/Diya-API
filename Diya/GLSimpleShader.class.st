@@ -7,9 +7,16 @@ Class {
 { #category : #accessing }
 GLSimpleShader class >> fragmentShader [
 	^ '
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform vec2 u_resolution;
+uniform vec2 u_mouse;
+uniform float u_time;
 void main()
 {
-	gl_FragColor = vec4(0.4,0.4,0.8,1.0);
+    vec2 mouse = vec2(u_mouse)/vec2(u_resolution);
+    gl_FragColor = vec4(mouse.x, mouse.y, abs(sin(u_time)), 1.0);
 }
 '
 ]

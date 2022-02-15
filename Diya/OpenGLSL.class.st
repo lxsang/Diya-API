@@ -1,11 +1,9 @@
 Class {
 	#name : #OpenGLSL,
-	#superclass : #DiyaBaseObject,
+	#superclass : #DiyaSingleton,
 	#instVars : [
-		'programID'
-	],
-	#classVars : [
-		'singleton'
+		'programID',
+		'uniforms'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -17,6 +15,11 @@ Class {
 { #category : #'as yet unclassified' }
 OpenGLSL class >> attachShader: shader to: program [
 	^self ffiCall: #(void glAttachShader(GLuint program,GLuint shader))
+]
+
+{ #category : #'instance creation' }
+OpenGLSL class >> cleanUpInstance: singleton [
+	singleton delete
 ]
 
 { #category : #'as yet unclassified' }
@@ -75,21 +78,13 @@ OpenGLSL class >> getShaderiv:shader parameterName: pname params: ptr [
 ]
 
 { #category : #'as yet unclassified' }
+OpenGLSL class >> getUniformLocation: uname ofProgram: program [
+	^self ffiCall:#(GLint glGetUniformLocation(	GLuint program,const GLchar *uname))
+]
+
+{ #category : #'as yet unclassified' }
 OpenGLSL class >> linkProgram:program [
 	^self ffiCall: #(void glLinkProgram(GLuint program))
-]
-
-{ #category : #'instance creation' }
-OpenGLSL class >> new [
-	self error: 'Use #uniqueInstance'
-]
-
-{ #category : #'instance creation' }
-OpenGLSL class >> reset [
-	singleton ifNotNil: [ 
-		singleton delete.
-	].
-	singleton := nil
 ]
 
 { #category : #'as yet unclassified' }
@@ -97,10 +92,9 @@ OpenGLSL class >> setShaderSourceFor: shader count: n string: s length: l [
 	^ self ffiCall: #(void glShaderSource(	GLuint shader,GLsizei n,const void* s,const GLint *l))
 ]
 
-{ #category : #'instance creation' }
-OpenGLSL class >> uniqueInstance [
-	singleton ifNil: [ singleton := super new. singleton compile ].
-	^ singleton
+{ #category : #'as yet unclassified' }
+OpenGLSL class >> systemUniforms [
+	^#(u_time u_resolution u_mouse)
 ]
 
 { #category : #'as yet unclassified' }
@@ -111,6 +105,11 @@ OpenGLSL class >> useProgram:program [
 { #category : #accessing }
 OpenGLSL class >> vertextShader [
 	^ self subclassResponsibility
+]
+
+{ #category : #initialization }
+OpenGLSL >> addUniform: uname of: utype [
+	uniforms at:uname put: (utype fromName: uname).
 ]
 
 { #category : #compiling }
@@ -151,7 +150,8 @@ OpenGLSL >> compile [
 	OpenGLSL detachShaderFrom: programID  shader: vertexShaderID.
 	OpenGLSL detachShaderFrom: programID  shader: fragmentShaderID.
 	OpenGLSL deleteShader: vertexShaderID.
-	OpenGLSL deleteShader: fragmentShaderID 
+	OpenGLSL deleteShader: fragmentShaderID.
+	self locateUniforms
 ]
 
 { #category : #compiling }
@@ -182,6 +182,44 @@ OpenGLSL >> getSourcePtr: string for: shaderId [
 	xarray at:1 put: (ExternalAddress fromString: string). 
 	xarray autoRelease.
 	OpenGLSL setShaderSourceFor: shaderId count: 1 string: xarray getHandle length: nil.
+]
+
+{ #category : #'submorphs-add/remove' }
+OpenGLSL >> getUniformLocation:uname [
+	^ self class getUniformLocation: uname asString ofProgram: programID
+]
+
+{ #category : #initialization }
+OpenGLSL >> initialize [
+	super initialize.
+	uniforms := Dictionary new.
+	self addUniform: #u_time of: Uniform1F.
+	self addUniform: #u_resolution of: Uniform2F.
+	self addUniform: #u_mouse of: Uniform2F.
+	self setUpUniforms.
+	self compile
+]
+
+{ #category : #compiling }
+OpenGLSL >> locateUniforms [
+	|loc|
+	uniforms valuesDo: [ :uniform|
+		loc := self getUniformLocation: uniform uname.
+		loc = -1 ifFalse:[uniform location: loc]
+	]
+]
+
+{ #category : #initialization }
+OpenGLSL >> setUniform: uname value: values [
+	|uniform|
+	uniform := uniforms at: uname asSymbol ifAbsent:[
+		^self error: 'Uniform', uname, 'is not defined in this program'].
+	uniform value: values
+]
+
+{ #category : #initialization }
+OpenGLSL >> setUpUniforms [
+	"do nothing, custom uniform can be set up by subclass"
 ]
 
 { #category : #'submorphs-add/remove' }

@@ -1,6 +1,9 @@
 Class {
 	#name : #DiyaRenderer,
 	#superclass : #DiyaBaseObject,
+	#instVars : [
+		'context'
+	],
 	#pools : [
 		'OpenGLConstants',
 		'OpenGLTypes'
@@ -8,9 +11,20 @@ Class {
 	#category : #'Diya-Graphics'
 }
 
+{ #category : #'instance creation' }
+DiyaRenderer class >> fromContext: ctx [
+	^self new context: ctx; yourself
+]
+
 { #category : #deleting }
 DiyaRenderer >> destroy [ 
 	^ self subclassResponsibility 
+]
+
+{ #category : #initialization }
+DiyaRenderer >> initialize [
+	super initialize.
+	context := DiyaRendererContext uniqueInstance
 ]
 
 { #category : #deleting }

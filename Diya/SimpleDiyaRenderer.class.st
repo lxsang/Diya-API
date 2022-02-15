@@ -14,12 +14,12 @@ Class {
 SimpleDiyaRenderer >> destroy [ 
 	vertexBuffer delete.
 	arrayBuffer delete.
-	shader delete.
 	GLSimpleShader reset.
 ]
 
 { #category : #initialization }
-SimpleDiyaRenderer >> initialize [ 
+SimpleDiyaRenderer >> initialize [
+	super initialize.
 	vertexBuffer := OpenGLVertexBuffer new.
 	arrayBuffer := OpenGLVertexArray new.
 	bufferData := FFIExternalArray externalNewType: GLfloat size: 9.
@@ -33,6 +33,12 @@ SimpleDiyaRenderer >> render [
 	OpenGL clearColorR: 1.0 G: 0  B: 1.0  A:0.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
 	shader use.
+	shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
+	shader setUniform: #u_resolution value: { context resolution x. context resolution y }.
+	context mouse ifNotNil: [
+		shader setUniform: #u_mouse value: { context mouse x. context mouse y }.
+	].
+ 
 	arrayBuffer enableAttribute: 0.
 	vertexBuffer bind: GL_ARRAY_BUFFER.
 	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:3  type: GL_FLOAT normalized: GL_FALSE stride: 0 pointer: nil .
