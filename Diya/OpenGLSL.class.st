@@ -214,7 +214,7 @@ OpenGLSL >> locateUniforms [
 OpenGLSL >> setUniform: uname value: values [
 	|uniform|
 	uniform := uniforms at: uname asSymbol ifAbsent:[
-		^self error: 'Uniform', uname, 'is not defined in this program'].
+		^self error: 'Uniform ', uname, ' is not defined in this program'].
 	uniform value: values
 ]
 

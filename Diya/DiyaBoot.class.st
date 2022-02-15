@@ -80,11 +80,11 @@ DiyaBoot >> initialize [
 DiyaBoot >> processEvent: event [
 	|mappedEvt|
 	mappedEvt := event mapped.
-	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...'. ^running := false. ].
+	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...';cr. ^running := false. ].
 	mappedEvt type = SDL_QUIT ifTrue:[ ^running:= false ].
 	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
 	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
-	mappedEvt type = SDL_MOUSEMOTION ifTrue:[DiyaRendererContext uniqueInstance mouse: mappedEvt].
+	mappedEvt type = SDL_MOUSEMOTION ifTrue:[DiyaRendererContext uniqueInstance mouse: (mappedEvt x) @ (mappedEvt y)].
 ]
 
 { #category : #events }
