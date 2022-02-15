@@ -117,6 +117,7 @@ OpenGLSL >> checkStatus:status of: id [
 	|infoLength buffer result|
 	result  := FFIExternalArray externalNewType: GLint size: 1.
 	infoLength := FFIExternalArray externalNewType: GLint size: 1.
+	infoLength at: 1 put: 0.
 	infoLength autoRelease.
 	result autoRelease.
 	OpenGLSL getShaderiv: id parameterName: status  params: result getHandle.
