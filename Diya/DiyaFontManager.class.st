@@ -24,6 +24,21 @@ DiyaFontManager class >> searchPaths [
  }
 ]
 
+{ #category : #initialization }
+DiyaFontManager >> defaultFamily [
+	^self error: 'No font found'
+	
+	
+]
+
+{ #category : #initialization }
+DiyaFontManager >> face: styleName from: familyName [
+	|family|
+	family := families at: familyName  ifAbsent: [ self defaultFamily ].
+	^family face: styleName 
+	
+]
+
 { #category : #accessing }
 DiyaFontManager >> families [
 	^ families

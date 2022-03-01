@@ -20,6 +20,11 @@ DiyaFontFamily >> addFace: face [
 ]
 
 { #category : #accessing }
+DiyaFontFamily >> face: styleName [
+	^faces at: styleName ifAbsent: [^faces at: 'Regular']
+]
+
+{ #category : #accessing }
 DiyaFontFamily >> faces [
 	^ faces
 ]
