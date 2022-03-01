@@ -214,6 +214,7 @@ DiyaBoot >> startx [
 	context delete.
 	renderer destroy.
 	window destroy.
+	DiyaFontManager reset.
 	SDL2 quit.
 ]
 
