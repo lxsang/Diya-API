@@ -68,6 +68,11 @@ OpenGLSLUniform class >> uniform4i: location value: v0 value: v1 value: v2 value
 	^self ffiCall: #(void glUniform4i(GLint location,GLint v0,GLint v1,GLint v2, GLint v3))
 ]
 
+{ #category : #'as yet unclassified' }
+OpenGLSLUniform class >> uniformMatrix4fv: location count: count transpose: transpose value: value [
+	^self ffiCall: #(void glUniformMatrix4fv(GLint location,GLsizei count,GLboolean transpose,const GLfloat *value))
+]
+
 { #category : #accessing }
 OpenGLSLUniform >> location [
 	^ location

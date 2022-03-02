@@ -65,6 +65,7 @@ DiyaBoot >> init [
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
+	DiyaRendererContext reset.
 ]
 
 { #category : #events }
@@ -98,30 +99,21 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event|
+	|event root rec|
 	event := SDL_Event new.
+	root := DiyaRootNode new.
+	DiyaRenderer uniqueInstance root: root.
+	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 120 @ 160.
+	rec rotation: (Float pi / -8.0).
+	rec scale: 1.5@1.5.
+	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	[ running ] whileTrue: [ 
-		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
+		(SDL2 pollEvent: event) > 0 ifTrue: [
 			self processEvent: event
 		].
-		self step.
+		DiyaRenderer uniqueInstance render.
 		SDL2 glSwapWindow: window.
-		SDL2 delay: 50. 
-	].
-]
-
-{ #category : #events }
-DiyaBoot >> render:sr [
-	|event|
-	event := SDL_Event new.
-	[ running ] whileTrue: [ 
-		[ (SDL2 pollEvent: event) > 0 ] whileTrue: [
-			self processEvent: event
-		].
-		OpenGL viewportX: 0 Y:0 W: display w H: display h .
-		sr render.
-		SDL2 glSwapWindow: window.
-		SDL2 delay: 50. 
+		"SDL2 delay: 50. "
 	].
 ]
 
@@ -200,21 +192,18 @@ DiyaBoot >> showSystemInfo [
 
 { #category : #events }
 DiyaBoot >> startx [
-	|sr|
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
 	self createRenderer.
 	self showSystemInfo.
 	DiyaRendererContext uniqueInstance display: display.
-	sr := SimpleDiyaRenderer new.
-	sr setup.
-	self render:sr.
-	sr destroy.
+	self render.
 	context delete.
 	renderer destroy.
 	window destroy.
 	DiyaFontManager reset.
+	DiyaRendererContext reset.
 	SDL2 quit.
 ]
 

@@ -1,8 +1,8 @@
 Class {
 	#name : #DiyaRenderer,
-	#superclass : #DiyaBaseObject,
+	#superclass : #DiyaSingleton,
 	#instVars : [
-		'context'
+		'root'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -16,23 +16,22 @@ DiyaRenderer class >> fromContext: ctx [
 	^self new context: ctx; yourself
 ]
 
-{ #category : #deleting }
-DiyaRenderer >> destroy [ 
-	^ self subclassResponsibility 
-]
-
 { #category : #initialization }
 DiyaRenderer >> initialize [
 	super initialize.
-	context := DiyaRendererContext uniqueInstance
 ]
 
 { #category : #deleting }
 DiyaRenderer >> render [ 
-	^ self subclassResponsibility 
+	root render. 
 ]
 
-{ #category : #deleting }
-DiyaRenderer >> setup [ 
-	^ self subclassResponsibility 
+{ #category : #accessing }
+DiyaRenderer >> root [
+	^ root
+]
+
+{ #category : #accessing }
+DiyaRenderer >> root: anObject [
+	root := anObject
 ]

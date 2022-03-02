@@ -9,12 +9,8 @@ Class {
 
 { #category : #'instance creation' }
 DiyaFontManager class >> cleanUpInstance: singleton [
+	singleton ifNil:[^self].
 	singleton reset.
-]
-
-{ #category : #'class initialization' }
-DiyaFontManager class >> initialize [
-	self uniqueInstance reset.
 ]
 
 { #category : #'as yet unclassified' }

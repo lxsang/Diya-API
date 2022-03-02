@@ -7,7 +7,8 @@ Class {
 		'scale',
 		'rotation',
 		'tf',
-		'shader'
+		'shader',
+		'context'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -26,11 +27,22 @@ DiyaNode >> initialize [
 	super initialize.
 	parent := nil.
 	shader := DiyaDefaultShader uniqueInstance.
+	context := DiyaRendererContext uniqueInstance.
+]
+
+{ #category : #testing }
+DiyaNode >> isRoot [
+	^false
 ]
 
 { #category : #accessing }
 DiyaNode >> parent [
 	^ parent
+]
+
+{ #category : #accessing }
+DiyaNode >> parent: anObject [
+	parent := anObject
 ]
 
 { #category : #accessing }
@@ -40,11 +52,12 @@ DiyaNode >> position [
 
 { #category : #accessing }
 DiyaNode >> position: anObject [
-	translation := anObject
+	translation := anObject.
+	self updateTF.
 ]
 
 { #category : #accessing }
-DiyaNode >> renderOn: context [
+DiyaNode >> render [
 	^self subclassResponsibility 
 ]
 
@@ -55,7 +68,8 @@ DiyaNode >> rotation [
 
 { #category : #accessing }
 DiyaNode >> rotation: anObject [
-	rotation := anObject
+	rotation := anObject.
+	self updateTF.
 ]
 
 { #category : #accessing }
@@ -65,7 +79,8 @@ DiyaNode >> scale [
 
 { #category : #accessing }
 DiyaNode >> scale: anObject [
-	scale := anObject
+	scale := anObject.
+	self updateTF.
 ]
 
 { #category : #accessing }
