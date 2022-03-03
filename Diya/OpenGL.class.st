@@ -13,6 +13,16 @@ OpenGL class >> begin: mode [
 	^ self ffiCall: #(void glBegin(GLenum mode))
 ]
 
+{ #category : #'as yet unclassified' }
+OpenGL class >> blendFnOn:buf sfactor: sfactor dfactor: dfactor [
+	^ self ffiCall: #(void glBlendFunci(	GLuint buf,GLenum sfactor,GLenum dfactor))
+]
+
+{ #category : #'as yet unclassified' }
+OpenGL class >> blendFnWithSfactor: sfactor dfactor: dfactor [
+	^ self ffiCall: #(void glBlendFunc(	GLenum sfactor,GLenum dfactor))
+]
+
 { #category : #accessing }
 OpenGL class >> checkSymbol [
 	^#glDrawArrays
@@ -34,8 +44,18 @@ OpenGL class >> color3fR: red G: green B: blue [
 ]
 
 { #category : #'as yet unclassified' }
+OpenGL class >> disable: cap [
+	^ self ffiCall: #(void glDisable(	GLenum cap))
+]
+
+{ #category : #'as yet unclassified' }
 OpenGL class >> drawArrays: mode first: idx count:n [
 	^self ffiCall: #(void glDrawArrays(GLenum mode,GLint idx,GLsizei n))
+]
+
+{ #category : #'as yet unclassified' }
+OpenGL class >> enable: cap [
+	^ self ffiCall: #(void glEnable(	GLenum cap))
 ]
 
 { #category : #accessing }
@@ -51,6 +71,11 @@ OpenGL class >> getIntegerv: pname data: data [
 { #category : #accessing }
 OpenGL class >> libNames [
 	^#('libGL.so.1')
+]
+
+{ #category : #accessing }
+OpenGL class >> pixelstorei: pname param: param [
+	^self ffiCall: #(void glPixelStorei(	GLenum pname,GLint param))
 ]
 
 { #category : #accessing }

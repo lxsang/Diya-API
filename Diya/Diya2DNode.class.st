@@ -4,6 +4,15 @@ Class {
 	#category : #'Diya-Graphics'
 }
 
+{ #category : #'as yet unclassified' }
+Diya2DNode >> gltf: points [
+	^ points collect: [ :point | |coord|
+		coord := self tf +* { point x. point y. 1.0 }.
+		coord at:3 put: 0.0.
+		coord
+	 ]
+]
+
 { #category : #initialization }
 Diya2DNode >> initialize [
 	super initialize.

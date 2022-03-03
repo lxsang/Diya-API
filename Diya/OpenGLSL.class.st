@@ -103,8 +103,17 @@ OpenGLSL class >> useProgram:program [
 ]
 
 { #category : #accessing }
-OpenGLSL class >> vertextShader [
-	^ self subclassResponsibility
+OpenGLSL class >> vertexShader [
+	^ '
+#ifdef GL_ES
+precision mediump float;
+#endif
+uniform mat4 u_projection;
+void main()
+{
+	gl_Position = u_projection  * vec4(gl_Vertex.xy, 0, 1);
+}
+'
 ]
 
 { #category : #initialization }
@@ -165,7 +174,7 @@ OpenGLSL >> compileFragmentShader:fragmentShaderID [
 
 { #category : #compiling }
 OpenGLSL >> compileVertexShader: vertexShaderID [
-	self getSourcePtr:self class vertextShader  for: vertexShaderID.
+	self getSourcePtr:self class vertexShader  for: vertexShaderID.
 	OpenGLSL compileShader: vertexShaderID.
 	self checkStatus:GL_COMPILE_STATUS of: vertexShaderID
 	
@@ -197,6 +206,7 @@ OpenGLSL >> initialize [
 	self addUniform: #u_time of: Uniform1F.
 	self addUniform: #u_resolution of: Uniform2F.
 	self addUniform: #u_mouse of: Uniform2F.
+	self addUniform: #u_projection of: UniformMatrix4fv.
 	self setUpUniforms.
 	self compile
 ]

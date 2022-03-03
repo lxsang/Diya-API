@@ -7,13 +7,18 @@ Class {
 		'GL_ACTIVE_ATTRIBUTE_MAX_LENGTH',
 		'GL_ACTIVE_UNIFORMS',
 		'GL_ACTIVE_UNIFORM_MAX_LENGTH',
+		'GL_ALPHA',
 		'GL_ARRAY_BUFFER',
 		'GL_ARRAY_BUFFER_BINDING',
 		'GL_ATTACHED_SHADERS',
+		'GL_BLEND',
+		'GL_BLUE',
 		'GL_BYTE',
+		'GL_CLAMP_TO_EDGE',
 		'GL_COLOR_BUFFER_BIT',
 		'GL_COMPILE_STATUS',
 		'GL_COMPUTE_SHADER',
+		'GL_CULL_FACE',
 		'GL_DELETE_STATUS',
 		'GL_DEPTH_BUFFER_BIT',
 		'GL_DOUBLE',
@@ -23,31 +28,44 @@ Class {
 		'GL_FLOAT',
 		'GL_FRAGMENT_SHADER',
 		'GL_GEOMETRY_SHADER',
+		'GL_GREEN',
 		'GL_HALF_FLOAT',
 		'GL_INFO_LOG_LENGTH',
 		'GL_INT',
 		'GL_INT_2_10_10_10_REV',
+		'GL_LINEAR',
 		'GL_LINES',
 		'GL_LINE_LOOP',
 		'GL_LINE_STRIP',
 		'GL_LINK_STATUS',
+		'GL_ONE_MINUS_SRC_ALPHA',
+		'GL_PACK_ALIGNMENT',
 		'GL_POINTS',
 		'GL_POLYGON',
 		'GL_QUADS',
 		'GL_QUAD_STRIP',
+		'GL_RED',
 		'GL_SHADER_SOURCE_LENGTH',
 		'GL_SHADER_TYPE',
 		'GL_SHORT',
+		'GL_SRC_ALPHA',
 		'GL_STATIC_DRAW',
 		'GL_STENCIL_BUFFER_BIT',
 		'GL_TESS_CONTROL_SHADER',
 		'GL_TESS_EVALUATION_SHADER',
+		'GL_TEXTURE_2D',
 		'GL_TEXTURE_BUFFER',
+		'GL_TEXTURE_MAG_FILTER',
+		'GL_TEXTURE_MIN_FILTER',
+		'GL_TEXTURE_UNIT_BASE',
+		'GL_TEXTURE_WRAP_S',
+		'GL_TEXTURE_WRAP_T',
 		'GL_TRIANGLES',
 		'GL_TRIANGLE_FAN',
 		'GL_TRIANGLE_STRIP',
 		'GL_TRUE',
 		'GL_UNIFORM_BUFFER',
+		'GL_UNPACK_ALIGNMENT',
 		'GL_UNSIGNED_BYTE',
 		'GL_UNSIGNED_INT',
 		'GL_UNSIGNED_INT_10F_11F_11F_REV',
@@ -81,7 +99,11 @@ OpenGLConstants class >> initCommonConstants [
 	GL_DYNAMIC_DRAW := 16r88E8.
 	GL_FALSE := 0.
 	GL_TRUE := 1.
-	GL_ARRAY_BUFFER_BINDING := 16r8894
+	GL_ARRAY_BUFFER_BINDING := 16r8894.
+	GL_RED := 16r1903.
+	GL_BLUE := 16r1905.
+	GL_GREEN := 16r1904.
+	GL_ALPHA := 16r1903.
 ]
 
 { #category : #'class initialization' }
@@ -104,6 +126,12 @@ OpenGLConstants class >> initCommonMode [
 	GL_QUADS := 16r0007.
 	GL_QUAD_STRIP := 16r0008.
 	GL_POLYGON := 16r0009.
+	GL_BLEND := 16r0BE2.
+	GL_SRC_ALPHA := 16r0302.
+	GL_ONE_MINUS_SRC_ALPHA := 16r0303.
+	GL_CULL_FACE := 16r0B44.
+	GL_PACK_ALIGNMENT := 16r0D05.
+	GL_UNPACK_ALIGNMENT := 16r0CF5
 ]
 
 { #category : #'class initialization' }
@@ -129,9 +157,23 @@ OpenGLConstants class >> initCommonShader [
 ]
 
 { #category : #'class initialization' }
+OpenGLConstants class >> initTextureConstants [
+	GL_TEXTURE_WRAP_S := 16r2802.
+	GL_TEXTURE_2D := 16r0DE1.
+	GL_CLAMP_TO_EDGE := 16r812F.
+	GL_TEXTURE_WRAP_T := 16r2803.
+	GL_TEXTURE_MIN_FILTER := 16r2801.
+	GL_TEXTURE_MAG_FILTER := 16r2800.
+	GL_LINEAR := 16r2601.
+	GL_TEXTURE_UNIT_BASE := 16r84C0.
+	
+]
+
+{ #category : #'class initialization' }
 OpenGLConstants class >> initialize [
 	self initCommonMode.
 	self initCommonMask.
 	self initCommonShader.
-	self initCommonConstants
+	self initCommonConstants.
+	self initTextureConstants.
 ]

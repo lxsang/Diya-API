@@ -66,6 +66,7 @@ DiyaBoot >> init [
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	DiyaRendererContext reset.
+	DiyaFontManager uniqueInstance loadFonts.
 ]
 
 { #category : #events }
@@ -99,14 +100,16 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event root rec|
+	|event root rec text|
 	event := SDL_Event new.
 	root := DiyaRootNode new.
 	DiyaRenderer uniqueInstance root: root.
 	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 120 @ 160.
 	rec rotation: (Float pi / -8.0).
 	rec scale: 1.5@1.5.
+	text := root addNode: (DiyaText data: 'Hello,world' shader: GLTexShader uniqueInstance) at: 0@0.
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
+	"TODO: maybe give node to customize this"
 	[ running ] whileTrue: [ 
 		(SDL2 pollEvent: event) > 0 ifTrue: [
 			self processEvent: event
@@ -197,7 +200,7 @@ DiyaBoot >> startx [
 	self createGLContext.
 	self createRenderer.
 	self showSystemInfo.
-	DiyaRendererContext uniqueInstance display: display.
+	DiyaRendererContext uniqueInstance display: display; useProjection: OrthoProjectionMatrix.
 	self render.
 	context delete.
 	renderer destroy.

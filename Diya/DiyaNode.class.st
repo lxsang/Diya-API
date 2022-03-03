@@ -4,6 +4,7 @@ Class {
 	#instVars : [
 		'translation',
 		'parent',
+		'children',
 		'scale',
 		'rotation',
 		'tf',
@@ -22,12 +23,47 @@ DiyaNode class >> with: shader [
 	^self new shader: shader; yourself
 ]
 
+{ #category : #accessing }
+DiyaNode >> addNode: node [
+	^self addNode: node at: 0@0 
+]
+
+{ #category : #accessing }
+DiyaNode >> addNode: node at: pos [
+	children ifNil: [ ^self ].
+	node parent: self.
+	node position: pos.
+	children add: node.
+	^ node
+]
+
+{ #category : #accessing }
+DiyaNode >> boundingBox [
+	^ self subclassResponsibility 
+]
+
+{ #category : #accessing }
+DiyaNode >> children [
+	^children
+]
+
+{ #category : #accessing }
+DiyaNode >> draw [
+	self subclassResponsibility 
+]
+
+{ #category : #'as yet unclassified' }
+DiyaNode >> gltf: points [
+	^self subclassResponsibility 
+]
+
 { #category : #initialization }
 DiyaNode >> initialize [
 	super initialize.
 	parent := nil.
-	shader := DiyaDefaultShader uniqueInstance.
+	shader := nil.
 	context := DiyaRendererContext uniqueInstance.
+	children := OrderedCollection new.
 ]
 
 { #category : #testing }
@@ -58,7 +94,9 @@ DiyaNode >> position: anObject [
 
 { #category : #accessing }
 DiyaNode >> render [
-	^self subclassResponsibility 
+	self draw.
+	children ifNil: [ ^self ].
+	children do: [:c  | c render  ]. 
 ]
 
 { #category : #accessing }
@@ -85,6 +123,9 @@ DiyaNode >> scale: anObject [
 
 { #category : #accessing }
 DiyaNode >> shader [
+	shader ifNil: [ 
+		parent ifNil: [ ^nil ].
+		^parent shader ].
 	^ shader
 ]
 

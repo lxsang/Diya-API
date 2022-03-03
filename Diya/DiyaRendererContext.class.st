@@ -5,7 +5,10 @@ Class {
 		'mouse',
 		'display',
 		'vbo',
-		'vao'
+		'vao',
+		'texture0',
+		'projection',
+		'buffer'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -20,9 +23,15 @@ DiyaRendererContext class >> cleanUpInstance: singleton [
 ]
 
 { #category : #accessing }
+DiyaRendererContext >> buffer [
+	^ buffer
+]
+
+{ #category : #accessing }
 DiyaRendererContext >> destroy [ 
 	vao delete.
 	vbo delete.
+	texture0 delete.
 ]
 
 { #category : #accessing }
@@ -40,8 +49,14 @@ DiyaRendererContext >> initialize [
 	super initialize.
 	vbo := OpenGLVertexBuffer new.
 	vao := OpenGLVertexArray new.
+	texture0 := OpenGLTexture fromUnit: 0.
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
+	projection := Array2D identity: 4.
+	buffer := FFIExternalArray externalNewType: GLfloat size: 128.
+	buffer autoRelease.
+	vbo data: GL_ARRAY_BUFFER data: nil size:512 usage: GL_DYNAMIC_DRAW.
+	
 ]
 
 { #category : #accessing }
@@ -54,9 +69,24 @@ DiyaRendererContext >> mouse: anObject [
 	mouse := anObject
 ]
 
+{ #category : #accessing }
+DiyaRendererContext >> projection [
+	^ projection
+]
+
 { #category : #'as yet unclassified' }
 DiyaRendererContext >> resolution [
 	^ (display w) @ (display h)
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> texture0 [
+	^ texture0
+]
+
+{ #category : #'as yet unclassified' }
+DiyaRendererContext >> useProjection: aClass [
+	projection := aClass fromDisplay: self display
 ]
 
 { #category : #accessing }

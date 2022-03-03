@@ -47,26 +47,44 @@ OpenGLVertexBuffer class >> namedBufferData:buffer size: size data: data usage: 
 ]
 
 { #category : #'as yet unclassified' }
+OpenGLVertexBuffer class >> subData:target offset: offset size: size data: data [
+	^self ffiCall: #(void glBufferSubData(GLenum target,GLintptr offset,GLsizeiptr size,const void * data))
+]
+
+{ #category : #'as yet unclassified' }
 OpenGLVertexBuffer >> bind: target [
 	^OpenGLVertexBuffer bind:target  buffer: self vertexBufferID 
 ]
 
 { #category : #'as yet unclassified' }
+OpenGLVertexBuffer >> data:target data: data size: size usage: usage [
+	self bind: target.
+	^OpenGLVertexBuffer bufferData: target size: size  data:(data ifNil:[data] ifNotNil: [data getHandle]) usage: usage 
+]
+
+{ #category : #'as yet unclassified' }
 OpenGLVertexBuffer >> data:target data: data usage: usage [
+	self bind: target.
 	^OpenGLVertexBuffer bufferData: target size: data size*4  data:data getHandle usage: usage 
 ]
 
 { #category : #'as yet unclassified' }
 OpenGLVertexBuffer >> delete [ 
 	OpenGLVertexBuffer deleteBuffersSize: 1 buffers:  vertexBufferID getHandle.
-	vertexBufferID free.
 ]
 
 { #category : #initialization }
 OpenGLVertexBuffer >> initialize [
 	vertexBufferID := FFIExternalArray externalNewType: GLint size:1. 
 	vertexBufferID at:1 put: -1.
+	vertexBufferID autoRelease.
 	OpenGLVertexBuffer genVertexBuffersSize: 1 buffers: vertexBufferID getHandle
+]
+
+{ #category : #'as yet unclassified' }
+OpenGLVertexBuffer >> subData:target offset: offset data:data [
+	self bind: target.
+	^OpenGLVertexBuffer subData: target offset: offset size: data size * 4  data: data getHandle
 ]
 
 { #category : #initialization }

@@ -74,7 +74,6 @@ OpenGLVertexArray >> bind [
 { #category : #accessing }
 OpenGLVertexArray >> delete [
 	OpenGLVertexArray deteleVertexArraysSize:1 arrays: vertexArrayID getHandle.
-	vertexArrayID at: 1 put: -1
 ]
 
 { #category : #'as yet unclassified' }
