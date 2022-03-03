@@ -37,14 +37,20 @@ DiyaText >> data: anObject [
 DiyaText >> draw [
 	|face offset|
 	data ifNil: [ ^self ].
-	offset := 50.0@50.0.
+	offset := 100.0@100.0.
 	OpenGL enable: GL_CULL_FACE.
 	OpenGL enable: GL_BLEND.
 	OpenGL blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	self shader use.
-	shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
-	shader setUniform: #u_projection value: context projection buffer.
-	shader setUniform: #u_resolution value: { context resolution x. context resolution y }.
+	self shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
+	self shader setUniform: #u_projection value: context projection buffer.
+	self shader setUniform: #u_texture value: 0.
+	self shader setUniform: #u_resolution value: { context resolution x. context resolution y }.
+	context mouse ifNotNil: [
+		"in shader, window origin is bottom left conor of the window
+		the mouse position should be transformed to this coodinate"
+		shader setUniform: #u_mouse value: { context mouse x. context resolution y - context mouse y }.
+	].
 	face := DiyaFontManager uniqueInstance face: self fontStyle  from: self fontName.
 	"set fontsize"
 	face setPixelWidth:0 height: self fontSize.
@@ -52,11 +58,10 @@ DiyaText >> draw [
 	"configure vao vbo for texture QUAD"
 	context vao enableAttribute: 0.
 	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4  type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil .
-	data do:[:c | self drawCharacter: c at: offset with: face].
+	data do:[:c | self drawCharacter: c at: offset with: face.].
 	context vao disableAttribute: 0.
 	"reset value"
 	OpenGL pixelstorei: GL_UNPACK_ALIGNMENT param: 4.
-	OpenGLTexture bind: GL_TEXTURE_2D texture: 0.
 	OpenGL disable: GL_CULL_FACE.
 	OpenGL disable: GL_BLEND.
 	
@@ -140,6 +145,6 @@ DiyaText >> initialize [
 	super initialize.
 	fontStyle := 'Regular'.
 	fontName := 'Ubuntu'.
-	fontSize := 20.
+	fontSize := 40.
 	data := nil.
 ]

@@ -61,7 +61,7 @@ DiyaBoot >> createWindow [
 DiyaBoot >> init [
 	| status |
 	status := SDL2 init: SDL_INIT_EVERYTHING.
-	status = 0
+	status = 0 
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
@@ -104,13 +104,14 @@ DiyaBoot >> render [
 	event := SDL_Event new.
 	root := DiyaRootNode new.
 	DiyaRenderer uniqueInstance root: root.
-	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 120 @ 160.
-	rec rotation: (Float pi / -8.0).
-	rec scale: 1.5@1.5.
-	text := root addNode: (DiyaText data: 'Hello,world' shader: GLTexShader uniqueInstance) at: 0@0.
+	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 200 @ 200.
+	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 200 @ 500.
+	"rec rotation: (Float pi / -8.0).
+	rec scale: 1.5@1.5."
+	text := root addNode: (DiyaText data: 'Hello,world' shader: TotoShader uniqueInstance) at: 0@0.
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	"TODO: maybe give node to customize this"
-	[ running ] whileTrue: [ 
+	[ running ] whileTrue: [
 		(SDL2 pollEvent: event) > 0 ifTrue: [
 			self processEvent: event
 		].
