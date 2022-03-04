@@ -38,6 +38,7 @@ Class {
 		'GL_LINE_LOOP',
 		'GL_LINE_STRIP',
 		'GL_LINK_STATUS',
+		'GL_MAX_TEXTURE_SIZE',
 		'GL_ONE_MINUS_SRC_ALPHA',
 		'GL_PACK_ALIGNMENT',
 		'GL_POINTS',
@@ -45,6 +46,7 @@ Class {
 		'GL_QUADS',
 		'GL_QUAD_STRIP',
 		'GL_RED',
+		'GL_RGB',
 		'GL_SHADER_SOURCE_LENGTH',
 		'GL_SHADER_TYPE',
 		'GL_SHORT',
@@ -103,7 +105,8 @@ OpenGLConstants class >> initCommonConstants [
 	GL_RED := 16r1903.
 	GL_BLUE := 16r1905.
 	GL_GREEN := 16r1904.
-	GL_ALPHA := 16r1903.
+	GL_ALPHA := 16r1906.
+	GL_RGB := 16r1907.
 ]
 
 { #category : #'class initialization' }
@@ -166,6 +169,7 @@ OpenGLConstants class >> initTextureConstants [
 	GL_TEXTURE_MAG_FILTER := 16r2800.
 	GL_LINEAR := 16r2601.
 	GL_TEXTURE_UNIT_BASE := 16r84C0.
+	GL_MAX_TEXTURE_SIZE := 16r0D33
 	
 ]
 

@@ -2,7 +2,7 @@ Class {
 	#name : #DiyaFontFamily,
 	#superclass : #DiyaBaseObject,
 	#instVars : [
-		'faces',
+		'styles',
 		'name'
 	],
 	#category : #'Diya-Fonts'
@@ -16,23 +16,13 @@ DiyaFontFamily class >> fromFace: face [
 { #category : #accessing }
 DiyaFontFamily >> addFace: face [
 	name ifNil: [ name := face familyName ].
-	faces at: face styleName ifAbsentPut: face.
-]
-
-{ #category : #accessing }
-DiyaFontFamily >> face: styleName [
-	^faces at: styleName ifAbsent: [^faces at: 'Regular']
-]
-
-{ #category : #accessing }
-DiyaFontFamily >> faces [
-	^ faces
+	styles at: face styleName ifAbsentPut: (DiyaFontStyle fromFace: face).
 ]
 
 { #category : #initialization }
 DiyaFontFamily >> initialize [ 
 	super initialize.
-	faces := Dictionary new.
+	styles := Dictionary new.
 	name := nil
 ]
 
@@ -47,6 +37,16 @@ DiyaFontFamily >> name: anObject [
 ]
 
 { #category : #accessing }
+DiyaFontFamily >> style: styleName [
+	^styles at: styleName ifAbsent: [^styles at: 'Regular']
+]
+
+{ #category : #accessing }
 DiyaFontFamily >> styleNames [
-	^faces keys
+	^styles keys
+]
+
+{ #category : #accessing }
+DiyaFontFamily >> styles [
+	^ styles
 ]

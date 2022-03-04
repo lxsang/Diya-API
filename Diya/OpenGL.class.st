@@ -64,6 +64,11 @@ OpenGL class >> end [
 ]
 
 { #category : #'as yet unclassified' }
+OpenGL class >> getError [
+	^self ffiCall: #(GLenum glGetError(	void))
+]
+
+{ #category : #'as yet unclassified' }
 OpenGL class >> getIntegerv: pname data: data [
 	^self ffiCall: #(void glGetIntegerv(	GLenum pname,GLint * data))
 ]

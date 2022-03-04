@@ -53,9 +53,9 @@ DiyaRendererContext >> initialize [
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
-	buffer := FFIExternalArray externalNewType: GLfloat size: 128.
+	buffer := FFIExternalArray externalNewType: GLfloat size: 32.
 	buffer autoRelease.
-	vbo data: GL_ARRAY_BUFFER data: nil size:512 usage: GL_DYNAMIC_DRAW.
+	vbo data: GL_ARRAY_BUFFER data: nil size:128 usage: GL_DYNAMIC_DRAW.
 	
 ]
 

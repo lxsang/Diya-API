@@ -1,21 +1,8 @@
 Class {
 	#name : #DiyaRectangle,
 	#superclass : #Diya2DNode,
-	#instVars : [
-		'size'
-	],
 	#category : #'Diya-Graphics'
 }
-
-{ #category : #'as yet unclassified' }
-DiyaRectangle class >> size: s [
-	^(self new) size:s; yourself
-]
-
-{ #category : #'as yet unclassified' }
-DiyaRectangle class >> size: size shader:s [
-	^(self with:s) size: size; yourself
-]
 
 { #category : #accessing }
 DiyaRectangle >> draw [
@@ -42,26 +29,18 @@ DiyaRectangle >> draw [
 { #category : #accessing }
 DiyaRectangle >> initialize [
 	super initialize.
-	self size:10@10.
+	self extent:10@10.
 	translation  := nil.
 	children := nil
-]
-
-{ #category : #accessing }
-DiyaRectangle >> size [
-	^ size
-]
-
-{ #category : #accessing }
-DiyaRectangle >> size: anObject [
-	size := anObject.
 ]
 
 { #category : #accessing }
 DiyaRectangle >> transformDo: block [
 	|i|
 	i := 1.
-	(self gltf: { 0.0@0.0. 0.0@ (size y). size. (size x) @0. }) do:[:p|
-			p   do: [ :e|
-			block value:i value:e. i := i+1]].
+	self gltf: { 0.0@0.0. 0.0@ (extent y). extent. (extent x) @0. } do:[:x :y|
+			block value: i value:x.
+			block value: i + 1 value: y.
+			block value: i + 2 value: 0.0.
+			i := i+3].
 ]

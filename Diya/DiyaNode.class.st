@@ -9,7 +9,8 @@ Class {
 		'rotation',
 		'tf',
 		'shader',
-		'context'
+		'context',
+		'extent'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -17,6 +18,16 @@ Class {
 	],
 	#category : #'Diya-Graphics'
 }
+
+{ #category : #'instance creation' }
+DiyaNode class >> size: size [
+	^(self new) extent: size; yourself
+]
+
+{ #category : #'instance creation' }
+DiyaNode class >> size: size shader:s [
+	^(self with:s) extent: size; yourself
+]
 
 { #category : #'instance creation' }
 DiyaNode class >> with: shader [
@@ -52,9 +63,24 @@ DiyaNode >> draw [
 	self subclassResponsibility 
 ]
 
+{ #category : #accessing }
+DiyaNode >> extent [
+	^ extent
+]
+
+{ #category : #accessing }
+DiyaNode >> extent: anObject [
+	extent := anObject
+]
+
 { #category : #'as yet unclassified' }
 DiyaNode >> gltf: points [
 	^self subclassResponsibility 
+]
+
+{ #category : #accessing }
+DiyaNode >> height [
+	^ extent y
 ]
 
 { #category : #initialization }
@@ -143,4 +169,9 @@ DiyaNode >> tf [
 { #category : #accessing }
 DiyaNode >> updateTF [
 	self subclassResponsibility 
+]
+
+{ #category : #accessing }
+DiyaNode >> wdith [
+	^ extent x
 ]

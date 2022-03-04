@@ -40,6 +40,19 @@ OpenGLTexImage2D >> data: anObject [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> debug [
+	self
+		stdlog: 'Target:',target hex;
+		stdlog: 'level:',level asString;
+		stdlog: 'border :',border asString;
+		stdlog: 'width :',width asString;
+		stdlog: 'height :',height asString;
+		stdlog: 'type :',type hex;
+		stdlog: 'format :',format hex;
+		stdlog: 'internalformat :',internalFormat hex
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> format [
 	^ format
 ]

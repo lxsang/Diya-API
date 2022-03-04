@@ -27,14 +27,6 @@ DiyaFontManager >> defaultFamily [
 	
 ]
 
-{ #category : #initialization }
-DiyaFontManager >> face: styleName from: familyName [
-	|family|
-	family := families at: familyName  ifAbsent: [ self defaultFamily ].
-	^family face: styleName 
-	
-]
-
 { #category : #accessing }
 DiyaFontManager >> families [
 	^ families
@@ -98,4 +90,12 @@ DiyaFontManager >> loadPath: path [
 DiyaFontManager >> reset [
  	"reset all stored faces"
 	families := Dictionary new.
+]
+
+{ #category : #initialization }
+DiyaFontManager >> style: styleName from: familyName [
+	|family|
+	family := families at: familyName  ifAbsent: [ self defaultFamily ].
+	^family style: styleName 
+	
 ]

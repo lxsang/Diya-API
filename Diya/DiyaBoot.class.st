@@ -4,7 +4,6 @@ Class {
 	#instVars : [
 		'running',
 		'window',
-		'renderer',
 		'context',
 		'display',
 		'clock'
@@ -37,14 +36,6 @@ DiyaBoot >> createGLContext [
 ]
 
 { #category : #events }
-DiyaBoot >> createRenderer [
-	renderer := window primCreateRenderer: -1 flags: SDL_RENDERER_ACCELERATED.
-	renderer ifNil: [ ^self error: SDL2 getErrorMessage ].
-	^renderer 
-	
-]
-
-{ #category : #events }
 DiyaBoot >> createWindow [
 	window := SDL2 createWindow: 'Diya'
 			x: 0
@@ -54,12 +45,20 @@ DiyaBoot >> createWindow [
 			flags: SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL.
 	window ifNil: [ ^self error: SDL2 getErrorMessage ].
 	"handle fullscreen: SDL_WINDOW_FULLSCREEN."
+	"SDL2 glSetAttribute: SDL_GL_CONTEXT_PROFILE_MASK value: SDL_GL_CONTEXT_PROFILE_ES.
+	SDL2 glSetAttribute: SDL_GL_CONTEXT_MAJOR_VERSION value: 2.
+	SDL2 glSetAttribute: SDL_GL_CONTEXT_MINOR_VERSION value: 0.
+	SDL2 glSetAttribute: SDL_GL_ACCELERATED_VISUAL value: 1."
+	"SDL2 glSetAttribute: SDL_GL_DOUBLEBUFFER value: 1.
+	SDL2 glSetAttribute: SDL_GL_DEPTH_SIZE value: 24."
+	
 	^window
 ]
 
 { #category : #events }
 DiyaBoot >> init [
 	| status |
+	SDL2 setHint: 'SDL_RENDER_DRIVER' value: 'opengles2'.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0 
 		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
@@ -106,9 +105,11 @@ DiyaBoot >> render [
 	DiyaRenderer uniqueInstance root: root.
 	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 200 @ 200.
 	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 200 @ 500.
-	"rec rotation: (Float pi / -8.0).
-	rec scale: 1.5@1.5."
-	text := root addNode: (DiyaText data: 'Hello,world' shader: TotoShader uniqueInstance) at: 0@0.
+	rec rotation: (Float pi / -8.0).
+	rec scale: 1.5@1.5.
+	text := root addNode: (DiyaText data: 'the quick brown fox jumped over the lazy dog' shader: TotoShader uniqueInstance) at: 50@100.
+	text extent: 100@100.
+	"text rotation:(Float pi / 4.0)."
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	"TODO: maybe give node to customize this"
 	[ running ] whileTrue: [
@@ -182,10 +183,6 @@ DiyaBoot >> showSystemInfo [
 		 stream nextPutAll:  rinfo name readString; nextPutAll:' '.
 	].
 	stream cr.
-	renderer ifNotNil:[
-		renderer primGetRendererInfo: rinfo.
-		stream nextPutAll: 'SDL_RENDER_DRIVER selected: '; nextPutAll: rinfo name readString; cr.
-	].
 	stream nextPutAll:'Display resolution: ';
 		nextPutAll:display w asString;
 		nextPutAll: 'x';
@@ -199,12 +196,11 @@ DiyaBoot >> startx [
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
-	self createRenderer.
+	SDL2 glMakeCurrent: window  context: context. 
 	self showSystemInfo.
 	DiyaRendererContext uniqueInstance display: display; useProjection: OrthoProjectionMatrix.
 	self render.
 	context delete.
-	renderer destroy.
 	window destroy.
 	DiyaFontManager reset.
 	DiyaRendererContext reset.

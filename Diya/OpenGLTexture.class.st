@@ -89,8 +89,18 @@ OpenGLTexture >> initialize [
 ]
 
 { #category : #initialization }
+OpenGLTexture >> maxTextureSize [
+	|ptr v|
+	ptr := FFIExternalArray externalNewType: GLint size:1. 
+	ptr at:1 put: -1.
+	OpenGL getIntegerv: GL_MAX_TEXTURE_SIZE data: ptr getHandle.
+	v := ptr at:1.
+	ptr free.
+	^v
+]
+
+{ #category : #initialization }
 OpenGLTexture >> setImage2D: tex2D [
-	self active.
 	self bind: tex2D target.
 	self class image2D: tex2D target
 		level: tex2D level
@@ -100,7 +110,7 @@ OpenGLTexture >> setImage2D: tex2D [
 		border: tex2D border
 		format: tex2D format
 		type: tex2D type
-		data: tex2D data
+		data: tex2D data getHandle.
 ]
 
 { #category : #initialization }

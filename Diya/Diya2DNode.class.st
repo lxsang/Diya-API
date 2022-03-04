@@ -5,11 +5,10 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-Diya2DNode >> gltf: points [
+Diya2DNode >> gltf: points do: block [
 	^ points collect: [ :point | |coord|
 		coord := self tf +* { point x. point y. 1.0 }.
-		coord at:3 put: 0.0.
-		coord
+		block value: coord first value: (coord at:2)
 	 ]
 ]
 
