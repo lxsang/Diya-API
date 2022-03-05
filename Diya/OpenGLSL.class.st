@@ -88,6 +88,11 @@ OpenGLSL class >> linkProgram:program [
 ]
 
 { #category : #'as yet unclassified' }
+OpenGLSL class >> resetShaders [
+	self allSubclassesDo: [ :c| c reset ].
+]
+
+{ #category : #'as yet unclassified' }
 OpenGLSL class >> setShaderSourceFor: shader count: n string: s length: l [
 	^ self ffiCall: #(void glShaderSource(	GLuint shader,GLsizei n,const void* s,const GLint *l))
 ]
@@ -109,9 +114,11 @@ OpenGLSL class >> vertexShader [
 precision mediump float;
 #endif
 uniform mat4 u_projection;
+uniform mat3 u_transform;
 void main()
 {
-	gl_Position = u_projection  * vec4(gl_Vertex.xy, 0, 1);
+	vec3 coord_global = u_transform * vec3(gl_Vertex.xy, 1.0);
+	gl_Position = u_projection * vec4(coord_global.xy, 0, 1.0);
 }
 '
 ]
@@ -207,6 +214,7 @@ OpenGLSL >> initialize [
 	self addUniform: #u_resolution of: Uniform2F.
 	self addUniform: #u_mouse of: Uniform2F.
 	self addUniform: #u_projection of: UniformMatrix4fv.
+	self addUniform: #u_transform of: UniformMatrix3fv. 
 	self setUpUniforms.
 	self compile
 ]

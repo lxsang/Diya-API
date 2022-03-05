@@ -44,8 +44,9 @@ DiyaText >> draw [
 	OpenGL enable: GL_TEXTURE_2D.
 	OpenGL blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	self shader use.
-	self shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
-	self shader setUniform: #u_projection value: context projection buffer.
+	shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
+	shader setUniform: #u_projection value: {GL_FALSE. context projection buffer}.
+	shader setUniform: #u_transform value: {GL_TRUE. self tf asGLBuffer}.
 	self shader setUniform: #u_texture value: 0.
 	self shader setUniform: #u_resolution value: { context resolution x. context resolution y }.
 	style := DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName.
@@ -83,27 +84,17 @@ DiyaText >> drawCharacter: c at: offset [
 
 { #category : #accessing }
 DiyaText >> fillVerticesBuffer: buffer at: offset tex: tex [
-	|x y w h i uvs|
+	|x y w h|
 	x := offset x + ((tex bearing x )*(self scale x)).
 	y := offset y - (((tex height) - (tex bearing y))*(self scale y)).
 	w := (tex  width)*(self scale x).
 	h := (tex  height)*(self scale y).
-	i := 1.
-	uvs := { 0@0. 0@1. 1@1. 0@0. 1@1. 1@0 }.
-	self gltf:{x@(y+h). x@y. (x+w)@y. x@(y+h). (x+w)@y. (x+w)@(y+h). } do:[:cx :cy| |uv|
-		uv := uvs at: ((i -1)/4) + 1.
-		buffer at:i put: cx.
-		buffer at: i +1 put: cy.
-		buffer at: i + 2 put: uv x.
-		buffer at: i + 3 put: uv y.
-		i := i+4.
-	].
-"{x. y + h. 0.0. 0.0.            
+	{x. y + h. 0.0. 0.0.            
       x. y. 0.0. 1.0.
       x + w. y. 1.0. 1.0.
 		x. y + h. 0.0. 0.0.
       x + w. y. 1.0. 1.0.
-      x + w. y + h. 1.0. 0.0.  }"
+      x + w. y + h. 1.0. 0.0.  } withIndexDo: [ :e :i| buffer at:i put: e ]
 ]
 
 { #category : #accessing }

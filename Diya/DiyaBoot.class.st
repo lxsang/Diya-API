@@ -103,12 +103,12 @@ DiyaBoot >> render [
 	event := SDL_Event new.
 	root := DiyaRootNode new.
 	DiyaRenderer uniqueInstance root: root.
-	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 200 @ 200.
-	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 200 @ 500.
+	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 250 @ 200.
+	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 250 @ 500.
 	rec rotation: (Float pi / -8.0).
 	rec scale: 1.5@1.5.
-	text := root addNode: (DiyaText data: 'the quick brown fox jumped over the lazy dog' shader: TotoShader uniqueInstance) at: 50@100.
-	text extent: 100@100.
+	text := root addNode: (DiyaText data: String loremIpsum  shader: TotoShader uniqueInstance) at: 20@320.
+	text extent: 200@320.
 	"text rotation:(Float pi / 4.0)."
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	"TODO: maybe give node to customize this"

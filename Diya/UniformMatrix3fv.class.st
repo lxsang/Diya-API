@@ -1,5 +1,5 @@
 Class {
-	#name : #UniformMatrix4fv,
+	#name : #UniformMatrix3fv,
 	#superclass : #OpenGLSLUniform,
 	#pools : [
 		'OpenGLConstants',
@@ -9,9 +9,9 @@ Class {
 }
 
 { #category : #accessing }
-UniformMatrix4fv >> setUniformValue [
+UniformMatrix3fv >> setUniformValue [
 	OpenGLSLUniform
-		uniformMatrix4fv: location
+		uniformMatrix3fv: location
 		count: 1
 		transpose: value first
 		value: value last getHandle 
