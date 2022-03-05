@@ -2,9 +2,9 @@ Class {
 	#name : #DiyaFontStyle,
 	#superclass : #DiyaBaseObject,
 	#instVars : [
+		'texmap',
 		'face',
-		'name',
-		'charmap'
+		'name'
 	],
 	#category : #'Diya-Fonts'
 }
@@ -21,27 +21,13 @@ DiyaFontStyle >> face [
 
 { #category : #accessing }
 DiyaFontStyle >> face: anObject [
-	face := anObject.
-	name := anObject styleName
+	face := anObject
 ]
 
 { #category : #initialization }
 DiyaFontStyle >> initialize [
 	super initialize.
-	charmap := Dictionary new.
-]
-
-{ #category : #initialization }
-DiyaFontStyle >> loadChar: charCode size: size [
-	|tex dic|
-	"lookup in the char map"
-	dic := charmap at: charCode ifAbsentPut: Dictionary new.
-	tex := dic at: size ifAbsentPut: [
-		face setPixelWidth:0 height: size.
-		face loadCharacter: charCode  flags: (1 << 2).
-		OpenGLFontTex fromFace: face
-	].
-	^tex
+	texmap := Dictionary new.
 ]
 
 { #category : #accessing }
@@ -52,4 +38,19 @@ DiyaFontStyle >> name [
 { #category : #accessing }
 DiyaFontStyle >> name: anObject [
 	name := anObject
+]
+
+{ #category : #accessing }
+DiyaFontStyle >> texmap [
+	^ texmap
+]
+
+{ #category : #initialization }
+DiyaFontStyle >> textureOf: size [
+	|tex|
+	tex := texmap at: size ifAbsentPut: [
+		""
+		OpenGLFontTex fromFace: face ofSize: size
+	].
+	^tex
 ]

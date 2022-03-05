@@ -53,6 +53,11 @@ OpenGLTexImage2D >> debug [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> extent [
+	^ width @ height 
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> format [
 	^ format
 ]

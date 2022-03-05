@@ -28,6 +28,12 @@ DiyaBoot class >> startx [
 ]
 
 { #category : #events }
+DiyaBoot >> GLinit. [
+	OpenGL viewportX: 0 Y:0 W: display w H: display h.
+	OpenGL enable: GL_TEXTURE_2D.
+]
+
+{ #category : #events }
 DiyaBoot >> createGLContext [
 	context :=  SDL2 glCreateContext:  window.
 	context ifNil: [ ^self error: SDL2 getErrorMessage ].
@@ -107,9 +113,10 @@ DiyaBoot >> render [
 	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 250 @ 500.
 	rec rotation: (Float pi / -8.0).
 	rec scale: 1.5@1.5.
-	text := root addNode: (DiyaText data: String loremIpsum  shader: TotoShader uniqueInstance) at: 20@320.
+	text := root addNode: (DiyaText data: String loremIpsum shader: TotoShader uniqueInstance) at: 20@320.
 	text extent: 200@320.
 	"text rotation:(Float pi / 4.0)."
+	self GLinit.
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	"TODO: maybe give node to customize this"
 	[ running ] whileTrue: [
@@ -118,7 +125,6 @@ DiyaBoot >> render [
 		].
 		DiyaRenderer uniqueInstance render.
 		SDL2 glSwapWindow: window.
-		"SDL2 delay: 50. "
 	].
 ]
 

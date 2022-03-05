@@ -36,12 +36,11 @@ DiyaText >> data: anObject [
 
 { #category : #accessing }
 DiyaText >> draw [
-	| offset|
+	| offset tex2D|
 	data ifNil: [ ^self ].
 	offset := 0.0@0.0.
 	OpenGL enable: GL_CULL_FACE.
 	OpenGL enable: GL_BLEND.
-	OpenGL enable: GL_TEXTURE_2D.
 	OpenGL blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	self shader use.
 	shader setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat.
@@ -53,9 +52,15 @@ DiyaText >> draw [
 	OpenGL pixelstorei: GL_UNPACK_ALIGNMENT param: 1.
 	"configure vao vbo for texture QUAD"
 	context texture0 active.
+	tex2D := style textureOf: self fontSize. 
+	context texture0 setImage2D: tex2D.
+	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_S param: GL_CLAMP_TO_EDGE.
+	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_T param: GL_CLAMP_TO_EDGE.
+	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MIN_FILTER param: GL_LINEAR.
+	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MAG_FILTER param: GL_LINEAR.
 	context vao enableAttribute: 0.
 	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil .
-	data do:[:c | self drawCharacter: c at: offset].
+	data do:[:c | self drawCharacter: c asciiValue  at: offset withTexture:tex2D. ].
 	context vao disableAttribute: 0.
 	"reset value"
 	OpenGL pixelstorei: GL_UNPACK_ALIGNMENT param: 4.
@@ -65,36 +70,56 @@ DiyaText >> draw [
 ]
 
 { #category : #accessing }
-DiyaText >> drawCharacter: c at: offset [
-	|tex2D|
-	tex2D := style loadChar: c asciiValue  size: self fontSize.
-	context texture0 setImage2D: tex2D.
-	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_S param: GL_CLAMP_TO_EDGE.
-	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_T param: GL_CLAMP_TO_EDGE.
-	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MIN_FILTER param: GL_LINEAR.
-	OpenGLTexture parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MAG_FILTER param: GL_LINEAR.
-	"fill the buffer"
-	((offset x > extent x) and: (tex2D width > 0)) ifTrue:[
+DiyaText >> drawCharacter: c at: offset withTexture: tex2D [
+	|x y w h charsize texcoord|
+	c = (Character space asciiValue) ifTrue:[
+		^offset setX: (offset x + ((tex2D spacing )* (self scale x)) ) setY: offset y.
+	].
+	charsize := tex2D charSize: c.
+	((offset x > extent x) and: (charsize x > 0)) ifTrue:[
 		offset setX: 0.0 setY: (offset y )- (tex2D linespace * (self scale y)).].
-	self fillVerticesBuffer: context buffer at: offset tex: tex2D.
+	charsize := tex2D charSize: c.
+	texcoord := tex2D texCoordOf: c.
+	x := offset x "+ ((tex bearing x )*(self scale x))".
+	y := offset y - ((tex2D cellh) * (self scale y)) "(((tex height) - (tex bearing y))*(self scale y))".
+	w := (charsize x)*(self scale x).
+	h := (charsize y)*(self scale y).
+	{x. y + h. texcoord origin x. texcoord origin y.            
+      x. y. texcoord origin x. texcoord corner y.
+      x + w. y. texcoord corner x. texcoord corner y.
+		x. y + h. texcoord origin x. texcoord origin y.
+      x + w. y. texcoord corner x. texcoord corner y.
+      x + w. y + h. texcoord corner x. texcoord origin y.  }  withIndexDo: [ :e :i| context buffer at:i put: e ].
 	context vbo subData: GL_ARRAY_BUFFER offset: 0 data: context buffer.
 	OpenGL drawArrays: GL_TRIANGLES first:0  count:6.
-	offset setX: (offset x + ((tex2D  advance x )* (self scale x)) ) setY: offset y.
+	offset setX: (offset x + ((charsize  x )* (self scale x)) ) setY: offset y.
 ]
 
 { #category : #accessing }
 DiyaText >> fillVerticesBuffer: buffer at: offset tex: tex [
 	|x y w h|
-	x := offset x + ((tex bearing x )*(self scale x)).
+	"x := offset x + ((tex bearing x )*(self scale x)).
 	y := offset y - (((tex height) - (tex bearing y))*(self scale y)).
 	w := (tex  width)*(self scale x).
-	h := (tex  height)*(self scale y).
+	h := (tex  height)*(self scale y)."
+	x := 0.
+	y := 0.
+	w := tex width.
+	h := tex height.
 	{x. y + h. 0.0. 0.0.            
       x. y. 0.0. 1.0.
       x + w. y. 1.0. 1.0.
 		x. y + h. 0.0. 0.0.
       x + w. y. 1.0. 1.0.
       x + w. y + h. 1.0. 0.0.  } withIndexDo: [ :e :i| buffer at:i put: e ]
+
+
+"{x. y + h. 0.0. 0.0.            
+      x. y. 0.0. 1.0.
+      x + w. y. 1.0. 1.0.
+		x. y + h. 0.0. 0.0.
+      x + w. y. 1.0. 1.0.
+      x + w. y + h. 1.0. 0.0.  }"
 ]
 
 { #category : #accessing }

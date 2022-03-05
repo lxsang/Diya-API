@@ -8,6 +8,7 @@ Class {
 DiyaRootNode >> draw [
 	OpenGL clearColorR: 1.0 G: 0.0 B: 1.0  A:0.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
+	context vbo bind: GL_ARRAY_BUFFER.
 ]
 
 { #category : #initialization }

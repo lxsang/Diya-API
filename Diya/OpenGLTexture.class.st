@@ -76,7 +76,6 @@ OpenGLTexture >> bind: target [
 { #category : #initialization }
 OpenGLTexture >> delete [
 	self class delete: 1 pointer:  textureID getHandle.
-	textureID  free.
 ]
 
 { #category : #initialization }
