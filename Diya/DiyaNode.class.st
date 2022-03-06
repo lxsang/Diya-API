@@ -10,7 +10,8 @@ Class {
 		'tf',
 		'shader',
 		'context',
-		'extent'
+		'extent',
+		'dirty'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -70,12 +71,8 @@ DiyaNode >> extent [
 
 { #category : #accessing }
 DiyaNode >> extent: anObject [
-	extent := anObject
-]
-
-{ #category : #'as yet unclassified' }
-DiyaNode >> gltf: points [
-	^self subclassResponsibility 
+	extent := anObject.
+	dirty := true
 ]
 
 { #category : #accessing }
@@ -90,6 +87,7 @@ DiyaNode >> initialize [
 	shader := nil.
 	context := DiyaRendererContext uniqueInstance.
 	children := OrderedCollection new.
+	dirty := false
 ]
 
 { #category : #testing }
@@ -120,6 +118,7 @@ DiyaNode >> position: anObject [
 
 { #category : #accessing }
 DiyaNode >> render [
+	dirty ifTrue:[dirty := self update not].
 	shader ifNotNil: [ self setUpShader  ].
 	self draw.
 	children ifNil: [ ^self ].
@@ -181,6 +180,11 @@ DiyaNode >> shader: anObject [
 DiyaNode >> tf [
 	parent ifNil: [ self error: 'TF: This node is not attached to the main tree' ].
 	^ tf
+]
+
+{ #category : #accessing }
+DiyaNode >> update [
+	^self subclassResponsibility 
 ]
 
 { #category : #accessing }

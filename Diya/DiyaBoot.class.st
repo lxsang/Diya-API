@@ -79,6 +79,7 @@ DiyaBoot >> exampleNodes [
 	rec scale: 1.5@1.5.
 	text := root addNode: (DiyaText data: String loremIpsum) at: 20@320.
 	text extent: 200@320.
+	text wordWrap: true.
 	^ root
 	"text rotation:(Float pi / 4.0); scale: 2.0@2.0."
 ]

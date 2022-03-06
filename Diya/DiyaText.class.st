@@ -6,7 +6,8 @@ Class {
 		'fontSize',
 		'fontName',
 		'data',
-		'style'
+		'style',
+		'wrap'
 	],
 	#pools : [
 		'FT2Types'
@@ -31,7 +32,8 @@ DiyaText >> data [
 
 { #category : #accessing }
 DiyaText >> data: anObject [
-	data := anObject
+	data := anObject.
+	dirty := true
 ]
 
 { #category : #accessing }
@@ -40,13 +42,13 @@ DiyaText >> draw [
 	self shader
 		setUniform: #u_use_texture value:1.
 	"configure vao vbo for texture QUAD"
-	style := DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName.
 	self texture setup.
 	context texture0 setImage2D: self texture.
 	context texture0 active. 
 	context vao enableAttribute: 0.
 	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil .
-	self drawText.
+	context vbo data: GL_ARRAY_BUFFER data: vbuffer size: nvertices*16 usage: GL_STATIC_DRAW.
+	OpenGL drawArrays: GL_TRIANGLES first:0  count:nvertices.
 	context vao disableAttribute: 0.
 	"reset value"
 	self texture drop.
@@ -54,34 +56,22 @@ DiyaText >> draw [
 ]
 
 { #category : #accessing }
-DiyaText >> drawSubStringFrom: lower at: offset [
-	|upper vertices count index tex2D|
-	upper := lower + ((data size - lower) min:(context buffer size / 24) asInteger).
-	count := 0.
+DiyaText >> drawText [
+	|vertices index tex2D offset|
+	nvertices  := 0.
 	index := 1.
+	offset := 0@0.
 	tex2D := self texture.
-	lower to: upper do: [ :i|
+	1 to: data size do: [ :i|
 		vertices := self getCharsVertices:(data at:i) asciiValue offset: offset on: tex2D.
 		vertices do: [ 
-			:e| context buffer at: index put:e.
+			:e| vbuffer at: index put:e.
 			index := index + 1.
 		].
-		vertices ifNotEmpty: [ count := count + 6 ].
+		vertices ifNotEmpty: [ nvertices := nvertices + 6 ].
+		(offset x > extent x and: wrap not) ifTrue: [ ^self ].
+		(offset y negated > extent y) ifTrue: [ ^self ]. 
 	].
-	context vbo subData: GL_ARRAY_BUFFER offset: 0 data: context buffer.
-	OpenGL drawArrays: GL_TRIANGLES first:0  count:count.
-	^ upper + 1
-]
-
-{ #category : #accessing }
-DiyaText >> drawText [
-	|lower offset|
-	offset := 0@0.
-	lower := 1.
-	[
-		lower := self drawSubStringFrom: lower at:offset.
-		lower < data size.
-	] whileTrue.
 ]
 
 { #category : #accessing }
@@ -89,9 +79,13 @@ DiyaText >> fontName [
 	^ fontName
 ]
 
-{ #category : #accessing }
-DiyaText >> fontName: anObject [
-	fontName := anObject.
+{ #category : #initialization }
+DiyaText >> fontName: name style: face size: size [
+	name ifNotNil: [ fontName := name ].
+	face ifNotNil: [ fontStyle := face ].
+	fontSize := size.
+	style := DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName.
+	dirty := true.
 ]
 
 { #category : #accessing }
@@ -99,19 +93,14 @@ DiyaText >> fontSize [
 	^ fontSize
 ]
 
-{ #category : #accessing }
-DiyaText >> fontSize: anObject [
-	fontSize := anObject.
+{ #category : #initialization }
+DiyaText >> fontSize: size [
+	self fontName: nil style:nil  size: size
 ]
 
 { #category : #accessing }
 DiyaText >> fontStyle [
 	^ fontStyle
-]
-
-{ #category : #accessing }
-DiyaText >> fontStyle: anObject [
-	fontStyle := anObject.
 ]
 
 { #category : #accessing }
@@ -124,7 +113,10 @@ DiyaText >> getCharsVertices:c offset: offset on: tex2D [
 	glyph := tex2D getGlyph: c.
 	gsize := glyph extent.
 	((offset x > self extent x) and: (gsize x > 0)) ifTrue:[
-		offset setX: 0.0 setY: (offset y )- (tex2D linespace).].
+		wrap ifFalse: [ ^ { } ].
+		offset setX: 0.0 setY: (offset y )- (tex2D linespace).
+		offset y negated > self extent y ifTrue:[^{}].
+	].
 	x := offset x + (glyph bearing x).
 	y := offset y - (tex2D cellh).
 	w := (gsize x).
@@ -141,13 +133,28 @@ DiyaText >> getCharsVertices:c offset: offset on: tex2D [
 { #category : #initialization }
 DiyaText >> initialize [
 	super initialize.
-	self fontName: 'Ubuntu'.
-	self fontStyle: 'Regular'.
-	self fontSize: 16.
+	self fontName: 'Ubuntu' style:'Regular'  size: 16.
 	data := nil.
+	wrap := false.
 ]
 
 { #category : #accessing }
 DiyaText >> texture [
 	^style textureOf: self fontSize 
+]
+
+{ #category : #initialization }
+DiyaText >> update [
+	extent ifNil: [ ^false ].
+	vbuffer ifNotNil: [vbuffer free].
+	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 24.
+	vbuffer autoRelease.
+	self drawText.
+	^true
+]
+
+{ #category : #initialization }
+DiyaText >> wordWrap: aBool [
+	wrap := aBool.
+	dirty := true
 ]

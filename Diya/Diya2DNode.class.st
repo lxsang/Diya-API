@@ -2,7 +2,9 @@ Class {
 	#name : #Diya2DNode,
 	#superclass : #DiyaNode,
 	#instVars : [
-		'color'
+		'color',
+		'vbuffer',
+		'nvertices'
 	],
 	#category : #'Diya-Graphics'
 }
@@ -25,7 +27,9 @@ Diya2DNode >> initialize [
 	rotation := 0.0.
 	tf := Array2D identity: 3.
 	shader := Diya2DShader uniqueInstance.
-	color := Color white
+	color := Color white.
+	vbuffer := nil.
+	nvertices := 0.
 ]
 
 { #category : #initialization }

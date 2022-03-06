@@ -23,6 +23,11 @@ DiyaRootNode >> isRoot [
 	^ true
 ]
 
+{ #category : #initialization }
+DiyaRootNode >> update [
+	^true
+]
+
 { #category : #accessing }
 DiyaRootNode >> updateTF [
 	"donothing"
