@@ -64,7 +64,6 @@ DiyaBoot >> createWindow [
 { #category : #events }
 DiyaBoot >> init [
 	| status |
-	FFIMethodRegistry resetAll.
 	SDL2 setHint: 'SDL_RENDER_DRIVER' value: 'opengles2'.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0 
