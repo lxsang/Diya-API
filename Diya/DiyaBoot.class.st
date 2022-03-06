@@ -34,12 +34,6 @@ DiyaBoot >> GLinit. [
 ]
 
 { #category : #events }
-DiyaBoot >> GLinit. [
-	OpenGL viewportX: 0 Y:0 W: display w H: display h.
-	OpenGL enable: GL_TEXTURE_2D.
-]
-
-{ #category : #events }
 DiyaBoot >> createGLContext [
 	context :=  SDL2 glCreateContext:  window.
 	context ifNil: [ ^self error: SDL2 getErrorMessage ].
@@ -70,6 +64,7 @@ DiyaBoot >> createWindow [
 { #category : #events }
 DiyaBoot >> init [
 	| status |
+	FFIMethodRegistry resetAll.
 	SDL2 setHint: 'SDL_RENDER_DRIVER' value: 'opengles2'.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0 
@@ -77,6 +72,8 @@ DiyaBoot >> init [
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	DiyaRendererContext reset.
+	DiyaFontManager reset.
+	OpenGLSL resetShaders.
 	DiyaFontManager uniqueInstance loadFonts.
 ]
 

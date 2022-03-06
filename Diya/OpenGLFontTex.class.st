@@ -37,11 +37,6 @@ OpenGLFontTex >> cellw [
 ]
 
 { #category : #accessing }
-OpenGLFontTex >> charSize: c [
-	^(self charmap at: c + 1) extent
-]
-
-{ #category : #accessing }
 OpenGLFontTex >> charmap [
 	^ charmap
 ]
@@ -58,11 +53,15 @@ OpenGLFontTex >> createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxb
 	offset := 0@0.
 	width := cellw * 16.
 	height := cellh * 16.
-	"linespace := (rec size metrics height / 64) asInteger."
 	0 to: 15 do: [ :row|
-		0 to: 15 do: [ :col|
+		0 to: 15 do: [ :col| |glyph|
 			offset := (col * cellw) @ (row*cellh).
-			charmap add: (Rectangle origin: offset extent: (((metrics at: currChar) first x)  @ cellh)).
+			glyph := (DiyaFontGlyph  origin: offset extent: (((metrics at: currChar) first x)  @ cellh)).
+			glyph
+				bearing: ((metrics at: currChar) at: 2);
+				advance: ((metrics at: currChar) at: 3);
+				texcoord: (Rectangle origin: (glyph origin/ (self extent) ) asFloatPoint  corner: ((glyph corner) / (self extent)) asFloatPoint ).
+			charmap add:glyph.
 			self blitPixel8: (bitmaps at: currChar) at: (offset x) @ ((offset y) + maxbearing - ((metrics at: currChar) last) ) size: (metrics at: currChar) first.
 			currChar := currChar + 1.
 		]
@@ -84,7 +83,7 @@ OpenGLFontTex >> fromFace: face  ofSize: size [
 	0 to: 255 do: [ :c |
 		|bmp bmpsize|
 		face loadCharacter: c flags: (1 << 2).
-		metrics add: { ((rec glyph metrics width) /64)@ ((rec glyph metrics height) /64). (rec glyph metrics horiBearingY) / 64}.
+		metrics add: { ((rec glyph metrics width) /64)@ ((rec glyph metrics height) /64). (face glyph hBearing). (face glyph advance). (rec glyph metrics horiBearingY) / 64}.
 		maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) / 64).
 		cellw := cellw max: ((rec glyph metrics width) / 64).
 		minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height )) / 64).
@@ -97,6 +96,11 @@ OpenGLFontTex >> fromFace: face  ofSize: size [
 	cellh := maxbearing - minhang.
 	self createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxbearing.
 	bitmaps do:[:p| p free].
+]
+
+{ #category : #accessing }
+OpenGLFontTex >> getGlyph: c [
+	^(self charmap at: c + 1)
 ]
 
 { #category : #initialization }
@@ -120,11 +124,4 @@ OpenGLFontTex >> linespace [
 { #category : #accessing }
 OpenGLFontTex >> spacing [
 	^ cellw / 2
-]
-
-{ #category : #accessing }
-OpenGLFontTex >> texCoordOf: c [
-	|rec|
-	rec := self charmap at: c + 1.
-	^ Rectangle origin: ((rec origin )/ (self extent) ) asFloatPoint  corner: ((rec corner) / (self extent)) asFloatPoint 
 ]

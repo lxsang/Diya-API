@@ -22,6 +22,11 @@ DiyaRendererContext class >> cleanUpInstance: singleton [
 	singleton destroy
 ]
 
+{ #category : #'instance creation' }
+DiyaRendererContext class >> maxFloatBufferSize [
+	^512
+]
+
 { #category : #accessing }
 DiyaRendererContext >> buffer [
 	^ buffer
@@ -53,9 +58,9 @@ DiyaRendererContext >> initialize [
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
-	buffer := FFIExternalArray externalNewType: GLfloat size: 32.
+	buffer := FFIExternalArray externalNewType: GLfloat size: self class maxFloatBufferSize .
 	buffer autoRelease.
-	vbo data: GL_ARRAY_BUFFER data: nil size:128 usage: GL_DYNAMIC_DRAW.
+	vbo data: GL_ARRAY_BUFFER data: nil size:self class maxFloatBufferSize*4 usage: GL_DYNAMIC_DRAW.
 	
 ]
 
