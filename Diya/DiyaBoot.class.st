@@ -34,6 +34,12 @@ DiyaBoot >> GLinit. [
 ]
 
 { #category : #events }
+DiyaBoot >> GLinit. [
+	OpenGL viewportX: 0 Y:0 W: display w H: display h.
+	OpenGL enable: GL_TEXTURE_2D.
+]
+
+{ #category : #events }
 DiyaBoot >> createGLContext [
 	context :=  SDL2 glCreateContext:  window.
 	context ifNil: [ ^self error: SDL2 getErrorMessage ].
