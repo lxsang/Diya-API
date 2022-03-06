@@ -1,15 +1,20 @@
 Class {
 	#name : #Diya2DNode,
 	#superclass : #DiyaNode,
+	#instVars : [
+		'color'
+	],
 	#category : #'Diya-Graphics'
 }
 
-{ #category : #'as yet unclassified' }
-Diya2DNode >> gltf: points do: block [
-	^ points collect: [ :point | |coord|
-		coord := self tf +* { point x. point y. 1.0 }.
-		block value: coord first value: (coord at:2)
-	 ]
+{ #category : #accessing }
+Diya2DNode >> color [
+	^ color
+]
+
+{ #category : #accessing }
+Diya2DNode >> color: anObject [
+	color := anObject
 ]
 
 { #category : #initialization }
@@ -19,6 +24,14 @@ Diya2DNode >> initialize [
 	scale := 1.0@1.0.
 	rotation := 0.0.
 	tf := Array2D identity: 3.
+	shader := Diya2DShader uniqueInstance.
+	color := Color white
+]
+
+{ #category : #initialization }
+Diya2DNode >> setUpShader [
+	super setUpShader.
+	shader setUniform: #u_color value: self color asGL4FArray.
 ]
 
 { #category : #accessing }
@@ -42,6 +55,8 @@ Diya2DNode >> updateTF [
 			0.0. scale y. 0.0.
 			0.0. 0.0. 1.0
 		}).
-	self parent isRoot ifTrue: [ ^tf ].
-	tf := self parent tf +* tf
+	self parent isRoot ifFalse: [ tf := self parent tf +* tf ].
+	children ifNotNil: [
+		children do:[:c| c updateTF ]].
+	
 ]

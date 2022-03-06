@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'charmap',
 		'cellw',
-		'cellh'
+		'cellh',
+		'spacing'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -56,16 +57,24 @@ OpenGLFontTex >> createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxb
 	0 to: 15 do: [ :row|
 		0 to: 15 do: [ :col| |glyph|
 			offset := (col * cellw) @ (row*cellh).
-			glyph := (DiyaFontGlyph  origin: offset extent: (((metrics at: currChar) first x)  @ cellh)).
+			glyph := (DiyaFontGlyph  origin: offset extent: (((metrics at: currChar) first x asInteger)  @ cellh)).
 			glyph
-				bearing: ((metrics at: currChar) at: 2);
-				advance: ((metrics at: currChar) at: 3);
+				bearing: ((metrics at: currChar) at: 2) asFloatPoint;
+				advance: ((metrics at: currChar) at: 3) asFloatPoint;
 				texcoord: (Rectangle origin: (glyph origin/ (self extent) ) asFloatPoint  corner: ((glyph corner) / (self extent)) asFloatPoint ).
 			charmap add:glyph.
 			self blitPixel8: (bitmaps at: currChar) at: (offset x) @ ((offset y) + maxbearing - ((metrics at: currChar) last) ) size: (metrics at: currChar) first.
 			currChar := currChar + 1.
 		]
 	].
+]
+
+{ #category : #accessing }
+OpenGLFontTex >> drop [
+	OpenGL
+		pixelstorei: GL_UNPACK_ALIGNMENT param: 4;
+		disable: GL_CULL_FACE;
+		disable: GL_BLEND.
 ]
 
 { #category : #'instance creation' }
@@ -83,7 +92,12 @@ OpenGLFontTex >> fromFace: face  ofSize: size [
 	0 to: 255 do: [ :c |
 		|bmp bmpsize|
 		face loadCharacter: c flags: (1 << 2).
-		metrics add: { ((rec glyph metrics width) /64)@ ((rec glyph metrics height) /64). (face glyph hBearing). (face glyph advance). (rec glyph metrics horiBearingY) / 64}.
+		metrics add: {
+			(((rec glyph metrics width) /64)@ ((rec glyph metrics height) /64)).
+			(face glyph hBearing).
+			(face glyph advance).
+			((rec glyph metrics horiBearingY) / 64)
+		}.
 		maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) / 64).
 		cellw := cellw max: ((rec glyph metrics width) / 64).
 		minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height )) / 64).
@@ -94,6 +108,7 @@ OpenGLFontTex >> fromFace: face  ofSize: size [
 		bitmaps add: bmp.
 	].
 	cellh := maxbearing - minhang.
+	spacing := (cellw / 2) asInteger.
 	self createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxbearing.
 	bitmaps do:[:p| p free].
 ]
@@ -122,6 +137,20 @@ OpenGLFontTex >> linespace [
 ]
 
 { #category : #accessing }
+OpenGLFontTex >> setup [
+	OpenGL
+		enable: GL_CULL_FACE;
+		enable: GL_BLEND;
+		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA;
+		pixelstorei: GL_UNPACK_ALIGNMENT param: 1.
+	OpenGLTexture
+		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_S param: GL_CLAMP_TO_EDGE;
+		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_T param: GL_CLAMP_TO_EDGE;
+		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MIN_FILTER param: GL_LINEAR;
+		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MAG_FILTER param: GL_LINEAR.
+]
+
+{ #category : #accessing }
 OpenGLFontTex >> spacing [
-	^ cellw / 2
+	^ spacing
 ]

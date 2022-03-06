@@ -24,7 +24,7 @@ DiyaRendererContext class >> cleanUpInstance: singleton [
 
 { #category : #'instance creation' }
 DiyaRendererContext class >> maxFloatBufferSize [
-	^512
+	^4096
 ]
 
 { #category : #accessing }

@@ -1,11 +1,11 @@
 Class {
-	#name : #GLSimpleShader,
-	#superclass : #OpenGLSL,
+	#name : #DiyaExampleShader,
+	#superclass : #Diya2DShader,
 	#category : #'Diya-Shaders'
 }
 
 { #category : #accessing }
-GLSimpleShader class >> fragmentShader [
+DiyaExampleShader class >> fragmentShader [
 	^ '
 #ifdef GL_ES
 precision mediump float;
@@ -17,7 +17,6 @@ void main()
 {
 	vec2 mouse = u_mouse / u_resolution;
    vec2 px = (gl_FragCoord.xy/u_resolution);
-
     gl_FragColor = vec4(px/mouse, abs(sin(u_time)), 1.0);
 }
 '

@@ -53,6 +53,11 @@ OpenGLTexImage2D >> debug [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> drop [
+	^self subclassResponsibility
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> extent [
 	^ width @ height 
 ]
@@ -98,6 +103,11 @@ OpenGLTexImage2D >> level: anObject [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> setup [
+	^self subclassResponsibility
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> target [
 	^ target
 ]
@@ -105,6 +115,11 @@ OpenGLTexImage2D >> target [
 { #category : #accessing }
 OpenGLTexImage2D >> target: anObject [
 	target := anObject
+]
+
+{ #category : #accessing }
+OpenGLTexImage2D >> teardown [
+	^self subclassResponsibility
 ]
 
 { #category : #accessing }

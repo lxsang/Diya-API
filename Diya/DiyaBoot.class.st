@@ -18,6 +18,11 @@ Class {
 }
 
 { #category : #'instance creation' }
+DiyaBoot class >> maxFPS [
+	^60
+]
+
+{ #category : #'instance creation' }
 DiyaBoot class >> startUp: status [
 	self startx.
 ]
@@ -59,6 +64,23 @@ DiyaBoot >> createWindow [
 	SDL2 glSetAttribute: SDL_GL_DEPTH_SIZE value: 24."
 	
 	^window
+]
+
+{ #category : #events }
+DiyaBoot >> exampleNodes [
+	|root text rec style|
+	root := DiyaRootNode new.
+	rec := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 200.
+	style := DiyaFontManager uniqueInstance style: 'Bold' from: 'Ubuntu'.
+	rec texture: (style textureOf: 16).
+	rec color: (Color r: 1.0 g:0.0  b:1.0  alpha:1.0 ).
+	rec := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
+	rec rotation: (Float pi / -8.0).
+	rec scale: 1.5@1.5.
+	text := root addNode: (DiyaText data: String loremIpsum) at: 20@320.
+	text extent: 200@320.
+	^ root
+	"text rotation:(Float pi / 4.0); scale: 2.0@2.0."
 ]
 
 { #category : #events }
@@ -107,26 +129,27 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event root rec text|
+	|event root text delta|
 	event := SDL_Event new.
-	root := DiyaRootNode new.
+	root := self exampleNodes.
 	DiyaRenderer uniqueInstance root: root.
-	rec := root addNode: (DiyaRectangle size: 120@160 shader: GLSimpleShader uniqueInstance) at: 250 @ 200.
-	rec := root addNode: (DiyaRectangle size: 50@50 shader: GLSimpleShader uniqueInstance) at: 250 @ 500.
-	rec rotation: (Float pi / -8.0).
-	rec scale: 1.5@1.5.
-	text := root addNode: (DiyaText data: String loremIpsum shader: TotoShader uniqueInstance) at: 20@320.
-	text extent: 200@320.
-	"text rotation:(Float pi / 4.0)."
+	text := root addNode:(DiyaText data: 'tick') at: (display w - 80)@40.
+	text extent: 80@40.
+	text fontSize: 20.
+	text color: Color red.
 	self GLinit.
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
-	"TODO: maybe give node to customize this"
 	[ running ] whileTrue: [
-		(SDL2 pollEvent: event) > 0 ifTrue: [
+		delta := DiyaClock uniqueInstance delta asMilliSeconds.
+		text data: ('FPS:', (1000/delta) asInteger asString).
+		DiyaClock uniqueInstance tick.
+		[(SDL2 pollEvent: event) > 0] whileTrue: [
 			self processEvent: event
 		].
 		DiyaRenderer uniqueInstance render.
 		SDL2 glSwapWindow: window.
+		delta := DiyaClock uniqueInstance delta asMilliSeconds.
+		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta). "60 fps"
 	].
 ]
 

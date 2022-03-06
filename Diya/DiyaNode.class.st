@@ -120,6 +120,7 @@ DiyaNode >> position: anObject [
 
 { #category : #accessing }
 DiyaNode >> render [
+	shader ifNotNil: [ self setUpShader  ].
 	self draw.
 	children ifNil: [ ^self ].
 	children do: [:c  | c render  ]. 
@@ -145,6 +146,22 @@ DiyaNode >> scale [
 DiyaNode >> scale: anObject [
 	scale := anObject.
 	self updateTF.
+]
+
+{ #category : #accessing }
+DiyaNode >> setUpShader [
+		shader use;
+			setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat;
+			setUniform: #u_projection value: {GL_FALSE. context projection buffer};
+			setUniform: #u_resolution value: { context resolution x. context resolution y };
+			setUniform: #u_texture value: 0;
+			setUniform: #u_transform value: {GL_TRUE. self tf asGLBuffer}.
+		context mouse ifNotNil: [
+			"in shader, window origin is bottom left conor of the window
+			the mouse position should be transformed to this coodinate"
+			shader setUniform: #u_mouse value:
+				{ context mouse x. context resolution y - context mouse y }.
+		].
 ]
 
 { #category : #accessing }

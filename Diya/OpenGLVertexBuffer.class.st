@@ -87,6 +87,12 @@ OpenGLVertexBuffer >> subData:target offset: offset data:data [
 	^OpenGLVertexBuffer subData: target offset: offset size: data size * 4  data: data getHandle
 ]
 
+{ #category : #'as yet unclassified' }
+OpenGLVertexBuffer >> subData:target offset: offset data:data size: size [
+	self bind: target.
+	^OpenGLVertexBuffer subData: target offset: offset size: size  data: data getHandle
+]
+
 { #category : #initialization }
 OpenGLVertexBuffer >> vertexBufferID [
 	^ vertexBufferID at: 1 
