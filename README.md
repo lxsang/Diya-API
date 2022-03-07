@@ -1,5 +1,8 @@
 # Diya-API
-Diya base system API
+Diya base system API:
+* SDL2, OpenGL and Freetype binding
+* Base Graphic stack for touch device
+* Application API for application development
 
 
 ```smalltalk
