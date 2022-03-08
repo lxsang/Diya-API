@@ -49,6 +49,7 @@ Class {
 		'GL_QUAD_STRIP',
 		'GL_RED',
 		'GL_RGB',
+		'GL_RGBA',
 		'GL_SHADER_SOURCE_LENGTH',
 		'GL_SHADER_TYPE',
 		'GL_SHORT',
@@ -109,6 +110,7 @@ OpenGLConstants class >> initCommonConstants [
 	GL_GREEN := 16r1904.
 	GL_ALPHA := 16r1906.
 	GL_RGB := 16r1907.
+	GL_RGBA := 16r1908.
 ]
 
 { #category : #'class initialization' }

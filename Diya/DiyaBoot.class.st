@@ -70,13 +70,19 @@ DiyaBoot >> createWindow [
 DiyaBoot >> exampleNodes [
 	|root text rec style|
 	root := DiyaRootNode new.
-	rec := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 200.
-	style := DiyaFontManager uniqueInstance style: 'Bold' from: 'Ubuntu'.
-	rec texture: (style textureOf: 16).
-	rec color: (Color r: 1.0 g:0.0  b:1.0  alpha:1.0 ).
+	rec := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
+	rec texture: (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
+	rec color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
+	
+	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
+	rec := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
+	rec color: (Color orange).
+	rec texture: (style textureOf: 20).
+	
 	rec := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
 	rec rotation: (Float pi / -8.0).
 	rec scale: 1.5@1.5.
+	
 	text := root addNode: (DiyaText data: String loremIpsum) at: 20@320.
 	text extent: 200@320.
 	text wordWrap: true.

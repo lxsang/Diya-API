@@ -103,6 +103,11 @@ OpenGLTexImage2D >> level: anObject [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> mipmap [
+	^false
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> setup [
 	^self subclassResponsibility
 ]
@@ -115,11 +120,6 @@ OpenGLTexImage2D >> target [
 { #category : #accessing }
 OpenGLTexImage2D >> target: anObject [
 	target := anObject
-]
-
-{ #category : #accessing }
-OpenGLTexImage2D >> teardown [
-	^self subclassResponsibility
 ]
 
 { #category : #accessing }

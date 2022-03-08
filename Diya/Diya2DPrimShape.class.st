@@ -10,12 +10,10 @@ Class {
 { #category : #initialization }
 Diya2DPrimShape >> draw [
 	vbuffer ifNil: [ ^self ].
-	self shader
-		setUniform: #u_use_texture value:1.
 	"configure vao vbo for texture QUAD"
 	self texture ifNotNil: [
 		self texture setup.
-	context texture0 setImage2D: self texture.
+		context texture0 setImage2D: self texture.
 	context texture0 active. 	
 	].
 	context vao enableAttribute: 0.
@@ -36,10 +34,10 @@ Diya2DPrimShape >> initialize [
 
 { #category : #initialization }
 Diya2DPrimShape >> setUpShader [
-	super setUpShader.
-	texture ifNotNil: [
+	super setUpShader
+	texture ifNotNil:[
 		self shader
-			setUniform: #u_use_texture value:1.
+			setUniform: #u_texture_type value: texture format.
 	].
 ]
 

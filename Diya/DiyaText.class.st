@@ -40,7 +40,7 @@ DiyaText >> data: anObject [
 DiyaText >> draw [
 	data ifNil: [ ^self ].
 	self shader
-		setUniform: #u_use_texture value:1.
+		setUniform: #u_texture_type value: self texture format.
 	"configure vao vbo for texture QUAD"
 	self texture setup.
 	context texture0 setImage2D: self texture.

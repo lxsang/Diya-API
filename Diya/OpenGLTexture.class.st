@@ -53,6 +53,11 @@ OpenGLTexture class >> genTexture: n pointer: textures [
 ]
 
 { #category : #'as yet unclassified' }
+OpenGLTexture class >> generateMipmap: target [
+	^self ffiCall: #(void glGenerateMipmap(GLenum target))
+]
+
+{ #category : #'as yet unclassified' }
 OpenGLTexture class >> image2D: target level: level internalformat: internalformat w: width h: height border: border format: fmt type: type data: data [
 	^ self ffiCall: #(void glTexImage2D(	GLenum target,GLint level,GLint internalformat,GLsizei width,GLsizei height,GLint border,GLenum fmt,GLenum type,const void * data))
 ]
@@ -110,6 +115,9 @@ OpenGLTexture >> setImage2D: tex2D [
 		format: tex2D format
 		type: tex2D type
 		data: tex2D data getHandle.
+	tex2D mipmap ifTrue:[
+		self class generateMipmap: tex2D target	
+	].
 ]
 
 { #category : #initialization }
