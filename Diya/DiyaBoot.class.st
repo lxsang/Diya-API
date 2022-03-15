@@ -87,7 +87,6 @@ DiyaBoot >> exampleNodes [
 	text extent: 200@320.
 	text wordWrap: true.
 	^ root
-	"text rotation:(Float pi / 4.0); scale: 2.0@2.0."
 ]
 
 { #category : #events }
@@ -123,6 +122,7 @@ DiyaBoot >> processEvent: event [
 	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
 	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
 	mappedEvt type = SDL_MOUSEMOTION ifTrue:[DiyaRendererContext uniqueInstance mouse: (mappedEvt x) @ (mappedEvt y)].
+	mappedEvt free.
 ]
 
 { #category : #events }
@@ -144,8 +144,8 @@ DiyaBoot >> render [
 	text extent: 80@40.
 	text fontSize: 20.
 	text color: Color red.
+	DiyaRendererContext uniqueInstance.
 	self GLinit.
-	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	[ running ] whileTrue: [
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
 		text data: ('FPS:', (1000/delta) asInteger asString).
@@ -154,6 +154,7 @@ DiyaBoot >> render [
 			self processEvent: event
 		].
 		DiyaRenderer uniqueInstance render.
+		
 		SDL2 glSwapWindow: window.
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
 		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta). "60 fps"
@@ -234,9 +235,11 @@ DiyaBoot >> startx [
 	display ifNil: [ ^self error: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
-	SDL2 glMakeCurrent: window  context: context. 
+	"SDL2 glMakeCurrent: window  context: context." 
 	self showSystemInfo.
-	DiyaRendererContext uniqueInstance display: display; useProjection: OrthoProjectionMatrix.
+	DiyaRendererContext
+		uniqueInstance display: display;
+		useProjection: OrthoProjectionMatrix.
 	self render.
 	context delete.
 	window destroy.

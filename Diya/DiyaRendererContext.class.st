@@ -18,6 +18,7 @@ Class {
 
 { #category : #'instance creation' }
 DiyaRendererContext class >> cleanUpInstance: singleton [
+	singleton ifNil:[^self].
 	singleton destroy
 ]
 
@@ -52,7 +53,6 @@ DiyaRendererContext >> initialize [
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
-	
 ]
 
 { #category : #accessing }

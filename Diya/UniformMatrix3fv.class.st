@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #accessing }
-UniformMatrix3fv >> setUniformValue [
+UniformMatrix3fv >> setUniformValue: value [
 	OpenGLSLUniform
 		uniformMatrix3fv: location
 		count: 1

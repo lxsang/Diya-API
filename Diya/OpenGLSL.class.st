@@ -19,6 +19,7 @@ OpenGLSL class >> attachShader: shader to: program [
 
 { #category : #'instance creation' }
 OpenGLSL class >> cleanUpInstance: singleton [
+	singleton ifNil:[^self].
 	singleton delete
 ]
 

@@ -149,18 +149,21 @@ DiyaNode >> scale: anObject [
 
 { #category : #accessing }
 DiyaNode >> setUpShader [
+	|mem|
+		mem := self tf asGLBuffer.
 		shader use;
 			setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat;
 			setUniform: #u_projection value: {GL_FALSE. context projection buffer};
 			setUniform: #u_resolution value: { context resolution x. context resolution y };
 			setUniform: #u_texture value: 0;
-			setUniform: #u_transform value: {GL_TRUE. self tf asGLBuffer}.
+			setUniform: #u_transform value: {GL_TRUE. mem}.
 		context mouse ifNotNil: [
 			"in shader, window origin is bottom left conor of the window
 			the mouse position should be transformed to this coodinate"
 			shader setUniform: #u_mouse value:
 				{ context mouse x. context resolution y - context mouse y }.
 		].
+		mem free.
 ]
 
 { #category : #accessing }

@@ -3,8 +3,7 @@ Class {
 	#superclass : #DiyaBaseObject,
 	#instVars : [
 		'uname',
-		'location',
-		'value'
+		'location'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -89,7 +88,7 @@ OpenGLSLUniform >> location: anObject [
 ]
 
 { #category : #accessing }
-OpenGLSLUniform >> setUniformValue [
+OpenGLSLUniform >> setUniformValue: value [
 	 ^ self subclassResponsibility
  	
 ]
@@ -105,14 +104,8 @@ OpenGLSLUniform >> uname: anObject [
 ]
 
 { #category : #accessing }
-OpenGLSLUniform >> value [
- ^ value
-]
-
-{ #category : #accessing }
 OpenGLSLUniform >> value: values [
 	location = -1 ifTrue: [ ^self ].
-	value := values.
-	self setUniformValue.
+	self setUniformValue: values.
  	
 ]

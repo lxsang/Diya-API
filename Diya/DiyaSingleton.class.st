@@ -24,14 +24,20 @@ DiyaSingleton class >> new [
 
 { #category : #'instance creation' }
 DiyaSingleton class >> reset [
-	|singleton|
-	singleton := singletons at: self class ifAbsent: [ ^ self ].
+	|singleton key|
+	key := self class asString asSymbol.
+	singleton := singletons at: key ifAbsent: [ ^ self ].
 	self cleanUpInstance: singleton.
-	singletons removeKey: self class
+	singletons removeKey: key
 ]
 
 { #category : #'instance creation' }
 DiyaSingleton class >> uniqueInstance [ 
-	singletons at: self class ifAbsentPut: super new.
-	^ singletons at: self class
+	^singletons at: self class asString asSymbol  ifAbsentPut: [ super new ].
+]
+
+{ #category : #initialization }
+DiyaSingleton >> initialize [
+	super initialize.
+	Transcript show: 'Initialise unique instance of ', self className; cr.
 ]

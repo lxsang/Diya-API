@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #accessing }
-UniformMatrix4fv >> setUniformValue [
+UniformMatrix4fv >> setUniformValue: value [
 	OpenGLSLUniform
 		uniformMatrix4fv: location
 		count: 1

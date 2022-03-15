@@ -9,6 +9,6 @@ Class {
 }
 
 { #category : #accessing }
-Uniform2i >> setUniformValue [
+Uniform2i >> setUniformValue: value [
 	OpenGLSLUniform uniform2i: location value: value first value: value last
 ]

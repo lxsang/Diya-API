@@ -16,7 +16,7 @@ DiyaFontFamily class >> fromFace: face [
 { #category : #accessing }
 DiyaFontFamily >> addFace: face [
 	name ifNil: [ name := face familyName ].
-	styles at: face styleName ifAbsentPut: (DiyaFontStyle fromFace: face).
+	styles at: face styleName ifAbsentPut: [(DiyaFontStyle fromFace: face)].
 ]
 
 { #category : #initialization }
