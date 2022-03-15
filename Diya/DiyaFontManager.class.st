@@ -54,6 +54,7 @@ DiyaFontManager >> loadFace: face [
 DiyaFontManager >> loadFile: aFile [
 	| path face i numfaces |
 	path := aFile fullName convertToWithConverter: UTF8TextConverter new.
+	Transcript show: 'Loading font file ', path;cr.
 	i := 0.
 	numfaces := nil.
 	[ face := FreeTypeFace basicNew
@@ -61,6 +62,7 @@ DiyaFontManager >> loadFile: aFile [
 		index: i.
 	face newFaceFromFile: path index: i.
 	face loadFields.
+	Transcript show: 'Loaded font face ', face styleName;cr.
 	numfaces ifNil: [ numfaces := face numFaces ].
 	self loadFace: face.
 	i := i + 1.

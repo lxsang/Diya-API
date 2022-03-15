@@ -23,6 +23,7 @@ DiyaImageTex >> drop [
 { #category : #'instance creation' }
 DiyaImageTex >> fromFile: path [
 	|form color index|
+	Transcript show: 'Loading texture from ', path fullName;cr.
 	form := ImageReadWriter formFromFileNamed: path.
 	data := FFIExternalArray externalNewType: GLubyte size:(form width) * (form height) * 4.
 	LibC memset: data getHandle value: 0 size: data size.

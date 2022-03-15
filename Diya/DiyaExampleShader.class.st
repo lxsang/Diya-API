@@ -17,7 +17,7 @@ void main()
 {
 	vec2 mouse = u_mouse / u_resolution;
    vec2 px = (gl_FragCoord.xy/u_resolution);
-    gl_FragColor = vec4(px/mouse, abs(sin(u_time)), 1.0);
+   gl_FragColor = vec4(abs(sin(u_time)), px/mouse, 1.0);
 }
 '
 ]
