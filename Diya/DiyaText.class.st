@@ -109,7 +109,7 @@ DiyaText >> fontStyle [
 
 { #category : #accessing }
 DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
-	|x y w h glyph gsize c |
+	|x y w h glyph gsize c texcoord|
 	c := (data at:i) asciiValue.
 	c = (Character space asciiValue) ifTrue:[
 		offset setX: (offset x + (tex2D spacing ) ) setY: offset y.
@@ -130,13 +130,14 @@ DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
 	y := offset y - (tex2D cellh).
 	w := (gsize x).
 	h := (gsize y).
+	texcoord := glyph texcoord.
 	offset setX: (offset x + (glyph advance x)) setY: offset y.
-	^{x. y + h. glyph texcoord origin x. glyph texcoord origin y.            
-      x. y. glyph texcoord origin x. glyph texcoord corner y.
-      x + w. y. glyph texcoord corner x. glyph texcoord corner y.
-		x. y + h. glyph texcoord origin x. glyph texcoord origin y.
-      x + w. y. glyph texcoord corner x. glyph texcoord corner y.
-      x + w. y + h. glyph texcoord corner x. glyph texcoord origin y.  }.
+	^{x. y + h. texcoord origin x.  texcoord origin y.            
+      x. y.  texcoord origin x.  texcoord corner y.
+      x + w. y.  texcoord corner x.  texcoord corner y.
+		x. y + h.  texcoord origin x.  texcoord origin y.
+      x + w. y.  texcoord corner x.  texcoord corner y.
+      x + w. y + h.  texcoord corner x.  texcoord origin y.  }.
 ]
 
 { #category : #initialization }

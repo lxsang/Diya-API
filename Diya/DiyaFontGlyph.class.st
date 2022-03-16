@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'advance',
 		'bearing',
-		'texcoord'
+		'tex'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -34,11 +34,16 @@ DiyaFontGlyph >> bearing: anObject [
 ]
 
 { #category : #accessing }
-DiyaFontGlyph >> texcoord [
-	^ texcoord
+DiyaFontGlyph >> tex [
+	^ tex
 ]
 
 { #category : #accessing }
-DiyaFontGlyph >> texcoord: anObject [
-	texcoord := anObject
+DiyaFontGlyph >> tex: anObject [
+	tex := anObject
+]
+
+{ #category : #accessing }
+DiyaFontGlyph >> texcoord [
+	^ (Rectangle origin: (self origin/ (tex extent) ) asFloatPoint  corner: ((self corner) / (tex extent)) asFloatPoint ).
 ]

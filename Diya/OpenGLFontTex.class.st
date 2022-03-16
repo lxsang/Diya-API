@@ -6,7 +6,12 @@ Class {
 		'cellw',
 		'cellh',
 		'spacing',
-		'fontSize'
+		'fontSize',
+		'colp',
+		'rowp',
+		'face',
+		'maxbearing',
+		'maxrows'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -26,7 +31,6 @@ OpenGLFontTex >> blitPixel8: bitmap at: offset size: size [
 	0 to: size y - 1 do: [ :i|
 			LibC memCopy: (bitmap getHandle + (i* (size x))) to:(data getHandle + ((i + offset y) * width + (offset x) ))  size: size x
 	].
-	bitmap free.
 ]
 
 { #category : #accessing }
@@ -44,39 +48,6 @@ OpenGLFontTex >> charmap [
 	^ charmap
 ]
 
-{ #category : #'instance creation' }
-OpenGLFontTex >> createBitmapFontFrom: glyphs maxBearing: maxbearing [
-	|bmp metric offset nrows index element|
-	data ifNotNil: [data free ].
-	charmap := Dictionary new.
-	nrows := glyphs size >> 5.
-	(glyphs size % 32) = 0 ifFalse:[nrows := nrows + 1].
-	data := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * (nrows << 5).
-	LibC memset: data getHandle value: 0 size: data size.
-	data autoRelease.
-	index := 1.
-	offset := 0@0.
-	width := cellw * 32.
-	height := cellh * nrows.
-	0 to: nrows - 1 do: [ :row|
-		0 to: 31 do: [ :col| |glyph|
-			element := glyphs at: index.
-			metric := element at: 3.
-			bmp := element at:2.
-			offset := (col * cellw) @ (row*cellh).
-			glyph := (DiyaFontGlyph  origin: offset extent: ((metric first x asInteger)  @ cellh)).
-			glyph
-				bearing: (metric at: 2) asFloatPoint;
-				advance: (metric at: 3) asFloatPoint;
-				texcoord: (Rectangle origin: (glyph origin/ (self extent) ) asFloatPoint  corner: ((glyph corner) / (self extent)) asFloatPoint ).
-			charmap at: element first put:glyph.
-			self blitPixel8: bmp at: (offset x) @ ((offset y) + maxbearing - (metric last) ) size: metric first.
-			index := index + 1.
-			index > glyphs size ifTrue:[^self].
-		]
-	].
-]
-
 { #category : #accessing }
 OpenGLFontTex >> drop [
 	OpenGL
@@ -91,50 +62,67 @@ OpenGLFontTex >> fontSize [
 ]
 
 { #category : #'instance creation' }
-OpenGLFontTex >> fromFace: face  ofSize: size [
-	|minhang maxbearing rec  glyphs iptr charcode w|
+OpenGLFontTex >> fromFace: aFace  ofSize: size [
+	|minhang rec iptr charcode w|
 	fontSize := size.
-	face setPixelWidth:0 height: size.
-	glyphs := OrderedCollection new.
-	cellw := 0.
-	cellh := 0.
-	minhang := 0.
-	maxbearing := 0.
+	face := aFace.
+	charmap := Dictionary new.
+	face setPixelWidth:0 height: self fontSize.
+	cellw := cellh := minhang := maxbearing := 0.
 	iptr := FFIExternalArray externalNewType: GLuint size:1.
 	iptr at:1 put: 0.
 	rec := (FTFaceRec fromHandle: face getHandle).
 	charcode := face getFirstChar: iptr getHandle.
 	[ (iptr at: 1) = 0 ] whileFalse: [
-		|bmp bmpsize metric|
 		face loadCharacter: charcode flags: (1 << 2).
 		w := ((rec glyph metrics width) >> 6).
 		(w > (size << 1)) ifFalse:[
-			metric := {
-				(((rec glyph metrics width) >> 6)@ ((rec glyph metrics height) >> 6)).
-				(face glyph hBearing).
-				(face glyph advance).
-				((rec glyph metrics horiBearingY) >> 6)
-			}.
 			maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) >> 6).
 			cellw := cellw max: w.
 			minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height)) >> 6).
-			"copy buffer"
-			bmpsize := (rec glyph bitmap width)*(rec glyph bitmap rows).
-			bmp := FFIExternalArray externalNewType: GLubyte size:bmpsize.
-			LibC memCopy: rec glyph bitmap buffer to: bmp getHandle  size: bmpsize.
-			glyphs add: {charcode. bmp. metric}.
 		].
 		charcode := face getNextChar: charcode iptr: iptr getHandle.
 	].
 	cellh := maxbearing - minhang.
-	spacing := (size >> 2) asInteger.
-	self createBitmapFontFrom: glyphs maxBearing: maxbearing.
+	spacing := (cellw >> 2) asInteger.
+	maxrows := 8.
+	data := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * (maxrows << 5).
+	LibC memset: data getHandle value: 0 size: data size.
+	width := cellw << 5.
+	height := cellh.
+	data autoRelease.
 	iptr free.
 ]
 
 { #category : #accessing }
+OpenGLFontTex >> genGlyph:c [
+	|rec  offset glyph gsize|
+	face setPixelWidth:0 height: self fontSize. 
+	face loadCharacter: c flags: (1 << 2).
+	rec := (FTFaceRec fromHandle: face getHandle).
+	gsize := ((rec glyph metrics width) >> 6)@((rec glyph metrics height) >> 6).
+	offset := (colp * cellw) @ (rowp*cellh).
+	glyph := (DiyaFontGlyph  origin: offset extent: ((gsize x)  @ cellh)).
+	glyph
+		bearing: face glyph hBearing asFloatPoint;
+		advance: face glyph advance;
+		tex: self.
+	self blitPixel8: rec glyph bitmap buffer at: (offset x) @ ((offset y) + maxbearing - ((rec glyph metrics horiBearingY) >> 6) ) size: gsize.
+	colp := (colp + 1) % 32.
+	colp = 0 ifTrue:[
+		rowp := rowp + 1.
+		height := height + cellh.
+		rowp >= maxrows ifTrue:[
+			self reallocateBuffer.
+		]. 
+	].
+	^glyph
+	
+]
+
+{ #category : #accessing }
 OpenGLFontTex >> getGlyph: c [
-	^(self charmap at: c ifAbsent:[^nil])
+	^(self charmap at: c ifAbsentPut:[self genGlyph:c])
 ]
 
 { #category : #initialization }
@@ -148,11 +136,26 @@ OpenGLFontTex >> initialize [
 	internalFormat := GL_ALPHA.
 	type := GL_UNSIGNED_BYTE.
 	target := GL_TEXTURE_2D.
+	colp := 0.
+	rowp := 0.
 ]
 
 { #category : #accessing }
 OpenGLFontTex >> linespace [
 	^ cellh
+]
+
+{ #category : #accessing }
+OpenGLFontTex >> reallocateBuffer [
+	|newbuffer|
+	maxrows := maxrows + 4.
+	newbuffer := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * (maxrows << 5).
+	LibC memset: newbuffer getHandle value: 0 size: newbuffer size.
+	LibC memCopy: data getHandle to: newbuffer getHandle size: data size.
+	newbuffer autoRelease.
+	data free.
+	data := newbuffer 
+	
 ]
 
 { #category : #accessing }

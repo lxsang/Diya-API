@@ -74,7 +74,7 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> exampleNodes [
-	|root node style tex|
+	|root node  tex|
 	root := DiyaRootNode new.
 	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
 	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
@@ -83,13 +83,14 @@ DiyaBoot >> exampleNodes [
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
-	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
-	"style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'."
-	node := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
+	"style := DiyaFontManager uniqueInstance style: 'Regular' from:'Ubuntu'.
+	tex1 := (style textureOf: 18).
+	style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'.
+	node := root addNode: (DiyaRectangle size: tex1 extent) at: 250 @ 300.
 	node color: (Color orange).
-	node texture: (style textureOf: 48).
+	node texture: tex1.
 	node borderColor: Color red.
-	node borderWidth: 3.0.
+	node borderWidth: 3.0."
 	
 	node := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
 	node rotation: (Float pi / -8.0).
@@ -104,7 +105,7 @@ DiyaBoot >> exampleNodes [
 	node borderWidth: 2.0.
 	
 	
-	node := root addNode: (DiyaCircle  r: 100) at: 200@200.
+	node := root addNode: (DiyaCircle  r: 100) at: 320@300.
 	node borderColor: Color red.
 	node color: Color white.
 	node borderWidth: 3.0.
