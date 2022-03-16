@@ -17,7 +17,6 @@ uniform float u_time;
 // 2D uniforms
 uniform int u_texture_type;
 uniform vec4 u_color;
-uniform vec4 u_border_color;
 uniform sampler2D u_texture;
 varying vec2 texcoord;
 void main(void) {
@@ -57,5 +56,5 @@ Diya2DShader >> setUpUniforms [
 	self addUniform: #u_texture_type of: Uniform1i.
 	self addUniform: #u_color of: Uniform4F.
 	self addUniform: #u_border_color of: Uniform4F.
-	self addUniform: #u_border of: Uniform1i.
+	self addUniform: #u_border of: Uniform1F.
 ]

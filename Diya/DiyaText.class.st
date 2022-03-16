@@ -74,7 +74,7 @@ DiyaText >> drawText [
 
 { #category : #accessing }
 DiyaText >> extent: v [
-	bbox := Rectangle origin: 0@0 corner: v. 
+	bbox := Rectangle origin: 0@0 corner: (v x) @ (v y negated ). 
 	dirty := true
 ]
 

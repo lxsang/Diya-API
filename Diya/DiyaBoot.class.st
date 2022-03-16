@@ -74,10 +74,11 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> exampleNodes [
-	|root node style|
+	|root node style tex|
+	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
 	root := DiyaRootNode new.
 	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
-	node texture: (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
+	node texture: tex.
 	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
 	node borderColor: Color red.
 	node borderWidth: 3.0.
@@ -104,8 +105,16 @@ DiyaBoot >> exampleNodes [
 	
 	node := root addNode: (DiyaCircle  r: 100) at: 200@200.
 	node borderColor: Color red.
-	node borderWidth: 2.0.
+	node color: Color white.
+	node borderWidth: 3.0.
+	node texture: tex.
 	"node rotation:(Float pi / 4.0)."
+	
+	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
+	node color: Color green.
+	node borderColor: Color red.
+	node texture: tex.
+	node borderWidth: 3.0.
 	^ root
 ]
 
