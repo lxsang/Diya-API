@@ -83,10 +83,11 @@ DiyaBoot >> exampleNodes [
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
-	style := DiyaFontManager uniqueInstance style: 'Regular' from:'Ubuntu'.
+	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
+	"style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'."
 	node := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
 	node color: (Color orange).
-	node texture: (style textureOf: 16).
+	node texture: (style textureOf: 48).
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
@@ -108,7 +109,7 @@ DiyaBoot >> exampleNodes [
 	node color: Color white.
 	node borderWidth: 3.0.
 	node texture: tex.
-	"node rotation:(Float pi / 4.0)".
+
 	
 	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
 	node color: Color green.
