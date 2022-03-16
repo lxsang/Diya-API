@@ -5,7 +5,8 @@ Class {
 		'charmap',
 		'cellw',
 		'cellh',
-		'spacing'
+		'spacing',
+		'fontSize'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -24,7 +25,8 @@ OpenGLFontTex >> blitPixel8: bitmap at: offset size: size [
 	size = (0@0) ifTrue:[^self].
 	0 to: size y - 1 do: [ :i|
 			LibC memCopy: (bitmap getHandle + (i* (size x))) to:(data getHandle + ((i + offset y) * width + (offset x) ))  size: size x
-	]
+	].
+	bitmap free.
 ]
 
 { #category : #accessing }
@@ -43,28 +45,34 @@ OpenGLFontTex >> charmap [
 ]
 
 { #category : #'instance creation' }
-OpenGLFontTex >> createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxbearing [
-	|currChar offset|
+OpenGLFontTex >> createBitmapFontFrom: glyphs maxBearing: maxbearing [
+	|bmp metric offset nrows index element|
 	data ifNotNil: [data free ].
-	charmap := OrderedCollection new.
-	data := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * 256.
+	charmap := Dictionary new.
+	nrows := glyphs size >> 5.
+	(glyphs size % 32) = 0 ifFalse:[nrows := nrows + 1].
+	data := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * (nrows << 5).
 	LibC memset: data getHandle value: 0 size: data size.
 	data autoRelease.
-	currChar := 1.
+	index := 1.
 	offset := 0@0.
-	width := cellw * 16.
-	height := cellh * 16.
-	0 to: 15 do: [ :row|
-		0 to: 15 do: [ :col| |glyph|
+	width := cellw * 32.
+	height := cellh * nrows.
+	0 to: nrows - 1 do: [ :row|
+		0 to: 31 do: [ :col| |glyph|
+			element := glyphs at: index.
+			metric := element at: 3.
+			bmp := element at:2.
 			offset := (col * cellw) @ (row*cellh).
-			glyph := (DiyaFontGlyph  origin: offset extent: (((metrics at: currChar) first x asInteger)  @ cellh)).
+			glyph := (DiyaFontGlyph  origin: offset extent: ((metric first x asInteger)  @ cellh)).
 			glyph
-				bearing: ((metrics at: currChar) at: 2) asFloatPoint;
-				advance: ((metrics at: currChar) at: 3) asFloatPoint;
+				bearing: (metric at: 2) asFloatPoint;
+				advance: (metric at: 3) asFloatPoint;
 				texcoord: (Rectangle origin: (glyph origin/ (self extent) ) asFloatPoint  corner: ((glyph corner) / (self extent)) asFloatPoint ).
-			charmap add:glyph.
-			self blitPixel8: (bitmaps at: currChar) at: (offset x) @ ((offset y) + maxbearing - ((metrics at: currChar) last) ) size: (metrics at: currChar) first.
-			currChar := currChar + 1.
+			charmap at: element first put:glyph.
+			self blitPixel8: bmp at: (offset x) @ ((offset y) + maxbearing - (metric last) ) size: metric first.
+			index := index + 1.
+			index > glyphs size ifTrue:[^self].
 		]
 	].
 ]
@@ -77,51 +85,62 @@ OpenGLFontTex >> drop [
 		disable: GL_BLEND.
 ]
 
+{ #category : #accessing }
+OpenGLFontTex >> fontSize [
+	^ fontSize
+]
+
 { #category : #'instance creation' }
 OpenGLFontTex >> fromFace: face  ofSize: size [
-	|minhang maxbearing rec metrics bitmaps |
+	|minhang maxbearing rec  glyphs iptr charcode w|
+	fontSize := size.
 	face setPixelWidth:0 height: size.
-	"set up a buffer for 256 characters"
-	bitmaps := OrderedCollection new.
-	metrics := OrderedCollection new.
+	glyphs := OrderedCollection new.
 	cellw := 0.
 	cellh := 0.
 	minhang := 0.
 	maxbearing := 0.
+	iptr := FFIExternalArray externalNewType: GLuint size:1.
+	iptr at:1 put: 0.
 	rec := (FTFaceRec fromHandle: face getHandle).
-	0 to: 255 do: [ :c |
-		|bmp bmpsize|
-		face loadCharacter: c flags: (1 << 2).
-		metrics add: {
-			(((rec glyph metrics width) /64)@ ((rec glyph metrics height) /64)).
-			(face glyph hBearing).
-			(face glyph advance).
-			((rec glyph metrics horiBearingY) / 64)
-		}.
-		maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) / 64).
-		cellw := cellw max: ((rec glyph metrics width) / 64).
-		minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height )) / 64).
-		"copy buffer"
-		bmpsize := (rec glyph bitmap width)*(rec glyph bitmap rows).
-		bmp := FFIExternalArray externalNewType: GLubyte size:bmpsize.
-		LibC memCopy: rec glyph bitmap buffer to: bmp getHandle  size: bmpsize.
-		bitmaps add: bmp.
+	charcode := face getFirstChar: iptr getHandle.
+	[ (iptr at: 1) = 0 ] whileFalse: [
+		|bmp bmpsize metric|
+		face loadCharacter: charcode flags: (1 << 2).
+		w := ((rec glyph metrics width) >> 6).
+		(w > (size << 1)) ifFalse:[
+			metric := {
+				(((rec glyph metrics width) >> 6)@ ((rec glyph metrics height) >> 6)).
+				(face glyph hBearing).
+				(face glyph advance).
+				((rec glyph metrics horiBearingY) >> 6)
+			}.
+			maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) >> 6).
+			cellw := cellw max: w.
+			minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height)) >> 6).
+			"copy buffer"
+			bmpsize := (rec glyph bitmap width)*(rec glyph bitmap rows).
+			bmp := FFIExternalArray externalNewType: GLubyte size:bmpsize.
+			LibC memCopy: rec glyph bitmap buffer to: bmp getHandle  size: bmpsize.
+			glyphs add: {charcode. bmp. metric}.
+		].
+		charcode := face getNextChar: charcode iptr: iptr getHandle.
 	].
 	cellh := maxbearing - minhang.
-	spacing := (cellw / 2) asInteger.
-	self createBitmapFontFrom: bitmaps metrics: metrics maxBearing: maxbearing.
-	bitmaps do:[:p| p free].
+	spacing := (size >> 2) asInteger.
+	self createBitmapFontFrom: glyphs maxBearing: maxbearing.
+	iptr free.
 ]
 
 { #category : #accessing }
 OpenGLFontTex >> getGlyph: c [
-	^(self charmap at: c + 1)
+	^(self charmap at: c ifAbsent:[^nil])
 ]
 
 { #category : #initialization }
 OpenGLFontTex >> initialize [
 	super initialize.
-	charmap := OrderedCollection new.
+	charmap := Dictionary new.
 	data := nil.
 	level := 0.
 	border := 0.

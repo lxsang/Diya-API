@@ -114,7 +114,7 @@ DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
 	c = (Character space asciiValue) ifTrue:[
 		offset setX: (offset x + (tex2D spacing ) ) setY: offset y.
 		wrap ifTrue: [
-			(offset x + ((self nextSpaceFrom: i + 1) * (tex2D spacing))) > (self extent x) ifTrue: [
+			(offset x + ((self nextSpaceFrom: i + 1) * (tex2D fontSize))) > (self extent x) ifTrue: [
 				offset setX: 0.0 setY: (offset y )- (tex2D linespace)]. 
 		].
 		^ {}.
