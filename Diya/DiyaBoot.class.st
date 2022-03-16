@@ -84,9 +84,10 @@ DiyaBoot >> exampleNodes [
 	node borderWidth: 3.0.
 	
 	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
+	"style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'."
 	node := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
 	node color: (Color orange).
-	node texture: (style textureOf: 20).
+	node texture: (style textureOf: 48).
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
