@@ -47,8 +47,8 @@ DiyaText >> draw [
 	context texture0 active. 
 	context vao enableAttribute: 0.
 	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil .
-	context vbo data: GL_ARRAY_BUFFER data: vbuffer size: nvertices*16 usage: GL_STATIC_DRAW.
-	OpenGL drawArrays: GL_TRIANGLES first:0  count:nvertices.
+	context vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_STATIC_DRAW.
+	OpenGL drawArrays: GL_TRIANGLES first:0  count: ((vbuffer size) >> 2).
 	context vao disableAttribute: 0.
 	"reset value"
 	self texture drop.
@@ -58,20 +58,24 @@ DiyaText >> draw [
 { #category : #accessing }
 DiyaText >> drawText [
 	|vertices index tex2D offset|
-	nvertices  := 0.
 	index := 1.
 	offset := 0@0.
 	tex2D := self texture.
 	1 to: data size do: [ :i|
-		vertices := self getCharsVertices:(data at:i) asciiValue offset: offset on: tex2D.
+		vertices := self getCharsVerticesAt:i offset: offset on: tex2D.
 		vertices do: [ 
 			:e| vbuffer at: index put:e.
 			index := index + 1.
 		].
-		vertices ifNotEmpty: [ nvertices := nvertices + 6 ].
-		(offset x > extent x and: wrap not) ifTrue: [ ^self ].
-		(offset y negated > extent y) ifTrue: [ ^self ]. 
+		(offset x > self extent x and: wrap not) ifTrue: [ ^self ].
+		(offset y negated > self extent y) ifTrue: [ ^self ]. 
 	].
+]
+
+{ #category : #accessing }
+DiyaText >> extent: v [
+	bbox := Rectangle origin: 0@0 corner: v. 
+	dirty := true
 ]
 
 { #category : #accessing }
@@ -104,10 +108,15 @@ DiyaText >> fontStyle [
 ]
 
 { #category : #accessing }
-DiyaText >> getCharsVertices:c offset: offset on: tex2D [
-	|x y w h glyph gsize|
+DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
+	|x y w h glyph gsize c |
+	c := (data at:i) asciiValue.
 	c = (Character space asciiValue) ifTrue:[
 		offset setX: (offset x + (tex2D spacing ) ) setY: offset y.
+		wrap ifTrue: [
+			(offset x + ((self nextSpaceFrom: i + 1) * (tex2D spacing))) > (self extent x) ifTrue: [
+				offset setX: 0.0 setY: (offset y )- (tex2D linespace)]. 
+		].
 		^ {}.
 	].
 	glyph := tex2D getGlyph: c.
@@ -136,6 +145,15 @@ DiyaText >> initialize [
 	self fontName: 'Ubuntu' style:'Regular'  size: 16.
 	data := nil.
 	wrap := false.
+	bbox := nil
+]
+
+{ #category : #'as yet unclassified' }
+DiyaText >> nextSpaceFrom: index [
+	index to: (data size) do: [:i|
+		(data at: i) = (Character space) ifTrue:[^i - index].
+	].
+	^ 0
 ]
 
 { #category : #accessing }
@@ -145,7 +163,7 @@ DiyaText >> texture [
 
 { #category : #initialization }
 DiyaText >> update [
-	extent ifNil: [ ^false ].
+	bbox ifNil: [ ^false ].
 	vbuffer ifNotNil: [vbuffer free].
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 24.
 	vbuffer autoRelease.

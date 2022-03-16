@@ -48,6 +48,12 @@ DiyaBoot >> createGLContext [
 
 { #category : #events }
 DiyaBoot >> createWindow [
+	SDL2
+		glSetAttribute: SDL_GL_MULTISAMPLEBUFFERS value: 1;
+		glSetAttribute: SDL_GL_MULTISAMPLESAMPLES value: 2.
+
+	OpenGL enable: GL_MULTISAMPLE.
+	
 	window := SDL2 createWindow: 'Diya'
 			x: 0
 			y: 0
@@ -68,24 +74,38 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> exampleNodes [
-	|root text rec style|
+	|root node style|
 	root := DiyaRootNode new.
-	rec := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
-	rec texture: (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
-	rec color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
+	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
+	node texture: (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
+	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
+	node borderColor: Color red.
+	node borderWidth: 3.0.
 	
 	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
-	rec := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
-	rec color: (Color orange).
-	rec texture: (style textureOf: 20).
+	node := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
+	node color: (Color orange).
+	node texture: (style textureOf: 20).
+	node borderColor: Color red.
+	node borderWidth: 3.0.
 	
-	rec := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
-	rec rotation: (Float pi / -8.0).
-	rec scale: 1.5@1.5.
+	node := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
+	node rotation: (Float pi / -8.0).
+	node scale: 1.5@1.5.
 	
-	text := root addNode: (DiyaText data: String loremIpsum) at: 20@320.
-	text extent: 200@320.
-	text wordWrap: true.
+	node := root addNode: (DiyaText data: String loremIpsum) at: 10@340.
+	node extent: 230@320.
+	node wordWrap: true.
+	
+	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
+	node color: (Color red).
+	node borderWidth: 2.0.
+	
+	
+	node := root addNode: (DiyaCircle  r: 100) at: 200@200.
+	node borderColor: Color red.
+	node borderWidth: 2.0.
+	"node rotation:(Float pi / 4.0)."
 	^ root
 ]
 
@@ -136,19 +156,24 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event root text delta|
+	|event root text delta fps maxfps minfps|
 	event := SDL_Event new.
 	root := self exampleNodes.
 	DiyaRenderer uniqueInstance root: root.
-	text := root addNode:(DiyaText data: 'tick') at: (display w - 80)@40.
-	text extent: 80@40.
+	text := root addNode:(DiyaText data: 'tick') at: (display w - 250)@40.
+	text extent: 250@40.
 	text fontSize: 20.
 	text color: Color red.
 	DiyaRendererContext uniqueInstance.
 	self GLinit.
+	fps := maxfps := 0.
+	minfps := self class maxFPS.
 	[ running ] whileTrue: [
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
-		text data: ('FPS:', (1000/delta) asInteger asString).
+		fps := ((1000/delta) asInteger).
+		maxfps := maxfps max: fps.
+		minfps := minfps min: fps.
+		text data: ('FPS:', fps asString, '(Min ', minfps asString, ', max ', maxfps asString, ')').
 		DiyaClock uniqueInstance tick.
 		[(SDL2 pollEvent: event) > 0] whileTrue: [
 			self processEvent: event

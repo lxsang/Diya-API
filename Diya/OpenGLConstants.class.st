@@ -37,10 +37,14 @@ Class {
 		'GL_LINEAR',
 		'GL_LINES',
 		'GL_LINE_LOOP',
+		'GL_LINE_SMOOTH',
+		'GL_LINE_SMOOTH_HINT',
 		'GL_LINE_STRIP',
 		'GL_LINK_STATUS',
 		'GL_MAX_TEXTURE_SIZE',
+		'GL_MULTISAMPLE',
 		'GL_NEAREST',
+		'GL_NICEST',
 		'GL_ONE_MINUS_SRC_ALPHA',
 		'GL_PACK_ALIGNMENT',
 		'GL_POINTS',
@@ -111,6 +115,8 @@ OpenGLConstants class >> initCommonConstants [
 	GL_ALPHA := 16r1906.
 	GL_RGB := 16r1907.
 	GL_RGBA := 16r1908.
+	GL_LINE_SMOOTH := 16r0B20.
+	GL_LINE_SMOOTH_HINT := 16r0C52
 ]
 
 { #category : #'class initialization' }
@@ -138,7 +144,9 @@ OpenGLConstants class >> initCommonMode [
 	GL_ONE_MINUS_SRC_ALPHA := 16r0303.
 	GL_CULL_FACE := 16r0B44.
 	GL_PACK_ALIGNMENT := 16r0D05.
-	GL_UNPACK_ALIGNMENT := 16r0CF5
+	GL_UNPACK_ALIGNMENT := 16r0CF5.
+	GL_NICEST := 16r1102.
+	GL_MULTISAMPLE := 16r809D
 ]
 
 { #category : #'class initialization' }

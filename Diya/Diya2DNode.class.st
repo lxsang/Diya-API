@@ -4,10 +4,15 @@ Class {
 	#instVars : [
 		'color',
 		'vbuffer',
-		'nvertices'
+		'bbox'
 	],
 	#category : #'Diya-Graphics'
 }
+
+{ #category : #accessing }
+Diya2DNode >> boundingBox [ 
+	^ bbox
+]
 
 { #category : #accessing }
 Diya2DNode >> color [
@@ -17,6 +22,16 @@ Diya2DNode >> color [
 { #category : #accessing }
 Diya2DNode >> color: anObject [
 	color := anObject
+]
+
+{ #category : #accessing }
+Diya2DNode >> extent [
+	^ bbox extent
+]
+
+{ #category : #accessing }
+Diya2DNode >> height [
+	^ self extent y
 ]
 
 { #category : #initialization }
@@ -29,7 +44,21 @@ Diya2DNode >> initialize [
 	shader := Diya2DShader uniqueInstance.
 	color := Color white.
 	vbuffer := nil.
-	nvertices := 0.
+]
+
+{ #category : #'as yet unclassified' }
+Diya2DNode >> recFromBuffer [
+	|maxX maxY minX minY x y|
+	maxX := maxY := minX := minY := 0.
+	1 to: vbuffer size by: 4  do: [ :i|
+		x := vbuffer at: i.
+		y := vbuffer at: i + 1.
+		maxX := maxX max: x.
+		maxY := maxY max: y.
+		minX := minX min: x.
+		minY := minY min: y.
+	].
+	^ Rectangle origin: minX@minY corner: maxX @ maxY
 ]
 
 { #category : #initialization }
@@ -63,4 +92,9 @@ Diya2DNode >> updateTF [
 	children ifNotNil: [
 		children do:[:c| c updateTF ]].
 	
+]
+
+{ #category : #accessing }
+Diya2DNode >> width [
+	^ self extent x
 ]

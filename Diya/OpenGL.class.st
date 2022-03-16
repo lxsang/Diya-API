@@ -73,9 +73,19 @@ OpenGL class >> getIntegerv: pname data: data [
 	^self ffiCall: #(void glGetIntegerv(	GLenum pname,GLint * data))
 ]
 
+{ #category : #'as yet unclassified' }
+OpenGL class >> hint:target mode:mode [
+	^self ffiCall: #(void glHint(	GLenum target,GLenum mode))
+]
+
 { #category : #accessing }
 OpenGL class >> libNames [
 	^#('libGL.so.1')
+]
+
+{ #category : #geometry }
+OpenGL class >> lineWidth: width [
+	^ self ffiCall: #(void glLineWidth(GLfloat width))
 ]
 
 { #category : #accessing }

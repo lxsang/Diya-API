@@ -65,7 +65,7 @@ OpenGLVertexBuffer >> data:target data: data size: size usage: usage [
 { #category : #'as yet unclassified' }
 OpenGLVertexBuffer >> data:target data: data usage: usage [
 	self bind: target.
-	^OpenGLVertexBuffer bufferData: target size: data size*4  data:data getHandle usage: usage 
+	^OpenGLVertexBuffer bufferData: target size: (data size) << 2  data:data getHandle usage: usage 
 ]
 
 { #category : #'as yet unclassified' }
@@ -84,7 +84,7 @@ OpenGLVertexBuffer >> initialize [
 { #category : #'as yet unclassified' }
 OpenGLVertexBuffer >> subData:target offset: offset data:data [
 	self bind: target.
-	^OpenGLVertexBuffer subData: target offset: offset size: data size * 4  data: data getHandle
+	^OpenGLVertexBuffer subData: target offset: offset size: (data size) << 2  data: data getHandle
 ]
 
 { #category : #'as yet unclassified' }

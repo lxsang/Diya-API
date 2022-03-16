@@ -10,7 +10,6 @@ Class {
 		'tf',
 		'shader',
 		'context',
-		'extent',
 		'dirty'
 	],
 	#pools : [
@@ -19,16 +18,6 @@ Class {
 	],
 	#category : #'Diya-Graphics'
 }
-
-{ #category : #'instance creation' }
-DiyaNode class >> size: size [
-	^(self new) extent: size; yourself
-]
-
-{ #category : #'instance creation' }
-DiyaNode class >> size: size shader:s [
-	^(self with:s) extent: size; yourself
-]
 
 { #category : #'instance creation' }
 DiyaNode class >> with: shader [
@@ -66,18 +55,7 @@ DiyaNode >> draw [
 
 { #category : #accessing }
 DiyaNode >> extent [
-	^ extent
-]
-
-{ #category : #accessing }
-DiyaNode >> extent: anObject [
-	extent := anObject.
-	dirty := true
-]
-
-{ #category : #accessing }
-DiyaNode >> height [
-	^ extent y
+	^  self subclassResponsibility  
 ]
 
 { #category : #initialization }
@@ -193,9 +171,4 @@ DiyaNode >> update [
 { #category : #accessing }
 DiyaNode >> updateTF [
 	self subclassResponsibility 
-]
-
-{ #category : #accessing }
-DiyaNode >> wdith [
-	^ extent x
 ]
