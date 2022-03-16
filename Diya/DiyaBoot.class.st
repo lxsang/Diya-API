@@ -74,18 +74,19 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> exampleNodes [
-	|root node style|
+	|root node style tex|
 	root := DiyaRootNode new.
+	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
 	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
-	node texture: (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
+	node texture: tex.
 	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
-	style := DiyaFontManager uniqueInstance style: 'Bold' from:'Ubuntu'.
+	style := DiyaFontManager uniqueInstance style: 'Regular' from:'Ubuntu'.
 	node := root addNode: (DiyaRectangle size: 208@288) at: 250 @ 50.
 	node color: (Color orange).
-	node texture: (style textureOf: 20).
+	node texture: (style textureOf: 16).
 	node borderColor: Color red.
 	node borderWidth: 3.0.
 	
@@ -94,7 +95,7 @@ DiyaBoot >> exampleNodes [
 	node scale: 1.5@1.5.
 	
 	node := root addNode: (DiyaText data: String loremIpsum) at: 10@340.
-	node extent: 230@320.
+	node extent: 250@320.
 	node wordWrap: true.
 	
 	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
@@ -104,8 +105,16 @@ DiyaBoot >> exampleNodes [
 	
 	node := root addNode: (DiyaCircle  r: 100) at: 200@200.
 	node borderColor: Color red.
-	node borderWidth: 2.0.
-	"node rotation:(Float pi / 4.0)."
+	node color: Color white.
+	node borderWidth: 3.0.
+	node texture: tex.
+	"node rotation:(Float pi / 4.0)".
+	
+	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
+	node color: Color green.
+	node borderColor: Color red.
+	node texture: tex.
+	node borderWidth: 3.0.
 	^ root
 ]
 
@@ -156,24 +165,20 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event root text delta fps maxfps minfps|
+	|event root text delta fps|
 	event := SDL_Event new.
 	root := self exampleNodes.
 	DiyaRenderer uniqueInstance root: root.
-	text := root addNode:(DiyaText data: 'tick') at: (display w - 250)@40.
-	text extent: 250@40.
-	text fontSize: 20.
+	text := root addNode:(DiyaText data: 'tick') at: (display w - 80)@40.
+	text extent: 80@40.
+	text fontSize: 18.
 	text color: Color red.
 	DiyaRendererContext uniqueInstance.
 	self GLinit.
-	fps := maxfps := 0.
-	minfps := self class maxFPS.
 	[ running ] whileTrue: [
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
 		fps := ((1000/delta) asInteger).
-		maxfps := maxfps max: fps.
-		minfps := minfps min: fps.
-		text data: ('FPS:', fps asString, '(Min ', minfps asString, ', max ', maxfps asString, ')').
+		text data: ('FPS:', fps asString).
 		DiyaClock uniqueInstance tick.
 		[(SDL2 pollEvent: event) > 0] whileTrue: [
 			self processEvent: event
@@ -182,7 +187,7 @@ DiyaBoot >> render [
 		
 		SDL2 glSwapWindow: window.
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
-		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta). "60 fps"
+		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta).
 	].
 ]
 

@@ -69,7 +69,7 @@ Diya2DPrimShape >> initialize [
 	children := nil.
 	type := GL_TRIANGLES.
 	border := 0.
-	bcolor := Color white 
+	bcolor := Color white.
 ]
 
 { #category : #initialization }

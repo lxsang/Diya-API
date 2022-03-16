@@ -90,9 +90,13 @@ DiyaLine >> to: anObject [
 { #category : #accessing }
 DiyaLine >> update [
 	|extent|
-	translation = from ifFalse:[self position: from].
-	bbox := (Rectangle origin: 0@0 corner: to - from ).
+	bbox := (Rectangle origin: from corner: to ).
+	bbox origin = translation ifFalse:[self position: bbox origin].
+	from := from - bbox origin.
+	to  := to - bbox origin.
 	extent := bbox extent.
+	bbox := (Rectangle origin: 0@0 corner:  extent ).
+	
 	{
 		0.0. 0.0. 0.0. 0.0.            
       extent x. extent y. 0.0. 0.0.

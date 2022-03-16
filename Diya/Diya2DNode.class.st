@@ -49,7 +49,8 @@ Diya2DNode >> initialize [
 { #category : #'as yet unclassified' }
 Diya2DNode >> recFromBuffer [
 	|maxX maxY minX minY x y|
-	maxX := maxY := minX := minY := 0.
+	maxX := minX := vbuffer at: 1.
+	maxY := minY := vbuffer at: 2.
 	1 to: vbuffer size by: 4  do: [ :i|
 		x := vbuffer at: i.
 		y := vbuffer at: i + 1.
