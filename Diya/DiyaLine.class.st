@@ -76,6 +76,11 @@ DiyaLine >> initialize [
 	border := 1.0
 ]
 
+{ #category : #'as yet unclassified' }
+DiyaLine >> inner: aPoint [
+		^false
+]
+
 { #category : #accessing }
 DiyaLine >> to [
 	^ to

@@ -22,7 +22,7 @@ DiyaFontManager class >> searchPaths [
 
 { #category : #initialization }
 DiyaFontManager >> defaultFamily [
-	^self error: 'No font found'
+	^'Ubuntu'
 	
 	
 ]
@@ -66,7 +66,7 @@ DiyaFontManager >> loadFile: aFile [
 	numfaces ifNil: [ numfaces := face numFaces ].
 	self loadFace: face.
 	i := i + 1.
-	i < numfaces ] whileTrue: [  ]
+	i < numfaces ] whileTrue
 ]
 
 { #category : #initialization }

@@ -5,10 +5,20 @@ Class {
 }
 
 { #category : #accessing }
+DiyaRootNode >> boundingBox [
+	^ Rectangle origin: 0@0 corner: context resolution 
+]
+
+{ #category : #accessing }
 DiyaRootNode >> draw [
 	OpenGL clearColorR: 0.0 G: 0.0 B: 0.0  A:0.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
 	context vbo bind: GL_ARRAY_BUFFER.
+]
+
+{ #category : #accessing }
+DiyaRootNode >> extent [
+	^  context resolution 
 ]
 
 { #category : #initialization }
@@ -16,11 +26,17 @@ DiyaRootNode >> initialize [
 	super initialize.
 	parent := self.
 	shader := nil.
+	root := self.
 ]
 
-{ #category : #testing }
-DiyaRootNode >> isRoot [
-	^ true
+{ #category : #'as yet unclassified' }
+DiyaRootNode >> inner: aPoint [
+	^true
+]
+
+{ #category : #accessing }
+DiyaRootNode >> isRoot [ 
+	^true
 ]
 
 { #category : #initialization }

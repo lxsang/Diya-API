@@ -39,9 +39,26 @@ DiyaBoot >> GLinit. [
 ]
 
 { #category : #events }
+DiyaBoot >> bindGlobalEventTo: aNode [
+	|pointer|
+	pointer := aNode addNode: (DiyaCircle r: 10) at: 200@200. 
+	pointer color: Color orange.
+	"pointer borderColor: Color red.
+	pointer borderWidth: 3."
+	aNode on: #keydown do:[:e| Transcript show: 'keydown...';cr. running := false.].
+	aNode on: #quit do: [:e| running := false].
+	aNode on: #fingerdown do:[:e| self setCursorPosition: e mapped ].
+	aNode on: #fingermotion do:[:e| self setCursorPosition: e mapped ].
+	aNode on: #mousemotion do:[:e|
+		pointer position: e mapped worldPosition.
+		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
+	].
+]
+
+{ #category : #events }
 DiyaBoot >> createGLContext [
 	context :=  SDL2 glCreateContext:  window.
-	context ifNil: [ ^self error: SDL2 getErrorMessage ].
+	context ifNil: [ ^DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	^context 
 	
 ]
@@ -60,7 +77,7 @@ DiyaBoot >> createWindow [
 			width: display w
 			height: display h
 			flags: SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL.
-	window ifNil: [ ^self error: SDL2 getErrorMessage ].
+	window ifNil: [ ^DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	"handle fullscreen: SDL_WINDOW_FULLSCREEN."
 	"SDL2 glSetAttribute: SDL_GL_CONTEXT_PROFILE_MASK value: SDL_GL_CONTEXT_PROFILE_ES.
 	SDL2 glSetAttribute: SDL_GL_CONTEXT_MAJOR_VERSION value: 2.
@@ -73,10 +90,20 @@ DiyaBoot >> createWindow [
 ]
 
 { #category : #events }
-DiyaBoot >> exampleNodes [
-	|root node  tex|
-	root := DiyaRootNode new.
+DiyaBoot >> exampleNodes: tree [
+	|root node node1 ell tex txtNode|
+	root := tree addNode: (Diya2DNode new) at: 0@10.
 	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
+	txtNode := root addNode: (DiyaText data: 'Event') at: 10@50.
+	txtNode color: Color orange.
+	txtNode extent: 200@40.
+	
+	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 100 @ 400.
+	node1 rotation: (Float pi / 8.0).
+	node1 scale: 1.2@1.2.
+	node1 on: #mousebuttondown do:[:e| txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
+	node1 on: #fingerdown do:[:e| Transcript show:'finger down on image'; cr].
+	
 	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
 	node texture: tex.
 	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
@@ -92,11 +119,8 @@ DiyaBoot >> exampleNodes [
 	node borderColor: Color red.
 	node borderWidth: 3.0."
 	
-	node := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 20 @ 400.
-	node rotation: (Float pi / -8.0).
-	node scale: 1.5@1.5.
 	
-	node := root addNode: (DiyaText data: String loremIpsum) at: 10@340.
+	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
 	node extent: 250@320.
 	node wordWrap: true.
 	
@@ -105,11 +129,15 @@ DiyaBoot >> exampleNodes [
 	node borderWidth: 2.0.
 	
 	
-	node := root addNode: (DiyaCircle  r: 100) at: 320@300.
-	node borderColor: Color red.
-	node color: Color white.
-	node borderWidth: 3.0.
-	node texture: tex.
+	ell := root addNode: (DiyaEllipse rx:150  ry: 100) at: 320@300.
+	ell borderColor: Color red.
+	ell color: Color white.
+	ell rotation: Float pi / 6.0.
+	ell borderWidth: 3.0.
+	"node rotation: Float pi / 2.0."
+	ell texture: tex.
+	ell on: #mousebuttondown do:[:e| txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
+	ell on: #fingerdown do:[:e| Transcript show:'finger down on ellipse'; cr].
 
 	
 	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
@@ -117,6 +145,7 @@ DiyaBoot >> exampleNodes [
 	node borderColor: Color red.
 	node texture: tex.
 	node borderWidth: 3.0.
+	
 	^ root
 ]
 
@@ -126,7 +155,7 @@ DiyaBoot >> init [
 	SDL2 setHint: 'SDL_RENDER_DRIVER' value: 'opengles2'.
 	status := SDL2 init: SDL_INIT_EVERYTHING.
 	status = 0 
-		ifFalse: [ ^ self error: SDL2 getErrorMessage ].
+		ifFalse: [ ^ DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	DiyaRendererContext reset.
@@ -145,18 +174,6 @@ DiyaBoot >> initialize [
 ]
 
 { #category : #events }
-DiyaBoot >> processEvent: event [
-	|mappedEvt|
-	mappedEvt := event mapped.
-	mappedEvt type = SDL_KEYDOWN ifTrue: [ Transcript show: 'keydown...';cr. ^running := false. ].
-	mappedEvt type = SDL_QUIT ifTrue:[ ^running:= false ].
-	mappedEvt type = SDL_FINGERDOWN ifTrue:[^self setCursorPosition: mappedEvt ].
-	mappedEvt type = SDL_FINGERMOTION ifTrue:[^self setCursorPosition: mappedEvt ].
-	mappedEvt type = SDL_MOUSEMOTION ifTrue:[DiyaRendererContext uniqueInstance mouse: (mappedEvt x) @ (mappedEvt y)].
-	mappedEvt free.
-]
-
-{ #category : #events }
 DiyaBoot >> randomColorChannel [
 	| rand |
 	rand := Random new.
@@ -169,12 +186,14 @@ DiyaBoot >> randomColorChannel [
 DiyaBoot >> render [
 	|event root text delta fps|
 	event := SDL_Event new.
-	root := self exampleNodes.
+	root := DiyaRootNode new.
+	self exampleNodes: root.
 	DiyaRenderer uniqueInstance root: root.
 	text := root addNode:(DiyaText data: 'tick') at: (display w - 80)@40.
 	text extent: 80@40.
 	text fontSize: 18.
 	text color: Color red.
+	self bindGlobalEventTo: root.
 	DiyaRendererContext uniqueInstance.
 	self GLinit.
 	[ running ] whileTrue: [
@@ -183,7 +202,7 @@ DiyaBoot >> render [
 		text data: ('FPS:', fps asString).
 		DiyaClock uniqueInstance tick.
 		[(SDL2 pollEvent: event) > 0] whileTrue: [
-			self processEvent: event
+			root trigger: (DiyaEvent from: event mapped).
 		].
 		DiyaRenderer uniqueInstance render.
 		
@@ -264,7 +283,7 @@ DiyaBoot >> showSystemInfo [
 
 { #category : #events }
 DiyaBoot >> startx [
-	display ifNil: [ ^self error: 'Please run #init before this method' ].
+	display ifNil: [ ^DiyaCoreAPIError signal: 'Please run #init before this method' ].
 	self createWindow.
 	self createGLContext.
 	"SDL2 glMakeCurrent: window  context: context." 

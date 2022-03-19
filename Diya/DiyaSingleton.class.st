@@ -19,7 +19,7 @@ DiyaSingleton class >> initialize [
 
 { #category : #'instance creation' }
 DiyaSingleton class >> new [
-	self error: 'Use #uniqueInstance'
+	^ DiyaCoreAPIError signal: 'Use #uniqueInstance'
 ]
 
 { #category : #'instance creation' }

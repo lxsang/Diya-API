@@ -3,15 +3,21 @@ Class {
 	#superclass : #DiyaNode,
 	#instVars : [
 		'color',
-		'vbuffer',
-		'bbox'
+		'vbuffer'
 	],
 	#category : #'Diya-Graphics'
 }
 
 { #category : #accessing }
 Diya2DNode >> boundingBox [ 
-	^ bbox
+	|rec|
+	children ifNil: [ ^ Rectangle origin: 0@0 corner: 0@0 ].
+	rec := children first boundingBox.
+	children do:[:c|
+		rec = c ifFalse:[
+			rec := rec merge: c boundingBox]
+	].
+	^rec
 ]
 
 { #category : #accessing }
@@ -25,8 +31,13 @@ Diya2DNode >> color: anObject [
 ]
 
 { #category : #accessing }
+Diya2DNode >> draw [
+	
+]
+
+{ #category : #accessing }
 Diya2DNode >> extent [
-	^ bbox extent
+	^ self boundingBox extent
 ]
 
 { #category : #accessing }
@@ -44,6 +55,18 @@ Diya2DNode >> initialize [
 	shader := Diya2DShader uniqueInstance.
 	color := Color white.
 	vbuffer := nil.
+]
+
+{ #category : #'as yet unclassified' }
+Diya2DNode >> inner: aPoint [
+	^ self boundingBox containsPoint: (self local: aPoint)
+]
+
+{ #category : #accessing }
+Diya2DNode >> local: aPoint [
+	^((aPoint - (0@0 applyTf: self tf) )/ scale)
+			rotateBy: rotation about: 0@0.
+	
 ]
 
 { #category : #'as yet unclassified' }
@@ -72,23 +95,11 @@ Diya2DNode >> setUpShader [
 Diya2DNode >> updateTF [
 	tf := Array2D identity:3.
 	"translation"
-		tf := tf +* (Array2D rows: 3 columns: 3 contents: {
-			1.0. 0.0. translation x.
-			0.0. 1.0. translation y.
-			0.0. 0.0. 1.0
-		}).
+		tf := tf +* (Array2D translateMatrix2D: translation).
 	"rotation"
-		tf := tf +* (Array2D rows: 3 columns: 3 contents:{
-			rotation cos. (rotation sin) negated. 0.0.
-			rotation sin. rotation cos. 0.0.
-			0.0. 0.0. 1.0
-		}).
+		tf := tf +* (Array2D rotationMatrix2D: rotation ).
 	"scale"
-		tf := tf +* (Array2D rows: 3 columns: 3 contents:{
-			scale x. 0.0. 0.0.
-			0.0. scale y. 0.0.
-			0.0. 0.0. 1.0
-		}).
+		tf := tf +* (Array2D scaleMatrix2D: scale).
 	self parent isRoot ifFalse: [ tf := self parent tf +* tf ].
 	children ifNotNil: [
 		children do:[:c| c updateTF ]].

@@ -10,11 +10,14 @@ Class {
 		'tf',
 		'shader',
 		'context',
-		'dirty'
+		'dirty',
+		'ehandlers',
+		'root'
 	],
 	#pools : [
 		'OpenGLConstants',
-		'OpenGLTypes'
+		'OpenGLTypes',
+		'SDL2Constants'
 	],
 	#category : #'Diya-Graphics'
 }
@@ -35,6 +38,7 @@ DiyaNode >> addNode: node at: pos [
 	node parent: self.
 	node position: pos.
 	children add: node.
+	node root: self root.
 	^ node
 ]
 
@@ -65,12 +69,28 @@ DiyaNode >> initialize [
 	shader := nil.
 	context := DiyaRendererContext uniqueInstance.
 	children := OrderedCollection new.
-	dirty := false
+	dirty := false.
+	ehandlers := Dictionary new.
+	root := nil.
+]
+
+{ #category : #'as yet unclassified' }
+DiyaNode >> inner: aPoint [
+	^ self subclassResponsibility 
 ]
 
 { #category : #testing }
 DiyaNode >> isRoot [
-	^false
+	^ false
+]
+
+{ #category : #convenience }
+DiyaNode >> on: eventName do: aBlock [
+	|evtCode|
+	evtCode := SDL2Constants bindingOf: ('SDL_', eventName asUppercase).
+	evtCode ifNil: [ ^DiyaCoreAPIError signal: 'Unknow event ', eventName ].
+	ehandlers at: evtCode value put: aBlock.
+	
 ]
 
 { #category : #accessing }
@@ -101,6 +121,16 @@ DiyaNode >> render [
 	self draw.
 	children ifNil: [ ^self ].
 	children do: [:c  | c render  ]. 
+]
+
+{ #category : #accessing }
+DiyaNode >> root [
+	^ root
+]
+
+{ #category : #accessing }
+DiyaNode >> root: anObject [
+	root := anObject
 ]
 
 { #category : #accessing }
@@ -159,8 +189,19 @@ DiyaNode >> shader: anObject [
 
 { #category : #accessing }
 DiyaNode >> tf [
-	parent ifNil: [ self error: 'TF: This node is not attached to the main tree' ].
+	parent ifNil: [ ^ DiyaCoreAPIError signal: 'TF: This node is not attached to the main tree' ].
 	^ tf
+]
+
+{ #category : #'as yet unclassified' }
+DiyaNode >> trigger: evt [
+	evt enable ifFalse:[^self].
+	ehandlers at: evt mapped type ifPresent:[:handler| handler value: evt].
+	children ifNil: [^self].
+	evt enable ifTrue: [
+		"evt mapped triggableOn: children first."
+		children select: [:node | evt mapped triggableOn: node ] thenDo:[:node| node trigger: evt]
+	].
 ]
 
 { #category : #accessing }

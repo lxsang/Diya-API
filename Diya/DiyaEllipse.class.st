@@ -47,6 +47,13 @@ DiyaEllipse >> initialize [
 	shader := DiyaEllipseShader uniqueInstance.
 ]
 
+{ #category : #initialization }
+DiyaEllipse >> inner: aPoint [
+	|dxy|
+	dxy  := self local: aPoint.
+	^ ((((dxy x) ** 2)/(rx**2)) + (((dxy y) ** 2) / (ry**2))) < 1.
+]
+
 { #category : #accessing }
 DiyaEllipse >> rx [
 	^ rx

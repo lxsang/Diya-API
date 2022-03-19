@@ -136,7 +136,7 @@ OpenGLSL >> checkStatus:status of: id [
 		] ifFalse: [ 
 			OpenGLSL getShaderInfoLogOf: id maxLength: (infoLength at: 1) lengthPtr: nil  buffer: buffer
 		].
-		^self error: buffer asString
+		^DiyaCoreAPIError signal: buffer asString
 	].
 	^self
 	
@@ -222,7 +222,7 @@ OpenGLSL >> locateUniforms [
 OpenGLSL >> setUniform: uname value: values [
 	|uniform|
 	uniform := uniforms at: uname asSymbol ifAbsent:[
-		^self error: 'Uniform ', uname, ' is not defined in this program'].
+		^DiyaCoreAPIError signal: 'Uniform ', uname, ' is not defined in this program'].
 	uniform value: values
 ]
 

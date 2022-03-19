@@ -1,13 +1,14 @@
 Class {
 	#name : #DiyaText,
-	#superclass : #Diya2DNode,
+	#superclass : #Diya2DPrimShape,
 	#instVars : [
 		'fontStyle',
 		'fontSize',
 		'fontName',
 		'data',
 		'style',
-		'wrap'
+		'wrap',
+		'texheight'
 	],
 	#pools : [
 		'FT2Types'
@@ -36,23 +37,8 @@ DiyaText >> data: anObject [
 	dirty := true
 ]
 
-{ #category : #accessing }
-DiyaText >> draw [
-	data ifNil: [ ^self ].
-	self shader
-		setUniform: #u_texture_type value: self texture format.
-	"configure vao vbo for texture QUAD"
-	self texture setup.
-	context texture0 setImage2D: self texture.
-	context texture0 active. 
-	context vao enableAttribute: 0.
-	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil .
-	context vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_STATIC_DRAW.
-	OpenGL drawArrays: GL_TRIANGLES first:0  count: ((vbuffer size) >> 2).
-	context vao disableAttribute: 0.
-	"reset value"
-	self texture drop.
-	
+{ #category : #initialization }
+DiyaText >> drawBorder [
 ]
 
 { #category : #accessing }
@@ -146,7 +132,8 @@ DiyaText >> initialize [
 	self fontName: 'Ubuntu' style:'Regular'  size: 16.
 	data := nil.
 	wrap := false.
-	bbox := nil
+	bbox := nil.
+	texheight := 0.
 ]
 
 { #category : #'as yet unclassified' }
@@ -159,7 +146,14 @@ DiyaText >> nextSpaceFrom: index [
 
 { #category : #accessing }
 DiyaText >> texture [
-	^style textureOf: self fontSize 
+	|tex|
+	tex := style textureOf: self fontSize.
+	texheight = tex height ifFalse: [ 
+		texheight := tex height.
+		self update.
+		dirty := false.	
+	].
+	^tex
 ]
 
 { #category : #initialization }

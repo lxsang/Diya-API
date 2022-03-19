@@ -5,7 +5,8 @@ Class {
 		'texture',
 		'type',
 		'border',
-		'bcolor'
+		'bcolor',
+		'bbox'
 	],
 	#category : #'Diya-Graphics'
 }
@@ -18,6 +19,11 @@ Diya2DPrimShape >> borderColor: c [
 { #category : #accessing }
 Diya2DPrimShape >> borderWidth: w [
 	border := w
+]
+
+{ #category : #accessing }
+Diya2DPrimShape >> boundingBox [ 
+	^ bbox applyTf: self tf.
 ]
 
 { #category : #initialization }
@@ -62,6 +68,11 @@ Diya2DPrimShape >> drawLines [
 	self subclassResponsibility 
 ]
 
+{ #category : #accessing }
+Diya2DPrimShape >> extent [
+	^ bbox extent
+]
+
 { #category : #initialization }
 Diya2DPrimShape >> initialize [
 	super initialize.
@@ -70,15 +81,21 @@ Diya2DPrimShape >> initialize [
 	type := GL_TRIANGLES.
 	border := 0.
 	bcolor := Color white.
+	bbox := Rectangle origin: 0@0 corner: 0@0.
+]
+
+{ #category : #'as yet unclassified' }
+Diya2DPrimShape >> inner: aPoint [
+	bbox ifNil: [ ^false ].
+	^ bbox containsPoint: (self local: aPoint)
 ]
 
 { #category : #initialization }
 Diya2DPrimShape >> setUpShader [
-	super setUpShader
-	texture ifNotNil:[
-		self shader
-			setUniform: #u_texture_type value: texture format.
-	].
+	super setUpShader.
+	self shader
+			setUniform: #u_texture_type value:
+				(self texture ifNil: [ 0 ] ifNotNil:[self texture format]).
 ]
 
 { #category : #accessing }
