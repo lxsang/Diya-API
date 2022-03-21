@@ -33,16 +33,6 @@ DiyaExampleApp >> setup [
 	node borderWidth: 3.0.
 	node extent:200@200.
 	
-	"style := DiyaFontManager uniqueInstance style: 'Regular' from:'Ubuntu'.
-	tex1 := (style textureOf: 18).
-	style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'.
-	node := root addNode: (DiyaRectangle size: tex1 extent) at: 250 @ 300.
-	node color: (Color orange).
-	node texture: tex1.
-	node borderColor: Color red.
-	node borderWidth: 3.0."
-	
-	
 	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
 	node extent: 240@320.
 	node wordWrap: true.
@@ -50,8 +40,7 @@ DiyaExampleApp >> setup [
 	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
 	node color: (Color red).
 	node borderWidth: 2.0.
-	
-	
+		
 	ell := root addNode: (DiyaEllipse rx:150  ry: 100) at: 320@300.
 	ell borderColor: Color red.
 	ell color: Color white.
@@ -62,7 +51,6 @@ DiyaExampleApp >> setup [
 	ell on: #(mousebuttondown fingerdown) do:[:e|
 		txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
 
-	
 	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
 	node color: Color green.
 	node borderColor: Color red.

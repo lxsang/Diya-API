@@ -103,9 +103,9 @@ Diya2DNode >> updateTF [
 	"scale"
 	scale = (1@1) ifFalse:[
 		tf := tf +* (Array2D scaleMatrix2D: scale)].
-	self parent isRoot ifFalse: [ tf := self parent tf +* tf ].
-	children ifNotNil: [
-		children do:[:c| c updateTF ]].
+	self parent ifNil: [ ^self ].
+	self parent isRoot ifFalse: [tf := self parent tf +* tf ].
+	children ifNotNil: [children do:[:c| c updateTF ]].
 	
 ]
 

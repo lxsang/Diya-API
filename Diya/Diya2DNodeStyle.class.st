@@ -8,8 +8,8 @@ Class {
 		'fontSize',
 		'fontFamilly',
 		'borderColor',
-		'width',
-		'height'
+		'bgcolor2',
+		'fontStyle'
 	],
 	#category : #'Diya-Graphics'
 }
@@ -17,6 +17,16 @@ Class {
 { #category : #accessing }
 Diya2DNodeStyle >> bgcolor [
 	^ bgcolor
+]
+
+{ #category : #accessing }
+Diya2DNodeStyle >> bgcolor2 [
+	^ bgcolor2
+]
+
+{ #category : #accessing }
+Diya2DNodeStyle >> bgcolor2: anObject [
+	bgcolor2 := anObject
 ]
 
 { #category : #accessing }
@@ -75,21 +85,11 @@ Diya2DNodeStyle >> fontSize: anObject [
 ]
 
 { #category : #accessing }
-Diya2DNodeStyle >> height [
-	^ height
+Diya2DNodeStyle >> fontStyle [
+	^ fontStyle
 ]
 
 { #category : #accessing }
-Diya2DNodeStyle >> height: anObject [
-	height := anObject
-]
-
-{ #category : #accessing }
-Diya2DNodeStyle >> width [
-	^ width
-]
-
-{ #category : #accessing }
-Diya2DNodeStyle >> width: anObject [
-	width := anObject
+Diya2DNodeStyle >> fontStyle: anObject [
+	fontStyle := anObject
 ]
