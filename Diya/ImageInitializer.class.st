@@ -59,6 +59,7 @@ ImageInitializer >> initializeImage [
 				show: 'CLASS: ' , c asString , ' is not initialized';
 				cr.
 			c initialize ].
+	DiyaSingleton resetAll.
 	FFIMethodRegistry resetAll.
 	Smalltalk garbageCollect.
 	SourceFiles := SourceFileArray new.

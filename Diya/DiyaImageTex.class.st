@@ -1,6 +1,9 @@
 Class {
 	#name : #DiyaImageTex,
 	#superclass : #OpenGLTexImage2D,
+	#instVars : [
+		'path'
+	],
 	#pools : [
 		'OpenGLConstants',
 		'OpenGLTypes'
@@ -21,8 +24,9 @@ DiyaImageTex >> drop [
 ]
 
 { #category : #'instance creation' }
-DiyaImageTex >> fromFile: path [
+DiyaImageTex >> fromFile: aPath [
 	|form color index|
+	path := aPath.
 	Transcript show: 'Loading texture from ', path fullName;cr.
 	form := ImageReadWriter formFromFileNamed: path.
 	data := FFIExternalArray externalNewType: GLubyte size:(form width) * (form height) * 4.
@@ -59,6 +63,11 @@ DiyaImageTex >> initialize [
 { #category : #accessing }
 DiyaImageTex >> mipmap [
 	^false
+]
+
+{ #category : #accessing }
+DiyaImageTex >> path [
+	^ path
 ]
 
 { #category : #accessing }

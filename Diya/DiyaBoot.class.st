@@ -2,7 +2,6 @@ Class {
 	#name : #DiyaBoot,
 	#superclass : #DiyaSingleton,
 	#instVars : [
-		'running',
 		'window',
 		'context',
 		'display',
@@ -36,21 +35,6 @@ DiyaBoot class >> startx [
 DiyaBoot >> GLinit. [
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	OpenGL enable: GL_TEXTURE_2D.
-]
-
-{ #category : #events }
-DiyaBoot >> bindGlobalEventTo: aNode [
-	|pointer|
-	pointer := aNode addNode: (DiyaCircle r: 10) at: 200@200. 
-	pointer color: Color orange.
-	"pointer borderColor: Color red.
-	pointer borderWidth: 3."
-	aNode on: #keydown do:[:e| Transcript show: 'keydown...';cr. running := false.].
-	aNode on: #quit do: [:e| running := false].
-	aNode on: #(fingerdown fingermotion mousemotion) do:[:e|
-		pointer position: e mapped worldPosition.
-		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
-	].
 ]
 
 { #category : #events }
@@ -88,69 +72,6 @@ DiyaBoot >> createWindow [
 ]
 
 { #category : #events }
-DiyaBoot >> exampleNodes: tree [
-	|root node node1 ell tex txtNode icon|
-	root := tree addNode: (Diya2DNode new) at: 0@10.
-	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
-	txtNode := root addNode: (DiyaText data: 'Event') at: 10@55.
-	txtNode color: Color orange.
-	txtNode extent: 200@40.
-	
-	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 100 @ 400.
-	node1 rotation: (Float pi / 8.0).
-	node1 scale: 1.2@1.2.
-	node1 on: #mousebuttondown do:[:e| txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
-	node1 on: #fingerdown do:[:e| txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
-	
-	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
-	node texture: tex.
-	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
-	node borderColor: Color red.
-	node borderWidth: 3.0.
-	
-	"style := DiyaFontManager uniqueInstance style: 'Regular' from:'Ubuntu'.
-	tex1 := (style textureOf: 18).
-	style := DiyaFontManager uniqueInstance style: 'Regular' from: 'bootstrap-icons'.
-	node := root addNode: (DiyaRectangle size: tex1 extent) at: 250 @ 300.
-	node color: (Color orange).
-	node texture: tex1.
-	node borderColor: Color red.
-	node borderWidth: 3.0."
-	
-	
-	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
-	node extent: 240@320.
-	node wordWrap: true.
-	
-	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
-	node color: (Color red).
-	node borderWidth: 2.0.
-	
-	
-	ell := root addNode: (DiyaEllipse rx:150  ry: 100) at: 320@300.
-	ell borderColor: Color red.
-	ell color: Color white.
-	ell rotation: Float pi / 6.0.
-	ell borderWidth: 3.0.
-	"node rotation: Float pi / 2.0."
-	ell texture: tex.
-	ell on: #mousebuttondown do:[:e| txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
-	ell on: #fingerdown do:[:e| txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
-
-	
-	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
-	node color: Color green.
-	node borderColor: Color red.
-	node texture: tex.
-	node borderWidth: 3.0.
-	
-	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 10@10.
-	icon fontSize: 24.
-	icon color: (Color r: 209/255 g: 66/255  b:245/255 ).
-	^ root
-]
-
-{ #category : #events }
 DiyaBoot >> init [
 	| status |
 	SDL2 setHint: 'SDL_RENDER_DRIVER' value: 'opengles2'.
@@ -159,15 +80,13 @@ DiyaBoot >> init [
 		ifFalse: [ ^ DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
-	DiyaRendererContext reset.
-	DiyaFontManager reset.
-	OpenGLSL resetShaders.
+	SDL2 showCursor: 0.
+	DiyaSingleton resetAll.
 	DiyaFontManager uniqueInstance loadFonts.
 ]
 
 { #category : #events }
 DiyaBoot >> initialize [
-	running := true.
 	display := nil.
 	window := nil.
 	context := nil.
@@ -185,28 +104,16 @@ DiyaBoot >> randomColorChannel [
 
 { #category : #events }
 DiyaBoot >> render [
-	|event root text delta fps|
-	event := SDL_Event new.
-	root := DiyaRootNode new.
-	self exampleNodes: root.
-	DiyaRenderer uniqueInstance root: root.
-	text := root addNode:(DiyaText data: 'tick') at: (display w - 80)@40.
-	text extent: 80@40.
-	text fontSize: 18.
-	text color: Color red.
-	self bindGlobalEventTo: root.
+	|delta launcher|
 	DiyaRendererContext uniqueInstance.
+	launcher := DiyaApplicationLauncher uniqueInstance.
+	launcher setup.
 	self GLinit.
-	[ running ] whileTrue: [
+	[ launcher running ] whileTrue: [
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
-		fps := ((1000/delta) asInteger).
-		text data: ('FPS:', fps asString).
+		launcher delta: delta.
 		DiyaClock uniqueInstance tick.
-		[(SDL2 pollEvent: event) > 0] whileTrue: [
-			root trigger: (DiyaEvent from: event mapped).
-		].
-		DiyaRenderer uniqueInstance render.
-		
+		launcher main.
 		SDL2 glSwapWindow: window.
 		delta := DiyaClock uniqueInstance delta asMilliSeconds.
 		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta).
@@ -242,12 +149,6 @@ DiyaBoot >> run: screenSize app: application [
 	DiyaClock reset.
 	DiyaRendererContext reset.
 	Smalltalk garbageCollect.
-]
-
-{ #category : #events }
-DiyaBoot >> setCursorPosition: mappedEvt [
-	window warpMouseX:((mappedEvt x)* (display w) )
-			Y: ((mappedEvt y) * (display h))
 ]
 
 { #category : #logging }
@@ -295,8 +196,7 @@ DiyaBoot >> startx [
 	self render.
 	context delete.
 	window destroy.
-	DiyaFontManager reset.
-	DiyaRendererContext reset.
+	DiyaSingleton resetAll.
 	SDL2 quit.
 ]
 

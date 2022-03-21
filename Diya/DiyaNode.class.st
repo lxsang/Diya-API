@@ -57,6 +57,11 @@ DiyaNode >> draw [
 	self subclassResponsibility 
 ]
 
+{ #category : #requirements }
+DiyaNode >> empty [
+	children := OrderedCollection new.
+]
+
 { #category : #accessing }
 DiyaNode >> extent [
 	^  self subclassResponsibility  

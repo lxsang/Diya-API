@@ -107,3 +107,8 @@ Diya2DPrimShape >> texture [
 Diya2DPrimShape >> texture: anObject [
 	texture := anObject
 ]
+
+{ #category : #accessing }
+Diya2DPrimShape >> textureNamed: name [
+	self texture: (context assets texture: name)
+]

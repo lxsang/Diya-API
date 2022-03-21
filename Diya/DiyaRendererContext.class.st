@@ -7,7 +7,8 @@ Class {
 		'vbo',
 		'vao',
 		'texture0',
-		'projection'
+		'projection',
+		'assets'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -25,6 +26,16 @@ DiyaRendererContext class >> cleanUpInstance: singleton [
 { #category : #'instance creation' }
 DiyaRendererContext class >> maxFloatBufferSize [
 	^4096
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> assets [
+	^ assets
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> assets: anObject [
+	assets := anObject
 ]
 
 { #category : #accessing }
@@ -53,6 +64,7 @@ DiyaRendererContext >> initialize [
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
+	assets := AssetManager new.
 ]
 
 { #category : #accessing }

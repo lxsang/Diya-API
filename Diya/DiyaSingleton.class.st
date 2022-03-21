@@ -32,6 +32,11 @@ DiyaSingleton class >> reset [
 ]
 
 { #category : #'instance creation' }
+DiyaSingleton class >> resetAll [
+	self allSubclasses do:[:e| e reset]
+]
+
+{ #category : #'instance creation' }
 DiyaSingleton class >> uniqueInstance [ 
 	^singletons at: self class asString asSymbol  ifAbsentPut: [ super new ].
 ]

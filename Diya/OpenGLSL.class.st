@@ -89,11 +89,6 @@ OpenGLSL class >> linkProgram:program [
 ]
 
 { #category : #'as yet unclassified' }
-OpenGLSL class >> resetShaders [
-	self allSubclassesDo: [ :c| c reset ].
-]
-
-{ #category : #'as yet unclassified' }
 OpenGLSL class >> setShaderSourceFor: shader count: n string: s length: l [
 	^ self ffiCall: #(void glShaderSource(	GLuint shader,GLsizei n,const void* s,const GLint *l))
 ]

@@ -11,7 +11,7 @@ Class {
 { #category : #accessing }
 Diya2DNode >> boundingBox [ 
 	|rec|
-	children ifNil: [ ^ Rectangle origin: 0@0 corner: 0@0 ].
+	children ifEmpty: [ ^ Rectangle origin: 0@0 corner: 0@0 ].
 	rec := children first boundingBox.
 	children do:[:c|
 		rec = c ifFalse:[
@@ -95,11 +95,14 @@ Diya2DNode >> setUpShader [
 Diya2DNode >> updateTF [
 	tf := Array2D identity:3.
 	"translation"
-		tf := tf +* (Array2D translateMatrix2D: translation).
+	translation = (0@0) ifFalse:[
+		tf := tf +* (Array2D translateMatrix2D: translation)].
 	"rotation"
-		tf := tf +* (Array2D rotationMatrix2D: rotation ).
+	rotation = 0 ifFalse:[
+		tf := tf +* (Array2D rotationMatrix2D: rotation )].
 	"scale"
-		tf := tf +* (Array2D scaleMatrix2D: scale).
+	scale = (1@1) ifFalse:[
+		tf := tf +* (Array2D scaleMatrix2D: scale)].
 	self parent isRoot ifFalse: [ tf := self parent tf +* tf ].
 	children ifNotNil: [
 		children do:[:c| c updateTF ]].
