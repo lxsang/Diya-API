@@ -26,7 +26,6 @@ DiyaApplicationModel >> context [
 { #category : #initialization }
 DiyaApplicationModel >> initialize [ 
 	super initialize.
-	am := AssetManager new.
 ]
 
 { #category : #accessing }

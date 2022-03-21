@@ -49,8 +49,8 @@ Diya2DNode >> height [
 Diya2DNode >> initialize [
 	super initialize.
 	translation := 0@0.
-	scale := 1.0@1.0.
-	rotation := 0.0.
+	scale := 1@1.
+	rotation := 0.
 	tf := Array2D identity: 3.
 	shader := Diya2DShader uniqueInstance.
 	color := Color white.

@@ -8,4 +8,5 @@ Class {
 DiyaBaseApplication >> initialize [
 	super initialize.
 	root := Diya2DNode new.
+	am := AssetManager new.
 ]
