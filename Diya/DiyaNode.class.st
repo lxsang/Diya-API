@@ -86,10 +86,8 @@ DiyaNode >> isRoot [
 
 { #category : #convenience }
 DiyaNode >> on: eventName do: aBlock [
-	|evtCode|
-	evtCode := SDL2Constants bindingOf: ('SDL_', eventName asUppercase).
-	evtCode ifNil: [ ^DiyaCoreAPIError signal: 'Unknow event ', eventName ].
-	ehandlers at: evtCode value put: aBlock.
+	eventName isArray ifFalse:[ ^ self register: aBlock to: eventName ].
+	eventName do:[:e| self register: aBlock to:e ].
 	
 ]
 
@@ -112,6 +110,15 @@ DiyaNode >> position [
 DiyaNode >> position: anObject [
 	translation := anObject.
 	self updateTF.
+]
+
+{ #category : #convenience }
+DiyaNode >> register: aBlock to: eventName [
+	|evtCode|
+	evtCode := SDL2Constants bindingOf: ('SDL_', eventName asUppercase).
+	evtCode ifNil: [ ^DiyaCoreAPIError signal: 'Unknow event ', eventName ].
+	ehandlers at: evtCode value put: aBlock.
+	
 ]
 
 { #category : #accessing }

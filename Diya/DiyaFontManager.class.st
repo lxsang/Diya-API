@@ -27,6 +27,18 @@ DiyaFontManager >> defaultFamily [
 	
 ]
 
+{ #category : #initialization }
+DiyaFontManager >> defaultIconSet [
+	^ self style: 'Regular' from: 'bootstrap-icons'
+]
+
+{ #category : #initialization }
+DiyaFontManager >> defaultStyle [
+	^'Regular'
+	
+	
+]
+
 { #category : #accessing }
 DiyaFontManager >> families [
 	^ families
@@ -97,7 +109,7 @@ DiyaFontManager >> reset [
 { #category : #initialization }
 DiyaFontManager >> style: styleName from: familyName [
 	|family|
-	family := families at: familyName  ifAbsent: [ self defaultFamily ].
+	family := families at: familyName  ifAbsent: [ families at: self defaultFamily ].
 	^family style: styleName 
 	
 ]

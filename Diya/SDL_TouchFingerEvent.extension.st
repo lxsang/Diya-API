@@ -7,5 +7,7 @@ SDL_TouchFingerEvent >> triggableOn: aNode [
 
 { #category : #'*Diya' }
 SDL_TouchFingerEvent >> worldPosition [
-	^ (self x) @ (DiyaRendererContext uniqueInstance resolution y - self y )
+	|resolution|
+	resolution := DiyaRendererContext uniqueInstance resolution.
+	^((self x)* (resolution x) ) @ ((1.0 - self y)* (resolution  y)).
 ]

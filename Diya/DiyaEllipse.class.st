@@ -39,6 +39,11 @@ DiyaEllipse >> drawBorder [
 ]
 
 { #category : #initialization }
+DiyaEllipse >> drawLines [
+	self shouldNotBeCalled 
+]
+
+{ #category : #initialization }
 DiyaEllipse >> initialize [
 	super initialize.
 	translation  := nil.

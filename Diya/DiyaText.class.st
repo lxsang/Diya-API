@@ -39,14 +39,21 @@ DiyaText >> data: anObject [
 
 { #category : #initialization }
 DiyaText >> drawBorder [
+	self shouldNotBeCalled 
+]
+
+{ #category : #initialization }
+DiyaText >> drawLines [
+	^ self shouldNotBeCalled
 ]
 
 { #category : #accessing }
 DiyaText >> drawText [
-	|vertices index tex2D offset|
+	|vertices index tex2D offset lbdelta|
 	index := 1.
 	offset := 0@0.
 	tex2D := self texture.
+	lbdelta := self getLinebreakIndices: (self extent x / tex2D meanww) asInteger.
 	1 to: data size do: [ :i|
 		vertices := self getCharsVerticesAt:i offset: offset on: tex2D.
 		vertices do: [ 
@@ -54,7 +61,10 @@ DiyaText >> drawText [
 			index := index + 1.
 		].
 		(offset x > self extent x and: wrap not) ifTrue: [ ^self ].
-		(offset y negated > self extent y) ifTrue: [ ^self ]. 
+		((lbdelta includes: i + 1) and: wrap) ifTrue: [
+			offset setX: 0.0 setY: (offset y )- (tex2D linespace).
+			(offset y negated > self extent y) ifTrue: [ ^self ].
+		]. 
 	].
 ]
 
@@ -71,8 +81,12 @@ DiyaText >> fontName [
 
 { #category : #initialization }
 DiyaText >> fontName: name style: face size: size [
-	name ifNotNil: [ fontName := name ].
-	face ifNotNil: [ fontStyle := face ].
+	name  ifNotNil: [fontName := name].
+	face ifNotNil: [fontStyle := face].
+	
+	fontName := fontName  ifNil: [DiyaFontManager uniqueInstance defaultFamily].
+	fontStyle := fontStyle ifNil: [DiyaFontManager uniqueInstance defaultStyle].
+	
 	fontSize := size.
 	style := DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName.
 	dirty := true.
@@ -96,21 +110,11 @@ DiyaText >> fontStyle [
 { #category : #accessing }
 DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
 	|x y w h glyph gsize c texcoord|
-	c := (data at:i) asciiValue.
-	c = (Character space asciiValue) ifTrue:[
-		offset setX: (offset x + (tex2D spacing ) ) setY: offset y.
-		wrap ifTrue: [
-			(offset x + ((self nextSpaceFrom: i + 1) * (tex2D fontSize))) > (self extent x) ifTrue: [
-				offset setX: 0.0 setY: (offset y )- (tex2D linespace)]. 
-		].
-		^ {}.
-	].
+	c := (data at:i) asInteger.
 	glyph := tex2D getGlyph: c.
 	gsize := glyph extent.
 	((offset x > self extent x) and: (gsize x > 0)) ifTrue:[
 		wrap ifFalse: [ ^ { } ].
-		offset setX: 0.0 setY: (offset y )- (tex2D linespace).
-		offset y negated > self extent y ifTrue:[^{}].
 	].
 	x := offset x + (glyph bearing x).
 	y := offset y - (tex2D cellh).
@@ -126,20 +130,35 @@ DiyaText >> getCharsVerticesAt:i offset: offset on: tex2D [
       x + w. y + h.  texcoord corner x.  texcoord origin y.  }.
 ]
 
+{ #category : #accessing }
+DiyaText >> getLinebreakIndices: delta [
+	|indices idx|
+	indices := Set new.
+	idx := delta + 1.
+	[
+		idx < data size
+	] whileTrue: [
+		indices add: (self lastSeparatorFrom: idx) + 1.
+		idx := idx + delta.
+	]. 
+	^indices
+]
+
 { #category : #initialization }
 DiyaText >> initialize [
 	super initialize.
-	self fontName: 'Ubuntu' style:'Regular'  size: 16.
+	"self fontName: 'Ubuntu' style:'Regular'  size: 16."
 	data := nil.
 	wrap := false.
 	bbox := nil.
 	texheight := 0.
+	self fontSize: 16
 ]
 
 { #category : #'as yet unclassified' }
-DiyaText >> nextSpaceFrom: index [
-	index to: (data size) do: [:i|
-		(data at: i) = (Character space) ifTrue:[^i - index].
+DiyaText >> lastSeparatorFrom: index [
+	index to: 1 by: -1 do: [:i|
+		(data at: i) isSeparator ifTrue:[^i].
 	].
 	^ 0
 ]

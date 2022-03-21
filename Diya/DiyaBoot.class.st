@@ -47,9 +47,7 @@ DiyaBoot >> bindGlobalEventTo: aNode [
 	pointer borderWidth: 3."
 	aNode on: #keydown do:[:e| Transcript show: 'keydown...';cr. running := false.].
 	aNode on: #quit do: [:e| running := false].
-	aNode on: #fingerdown do:[:e| self setCursorPosition: e mapped ].
-	aNode on: #fingermotion do:[:e| self setCursorPosition: e mapped ].
-	aNode on: #mousemotion do:[:e|
+	aNode on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
 		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
 	].
@@ -91,10 +89,10 @@ DiyaBoot >> createWindow [
 
 { #category : #events }
 DiyaBoot >> exampleNodes: tree [
-	|root node node1 ell tex txtNode|
+	|root node node1 ell tex txtNode icon|
 	root := tree addNode: (Diya2DNode new) at: 0@10.
 	tex := (DiyaImageTex  fromFile:Smalltalk imageDirectory / 'assets'/'mrsang.png').
-	txtNode := root addNode: (DiyaText data: 'Event') at: 10@50.
+	txtNode := root addNode: (DiyaText data: 'Event') at: 10@55.
 	txtNode color: Color orange.
 	txtNode extent: 200@40.
 	
@@ -102,7 +100,7 @@ DiyaBoot >> exampleNodes: tree [
 	node1 rotation: (Float pi / 8.0).
 	node1 scale: 1.2@1.2.
 	node1 on: #mousebuttondown do:[:e| txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
-	node1 on: #fingerdown do:[:e| Transcript show:'finger down on image'; cr].
+	node1 on: #fingerdown do:[:e| txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
 	node := root addNode: (DiyaRectangle size: 200@200) at: 250 @ 430.
 	node texture: tex.
@@ -121,7 +119,7 @@ DiyaBoot >> exampleNodes: tree [
 	
 	
 	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
-	node extent: 250@320.
+	node extent: 240@320.
 	node wordWrap: true.
 	
 	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
@@ -137,7 +135,7 @@ DiyaBoot >> exampleNodes: tree [
 	"node rotation: Float pi / 2.0."
 	ell texture: tex.
 	ell on: #mousebuttondown do:[:e| txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
-	ell on: #fingerdown do:[:e| Transcript show:'finger down on ellipse'; cr].
+	ell on: #fingerdown do:[:e| txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
 
 	
 	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
@@ -146,6 +144,9 @@ DiyaBoot >> exampleNodes: tree [
 	node texture: tex.
 	node borderWidth: 3.0.
 	
+	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 10@10.
+	icon fontSize: 24.
+	icon color: (Color r: 209/255 g: 66/255  b:245/255 ).
 	^ root
 ]
 

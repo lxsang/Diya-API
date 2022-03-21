@@ -1,9 +1,8 @@
 Extension { #name : #'SDL_MouseMotionEvent' }
 
 { #category : #'*Diya' }
-SDL_MouseMotionEvent >> triggableOn: aNode [
-	^false
-	"^ aNode inner: self worldPosition "
+SDL_MouseMotionEvent >> triggableOn: arg1 [
+	^ arg1 inner: self worldPosition
 ]
 
 { #category : #'*Diya' }

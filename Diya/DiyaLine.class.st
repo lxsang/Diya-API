@@ -53,6 +53,11 @@ DiyaLine >> drawBorder [
 	"do nothing"
 ]
 
+{ #category : #initialization }
+DiyaLine >> drawLines [
+	self shouldNotBeCalled
+]
+
 { #category : #accessing }
 DiyaLine >> from [
 	^ from

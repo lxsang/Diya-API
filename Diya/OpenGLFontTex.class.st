@@ -11,7 +11,8 @@ Class {
 		'rowp',
 		'face',
 		'maxbearing',
-		'maxrows'
+		'maxrows',
+		'meanww'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -63,7 +64,7 @@ OpenGLFontTex >> fontSize [
 
 { #category : #'instance creation' }
 OpenGLFontTex >> fromFace: aFace  ofSize: size [
-	|minhang rec iptr charcode w|
+	|minhang rec iptr charcode w numw|
 	fontSize := size.
 	face := aFace.
 	charmap := Dictionary new.
@@ -73,6 +74,8 @@ OpenGLFontTex >> fromFace: aFace  ofSize: size [
 	iptr at:1 put: 0.
 	rec := (FTFaceRec fromHandle: face getHandle).
 	charcode := face getFirstChar: iptr getHandle.
+	meanww := 0.
+	numw := 0.
 	[ (iptr at: 1) = 0 ] whileFalse: [
 		face loadCharacter: charcode flags: (1 << 2).
 		w := ((rec glyph metrics width) >> 6).
@@ -80,11 +83,14 @@ OpenGLFontTex >> fromFace: aFace  ofSize: size [
 			maxbearing := maxbearing max:  ((rec glyph metrics horiBearingY) >> 6).
 			cellw := cellw max: w.
 			minhang := minhang min: ((( rec glyph metrics horiBearingY) - (rec glyph metrics height)) >> 6).
+			meanww := meanww + w.
+			numw := numw + 1.
 		].
 		charcode := face getNextChar: charcode iptr: iptr getHandle.
 	].
 	cellh := maxbearing - minhang.
 	spacing := (cellw >> 2) asInteger.
+	meanww := meanww / numw.
 	maxrows := 8.
 	data := FFIExternalArray externalNewType: GLubyte size:cellw * cellh * (maxrows << 5).
 	LibC memset: data getHandle value: 0 size: data size.
@@ -143,6 +149,11 @@ OpenGLFontTex >> initialize [
 { #category : #accessing }
 OpenGLFontTex >> linespace [
 	^ cellh
+]
+
+{ #category : #accessing }
+OpenGLFontTex >> meanww [
+	^ meanww
 ]
 
 { #category : #accessing }

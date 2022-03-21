@@ -18,6 +18,11 @@ DiyaBaseObject >> logError: string [
 	self stderr nextPutAll: string; cr
 ]
 
+{ #category : #asserting }
+DiyaBaseObject >> shouldNotBeCalled [
+	^DiyaCoreAPIError signal: 'Should not be called'
+]
+
 { #category : #accessing }
 DiyaBaseObject >> stderr [
 	^VTermOutputDriver stderr
