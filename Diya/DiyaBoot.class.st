@@ -94,15 +94,6 @@ DiyaBoot >> initialize [
 ]
 
 { #category : #events }
-DiyaBoot >> randomColorChannel [
-	| rand |
-	rand := Random new.
-	rand := (rand next) * 255.
-	rand := rand asInteger.
-	^ rand
-]
-
-{ #category : #events }
 DiyaBoot >> render [
 	|delta launcher|
 	DiyaRendererContext uniqueInstance.
@@ -198,19 +189,4 @@ DiyaBoot >> startx [
 	window destroy.
 	DiyaSingleton resetAll.
 	SDL2 quit.
-]
-
-{ #category : #events }
-DiyaBoot >> step [
-	"renderer drawColorR: 0
-				g: 0
-				b: 0
-				a: 255."
-	OpenGL begin: GL_TRIANGLES.
-	"draw a simple triangle here"
-	OpenGL color3fR: 0.1 G:0.2  B: 0.3.
-	OpenGL vertex3fX: 0 Y: 0  Z: 0.
-	OpenGL vertex3fX: 1 Y: 0  Z: 0.
-	OpenGL vertex3fX: 0 Y: 1  Z: 0.  
-	OpenGL end.
 ]
