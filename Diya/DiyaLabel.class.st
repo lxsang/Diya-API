@@ -9,19 +9,6 @@ Class {
 }
 
 { #category : #accessing }
-DiyaLabel >> applyStyle [
-	txt color: style color.
-	txt fontName: style fontFamily style: style fontStyle  size: style fontSize.
-	txt wordWrap: true.
-	icon ifNotNil: [
-		icon color: style color.
-		icon fontSize: style fontSize
-	].
-	"update extent"
-	
-]
-
-{ #category : #accessing }
 DiyaLabel >> icon [
 	^ icon
 ]
@@ -29,8 +16,8 @@ DiyaLabel >> icon [
 { #category : #accessing }
 DiyaLabel >> icon: anObject [
 	icon := nil.
-	anObject isNumber ifTrue: [ icon := root addNode: (DiyaFontIcon data: anObject) ].
-	anObject isString ifTrue: [ icon := root addNode: (DiyaImageView from: anObject)].
+	anObject isNumber ifTrue: [ icon := self addNode: (DiyaFontIcon data: anObject) ].
+	anObject isString ifTrue: [ icon := self addNode: (DiyaImageView from: anObject)].
 	icon ifNil: [ ^ DiyaCoreAPIError signal: 'Invalid icon identification'].
 	dirty := true.
 ]
@@ -38,9 +25,10 @@ DiyaLabel >> icon: anObject [
 { #category : #initialization }
 DiyaLabel >> initialize [
 	super initialize.
-	txt := root addNode:(DiyaText new).
+	txt := self addNode:(DiyaText data: '').
 	icon := nil.
 	self extent: 0@0.
+	"style := DiyaDefaultStyle uniqueInstance."
 ]
 
 { #category : #accessing }
@@ -52,4 +40,18 @@ DiyaLabel >> txt [
 DiyaLabel >> txt: anObject [
 	txt data: anObject.
 	dirty := true
+]
+
+{ #category : #accessing }
+DiyaLabel >> updateLayout [
+	|offset isize|
+	offset := 0.
+	isize := style get: #fontSize.
+	icon ifNotNil: [
+		offset :=  isize + (isize >> 1).
+		icon position: 0 @ (extent y - isize)
+	].
+	txt extent: (extent x - offset) @ (extent y).
+	txt position: offset @ (extent y)
+	
 ]

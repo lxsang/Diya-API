@@ -2,7 +2,6 @@ Class {
 	#name : #Diya2DNode,
 	#superclass : #DiyaNode,
 	#instVars : [
-		'color',
 		'vbuffer'
 	],
 	#category : #'Diya-Graphics'
@@ -22,12 +21,12 @@ Diya2DNode >> boundingBox [
 
 { #category : #accessing }
 Diya2DNode >> color [
-	^ color
+	^ self style get: #color.
 ]
 
 { #category : #accessing }
 Diya2DNode >> color: anObject [
-	color := anObject
+	style set:#color value: anObject
 ]
 
 { #category : #accessing }
@@ -53,7 +52,6 @@ Diya2DNode >> initialize [
 	rotation := 0.
 	tf := Array2D identity: 3.
 	shader := Diya2DShader uniqueInstance.
-	color := Color white.
 	vbuffer := nil.
 ]
 

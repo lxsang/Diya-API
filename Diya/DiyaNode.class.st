@@ -12,7 +12,8 @@ Class {
 		'context',
 		'dirty',
 		'ehandlers',
-		'root'
+		'root',
+		'style'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -39,6 +40,7 @@ DiyaNode >> addNode: node at: pos [
 	node position: pos.
 	children add: node.
 	node root: self root.
+	node style parent: style.
 	^ node
 ]
 
@@ -76,6 +78,7 @@ DiyaNode >> initialize [
 	children := OrderedCollection new.
 	dirty := false.
 	ehandlers := Dictionary new.
+	style := DiyaNodeStyle new.
 	root := nil.
 ]
 
@@ -128,7 +131,8 @@ DiyaNode >> register: aBlock to: eventName [
 
 { #category : #accessing }
 DiyaNode >> render [
-	dirty ifTrue:[dirty := self update not].
+	dirty ifTrue:[
+		dirty := self update not].
 	shader ifNotNil: [ self setUpShader  ].
 	self draw.
 	children ifNil: [ ^self ].
@@ -200,8 +204,19 @@ DiyaNode >> shader: anObject [
 ]
 
 { #category : #accessing }
+DiyaNode >> style [
+	^style
+]
+
+{ #category : #accessing }
+DiyaNode >> style: aStyle [
+	style := aStyle.
+	dirty := true.
+	parent ifNotNil: [ style parent: parent style ]
+]
+
+{ #category : #accessing }
 DiyaNode >> tf [
-	parent ifNil: [ ^ DiyaCoreAPIError signal: 'TF: This node is not attached to the main tree' ].
 	^ tf
 ]
 

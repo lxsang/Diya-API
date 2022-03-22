@@ -32,17 +32,12 @@ DiyaLine class >> points: points [
 			yourself
 ]
 
-{ #category : #accessing }
-DiyaLine >> borderColor: c [
-	color := c
-]
-
 { #category : #initialization }
 DiyaLine >> draw [
 	OpenGL
 		"enable: GL_LINE_SMOOTH;
 		hint: GL_LINE_SMOOTH_HINT mode: GL_NICEST;"
-		lineWidth: border.
+		lineWidth: self border.
 	super draw.
 	OpenGL lineWidth: 1.0";
 		disable: GL_LINE_SMOOTH".
@@ -78,7 +73,7 @@ DiyaLine >> initialize [
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size:8.
 	vbuffer autoRelease.
 	type := GL_LINES.
-	border := 1.0
+	style set: #border value: 0
 ]
 
 { #category : #'as yet unclassified' }

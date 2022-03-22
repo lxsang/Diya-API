@@ -4,21 +4,29 @@ Class {
 	#instVars : [
 		'texture',
 		'type',
-		'border',
-		'bcolor',
 		'bbox'
 	],
 	#category : #'Diya-Graphics'
 }
 
 { #category : #accessing }
+Diya2DPrimShape >> border [
+	^style get: #border
+]
+
+{ #category : #accessing }
+Diya2DPrimShape >> borderColor [
+	^style get: #borderColor
+]
+
+{ #category : #accessing }
 Diya2DPrimShape >> borderColor: c [
-	bcolor := c
+	style set: #borderColor value: c.
 ]
 
 { #category : #accessing }
 Diya2DPrimShape >> borderWidth: w [
-	border := w
+	style set: #border value: w.
 ]
 
 { #category : #accessing }
@@ -41,19 +49,17 @@ Diya2DPrimShape >> draw [
 	OpenGL drawArrays: type first:0  count:((vbuffer size )>> 2 ).
 	"reset value"
 	self texture ifNotNil: [self texture drop.].
-	border > 0 ifTrue: [ self drawBorder ].
+	self border > 0 ifTrue: [ self drawBorder ].
 	context vao disableAttribute: 0.
 ]
 
 { #category : #initialization }
 Diya2DPrimShape >> drawBorder [
 	"Diya2DShader uniqueInstance use."
-	color = bcolor ifFalse:[
-		shader setUniform: #u_color value: bcolor asGL4FArray;
-		setUniform: #u_texture_type value: 0.
-	].
+	shader setUniform: #u_color value: self borderColor  asGL4FArray;
+	setUniform: #u_texture_type value: 0.
 	OpenGL
-		lineWidth: border.
+		lineWidth: self border.
 	self drawLines.
 	OpenGL lineWidth: 1.0.
 ]
@@ -79,8 +85,6 @@ Diya2DPrimShape >> initialize [
 	texture := nil.
 	children := nil.
 	type := GL_TRIANGLES.
-	border := 0.
-	bcolor := Color white.
 	bbox := Rectangle origin: 0@0 corner: 0@0.
 ]
 

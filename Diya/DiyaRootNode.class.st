@@ -11,7 +11,9 @@ DiyaRootNode >> boundingBox [
 
 { #category : #accessing }
 DiyaRootNode >> draw [
-	OpenGL clearColorR: 0.0 G: 0.0 B: 0.0  A:0.
+	|c|
+	c := style get: #bgcolor.
+	OpenGL clearColorR: c red G: c green B: c blue  A: c alpha.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
 	context vbo bind: GL_ARRAY_BUFFER.
 ]
@@ -27,6 +29,7 @@ DiyaRootNode >> initialize [
 	parent := self.
 	shader := nil.
 	root := self.
+	style := DiyaDefaultStyle new
 ]
 
 { #category : #'as yet unclassified' }

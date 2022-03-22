@@ -34,7 +34,7 @@ DiyaFontIcon >> drawText [
 DiyaFontIcon >> fontName: name style: face size: size [
 	super fontName: name style:face  size: size. 
 	data ifNil: [ ^ self ].
-	bbox := Rectangle origin: 0@0 corner: ((data size) * (self fontSize) ) @ self fontSize.
+	bbox := Rectangle origin: 0@0 corner: ((data size) * size ) @ size.
 ]
 
 { #category : #initialization }
@@ -49,7 +49,6 @@ DiyaFontIcon >> initialize [
 	self fontName: 'bootstrap-icons' style: 'Regular' size: 16.
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size:24.
 	vbuffer autoRelease.
-	style := DiyaFontManager uniqueInstance defaultIconSet. 
 ]
 
 { #category : #initialization }

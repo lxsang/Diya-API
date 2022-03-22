@@ -2,7 +2,6 @@ Class {
 	#name : #DiyaWidget,
 	#superclass : #Diya2DNode,
 	#instVars : [
-		'style',
 		'extent'
 	],
 	#category : #'Diya-Widgets'
@@ -11,11 +10,6 @@ Class {
 { #category : #'instance creation' }
 DiyaWidget class >> fromStyle: aStyle [
 	^self new style: aStyle; yourself 
-]
-
-{ #category : #accessing }
-DiyaWidget >> applyStyle [
-	self subclassResponsibility
 ]
 
 { #category : #geometry }
@@ -38,11 +32,16 @@ DiyaWidget >> style [
 { #category : #accessing }
 DiyaWidget >> style: anObject [
 	style := anObject.
-	self applyStyle.
+	dirty := true
 ]
 
 { #category : #accessing }
 DiyaWidget >> update [
-	self applyStyle.
+	self updateLayout.
 	^ true
+]
+
+{ #category : #accessing }
+DiyaWidget >> updateLayout [
+	self subclassResponsibility 
 ]

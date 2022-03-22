@@ -85,8 +85,8 @@ DiyaEllipse >> ry: anObject [
 DiyaEllipse >> setUpShader [
 	super setUpShader.
 	self shader
-		setUniform: #u_border value: border;
-		setUniform: #u_border_color value: bcolor asGL4FArray;
+		setUniform: #u_border value: (style get: #border);
+		setUniform: #u_border_color value: (style get:#borderColor) asGL4FArray;
 		setUniform: #u_rx value: rx;
 		setUniform: #u_ry value: ry.
 ]

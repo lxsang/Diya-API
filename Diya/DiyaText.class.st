@@ -2,13 +2,10 @@ Class {
 	#name : #DiyaText,
 	#superclass : #Diya2DPrimShape,
 	#instVars : [
-		'fontStyle',
-		'fontSize',
-		'fontName',
 		'data',
-		'style',
 		'wrap',
-		'texheight'
+		'texheight',
+		'font'
 	],
 	#pools : [
 		'FT2Types'
@@ -76,25 +73,21 @@ DiyaText >> extent: v [
 
 { #category : #accessing }
 DiyaText >> fontName [
-	^ fontName
+	^ self style get: #fontFamily
 ]
 
 { #category : #initialization }
 DiyaText >> fontName: name style: face size: size [
-	name  ifNotNil: [fontName := name].
-	face ifNotNil: [fontStyle := face].
-	
-	fontName := fontName  ifNil: [DiyaFontManager uniqueInstance defaultFamily].
-	fontStyle := fontStyle ifNil: [DiyaFontManager uniqueInstance defaultStyle].
-	
-	fontSize := size.
-	style := DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName.
+	name  ifNotNil: [style set:#fontFamily value: name].
+	face ifNotNil: [style set: #fontStyle value:face].
+	style set: #fontSize value: size.
+	font := nil.
 	dirty := true.
 ]
 
 { #category : #accessing }
 DiyaText >> fontSize [
-	^ fontSize
+	^ self style get:#fontSize
 ]
 
 { #category : #initialization }
@@ -104,7 +97,7 @@ DiyaText >> fontSize: size [
 
 { #category : #accessing }
 DiyaText >> fontStyle [
-	^ fontStyle
+	^ self style get: #fontStyle
 ]
 
 { #category : #accessing }
@@ -147,12 +140,10 @@ DiyaText >> getLinebreakIndices: delta [
 { #category : #initialization }
 DiyaText >> initialize [
 	super initialize.
-	"self fontName: 'Ubuntu' style:'Regular'  size: 16."
 	data := nil.
 	wrap := false.
-	bbox := nil.
 	texheight := 0.
-	self fontSize: 16
+	style set: #border value: 0
 ]
 
 { #category : #'as yet unclassified' }
@@ -165,9 +156,10 @@ DiyaText >> lastSeparatorFrom: index [
 
 { #category : #accessing }
 DiyaText >> texture [
-	|tex|
-	tex := style textureOf: self fontSize.
-	texheight = tex height ifFalse: [ 
+	| tex|
+	font:= font ifNil: [ DiyaFontManager uniqueInstance style: self fontStyle  from: self fontName ].
+	tex := font textureOf: self fontSize.
+	texheight = tex height ifFalse: [
 		texheight := tex height.
 		self update.
 		dirty := false.	

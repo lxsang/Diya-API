@@ -80,7 +80,7 @@ DiyaApplicationLauncher >> running [
 DiyaApplicationLauncher >> setup [
 	event := SDL_Event new.
 	root addNode: (Diya2DNode new) at: 0@10.
-	txtFPS := root addNode:(DiyaText data: 'tick') at: ( self context resolution x - 80)@40.
+	txtFPS := root addNode:(DiyaText data: '') at: ( self context resolution x - 80)@40.
 	txtFPS extent: 80@40.
 	txtFPS fontSize: 18.
 	txtFPS color: Color red.

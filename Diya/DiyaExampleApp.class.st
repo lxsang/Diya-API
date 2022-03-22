@@ -16,21 +16,22 @@ DiyaExampleApp >> main [
 
 { #category : #accessing }
 DiyaExampleApp >> setup [
-	|node node1 ell txtNode icon|
-	txtNode := root addNode: (DiyaText data: 'Event') at: 10@55.
-	txtNode color: Color orange.
-	txtNode extent: 200@40.
+	|node node1 ell label icon|
+	label := root addNode: (DiyaLabel new) at: 10@30.
+	label extent: 250@30.
+	label color: Color orange.
+	label icon: 16rF254.
 	
 	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 100 @ 400.
 	node1 rotation: (Float pi / 8.0).
 	node1 scale: 1.2@1.2.
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
-		txtNode data: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
+		label txt: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
 	node := root addNode: (DiyaImageView from:'mrsang.png') at: 250 @ 430.
 	node color: (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
-	node borderColor: Color red.
-	node borderWidth: 3.0.
+	"node borderColor: Color red."
+	"node borderWidth: 3.0."
 	node extent:200@200.
 	
 	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
@@ -49,7 +50,7 @@ DiyaExampleApp >> setup [
 	"node rotation: Float pi / 2.0."
 	ell textureNamed:'mrsang.png'.
 	ell on: #(mousebuttondown fingerdown) do:[:e|
-		txtNode data: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
+		label txt: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
 
 	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
 	node color: Color green.
