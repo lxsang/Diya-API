@@ -34,6 +34,18 @@ Diya2DPrimShape >> boundingBox [
 	^ bbox applyTf: self tf.
 ]
 
+{ #category : #accessing }
+Diya2DPrimShape >> color [
+	self texture ifNotNil: [ ^ self style get: #color. ].
+	^ self style get: #bgcolor.
+]
+
+{ #category : #accessing }
+Diya2DPrimShape >> color: value [
+	self texture ifNotNil: [ ^ self style set: #color value: value. ].
+	^ self style set: #bgcolor value: value.
+]
+
 { #category : #initialization }
 Diya2DPrimShape >> draw [
 	vbuffer ifNil: [ ^self ].
@@ -98,6 +110,7 @@ Diya2DPrimShape >> inner: aPoint [
 Diya2DPrimShape >> setUpShader [
 	super setUpShader.
 	self shader
+			setUniform: #u_color value: self color asGL4FArray;
 			setUniform: #u_texture_type value:
 				(self texture ifNil: [ 0 ] ifNotNil:[self texture format]).
 ]

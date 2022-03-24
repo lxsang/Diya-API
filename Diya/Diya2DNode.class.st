@@ -20,16 +20,6 @@ Diya2DNode >> boundingBox [
 ]
 
 { #category : #accessing }
-Diya2DNode >> color [
-	^ self style get: #color.
-]
-
-{ #category : #accessing }
-Diya2DNode >> color: anObject [
-	style set:#color value: anObject
-]
-
-{ #category : #accessing }
 Diya2DNode >> draw [
 	
 ]
@@ -81,12 +71,6 @@ Diya2DNode >> recFromBuffer [
 		minY := minY min: y.
 	].
 	^ Rectangle origin: minX@minY corner: maxX @ maxY
-]
-
-{ #category : #initialization }
-Diya2DNode >> setUpShader [
-	super setUpShader.
-	shader setUniform: #u_color value: self color asGL4FArray.
 ]
 
 { #category : #accessing }

@@ -12,6 +12,21 @@ DiyaWidget class >> fromStyle: aStyle [
 	^self new style: aStyle; yourself 
 ]
 
+{ #category : #accessing }
+DiyaWidget >> color [
+	^style get: #color
+]
+
+{ #category : #accessing }
+DiyaWidget >> color: value [
+	style set: #color value: value
+]
+
+{ #category : #geometry }
+DiyaWidget >> extent [
+	^extent
+]
+
 { #category : #geometry }
 DiyaWidget >> extent: size [
 	extent := size.
@@ -21,18 +36,6 @@ DiyaWidget >> extent: size [
 { #category : #initialization }
 DiyaWidget >> initialize [
 	super initialize.
-	self style: DiyaDefaultStyle new.
-]
-
-{ #category : #accessing }
-DiyaWidget >> style [
-	^ style
-]
-
-{ #category : #accessing }
-DiyaWidget >> style: anObject [
-	style := anObject.
-	dirty := true
 ]
 
 { #category : #accessing }

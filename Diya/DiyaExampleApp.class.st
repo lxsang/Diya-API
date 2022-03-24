@@ -16,8 +16,8 @@ DiyaExampleApp >> main [
 
 { #category : #accessing }
 DiyaExampleApp >> setup [
-	|node node1 ell label icon|
-	label := root addNode: (DiyaLabel new) at: 10@30.
+	|node node1 ell label icon button|
+	label := root addNode: (DiyaLabel new) at: 10@40.
 	label extent: 250@30.
 	label color: Color orange.
 	label icon: 16rF254.
@@ -34,15 +34,20 @@ DiyaExampleApp >> setup [
 	"node borderWidth: 3.0."
 	node extent:200@200.
 	
-	node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
+	node := root addNode: (DiyaRectangle new) at: 10@80.
+	node extent: 240@320.
+	
+	"node := root addNode: (DiyaText data: String loremIpsum) at: 10@400.
 	node extent: 240@320.
 	node wordWrap: true.
+	node fontSize: 16.
+	node align: #center."
 	
 	node := root addNode: (DiyaLine from: 10@620 to: 200@635).
 	node color: (Color red).
 	node borderWidth: 2.0.
 		
-	ell := root addNode: (DiyaEllipse rx:150  ry: 100) at: 320@300.
+	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 340@300.
 	ell borderColor: Color red.
 	ell color: Color white.
 	ell rotation: Float pi / 6.0.
@@ -58,8 +63,13 @@ DiyaExampleApp >> setup [
 	node textureNamed: 'mrsang.png'.
 	node borderWidth: 3.0.
 	
-	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 10@10.
+	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 10@24.
 	icon fontSize: 24.
 	icon color: (Color r: 209/255 g: 66/255  b:245/255 ).
+	
+	button := root addNode: (DiyaButton text: 'Click me !') at: 160@10.
+	button extent: 200@40.
+	button icon:16rF185.
+	button iconSize: 24.
 	^ root
 ]

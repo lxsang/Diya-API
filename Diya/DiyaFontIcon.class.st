@@ -15,12 +15,13 @@ DiyaFontIcon >> data: code [
 
 { #category : #initialization }
 DiyaFontIcon >> drawText [
-	|index offset tex|
+	|index offset tex glyph |
 	index := 1.
 	tex := self texture.
-	offset := 0@(self fontSize).
-	1 to: data size do: [ :i|
-		(self getCharsVerticesAt:i offset: offset on: tex) do: [
+	offset := (self alignLine: self fontSize)@(self valignText: self fontSize).
+	data do: [ :c|
+		glyph := tex getGlyph: c asInteger.
+		(self getCharsVerticesFrom: glyph offset: offset  cellh: tex cellh) do: [
 			:e| vbuffer at: index put:e.
 			index := index + 1
 		].
