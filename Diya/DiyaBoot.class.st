@@ -113,8 +113,23 @@ DiyaBoot >> render [
 
 { #category : #events }
 DiyaBoot >> run [
-	self init.
-	self startx. 
+	|envar arr|
+	envar := Smalltalk getenv:'DIYA_RES'.
+	arr := nil.
+	envar ifNotNil: [
+		arr := (envar splitOn: 'x') collect: [ :e| e asInteger ] .
+		arr size = 2 ifFalse:[
+			arr := nil.
+		]
+	].
+	arr
+		ifNil: [ 
+			self init.
+			self startx.
+		 ]
+		ifNotNil: [ 
+			self run: (arr at:1) @ (arr at: 2)
+		]
 ]
 
 { #category : #running }
