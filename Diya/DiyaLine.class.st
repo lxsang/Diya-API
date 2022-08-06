@@ -34,10 +34,11 @@ DiyaLine class >> points: points [
 
 { #category : #initialization }
 DiyaLine >> draw [
+	shader setUniform: #u_texture_type value: 1.
 	OpenGL
 		"enable: GL_LINE_SMOOTH;
 		hint: GL_LINE_SMOOTH_HINT mode: GL_NICEST;"
-		lineWidth: self border.
+		lineWidth: self borderWidth.
 	super draw.
 	OpenGL lineWidth: 1.0";
 		disable: GL_LINE_SMOOTH".

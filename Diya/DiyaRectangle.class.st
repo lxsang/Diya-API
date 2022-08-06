@@ -41,10 +41,10 @@ DiyaRectangle >> update [
 	|extent|
 	extent := self extent.
 	{
-		0.0. extent y. 0.0. 0.0.            
-      0. 0. 0.0. 1.0.
-      extent x. 0.0. 1.0. 1.0.
-		extent x. extent y. 1.0. 0.0.
+		0. 0. 0.0. 0.0.            
+      0. extent y. 0.0. 1.0.
+      extent x. extent y. 1.0. 1.0.
+		extent x. 0. 1.0. 0.0.
 	} doWithIndex: [:e :i| vbuffer at: i put: e].
 	^true
 ]

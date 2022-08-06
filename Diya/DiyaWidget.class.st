@@ -13,6 +13,12 @@ DiyaWidget class >> fromStyle: aStyle [
 ]
 
 { #category : #accessing }
+DiyaWidget >> bgColor:v [
+	^style set: #bgcolor value: v
+
+]
+
+{ #category : #accessing }
 DiyaWidget >> color [
 	^style get: #color
 ]

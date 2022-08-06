@@ -43,6 +43,17 @@ DiyaFontIcon >> getLinebreakIndices: delta [
 	self shouldNotBeCalled 
 ]
 
+{ #category : #accessing }
+DiyaFontIcon >> iconSize [
+	^ self fontSize
+]
+
+{ #category : #accessing }
+DiyaFontIcon >> iconSize: v [
+	"self extent: "
+	^ self fontSize: v
+]
+
 { #category : #initialization }
 DiyaFontIcon >> initialize [ 
 	super initialize.

@@ -9,7 +9,7 @@ DiyaDefaultStyle >> initialize [
 	super initialize.
 	self set: #bgcolor value:(Color r: 0.2118 g: 0.2118  b: 0.2118).
 	self set: #color value: Color white.
-	self set: #border value: 1.
+	self set: #border value: 0.
 	self set: #fontSize value: 18.
 	self set: #fontFamily value: DiyaFontManager uniqueInstance defaultFamily.
 	self set: #fontStyle value: DiyaFontManager uniqueInstance defaultStyle.

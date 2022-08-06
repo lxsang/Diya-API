@@ -22,7 +22,11 @@ DiyaNodeStyle >> get: styleName [
 DiyaNodeStyle >> initialize [ 
 	super initialize.
 	styles := Dictionary new.
-	parent := nil
+	parent := nil.
+	"self set: #bgcolor value: Color transparent.
+	self set: #color value:Color white.
+	self set: #border value: 0.
+	self set: #borderColor value: Color transparent."
 ]
 
 { #category : #accessing }

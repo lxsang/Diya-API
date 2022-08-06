@@ -7,5 +7,5 @@ SDL_MouseMotionEvent >> triggableOn: arg1 [
 
 { #category : #'*Diya' }
 SDL_MouseMotionEvent >> worldPosition [
-	^ (self x) @ (DiyaRendererContext uniqueInstance resolution y - self y )
+	^ (self x) @ (self y )
 ]

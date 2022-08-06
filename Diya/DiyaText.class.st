@@ -6,7 +6,8 @@ Class {
 		'wrap',
 		'texheight',
 		'font',
-		'lines'
+		'lines',
+		'maxLineWidth'
 	],
 	#pools : [
 		'FT2Types'
@@ -130,7 +131,7 @@ DiyaText >> formatText [
 					index := index + 1.	
 				]
 		].
-		offset setX: 0.0 setY: (offset y )- (texture linespace)
+		offset setX: 0.0 setY: (offset y ) + (texture linespace)
 	].
 	
 ]
@@ -140,17 +141,17 @@ DiyaText >> getCharsVerticesFrom:glyph offset: offset cellh: cellh [
 	|x y w h  gsize texcoord|
 	gsize := glyph extent.
 	x := offset x + (glyph bearing x).
-	y := offset y - cellh.
+	y := offset y "- cellh".
 	w := (gsize x).
 	h := (gsize y).
 	texcoord := glyph texcoord.
 	offset setX: (offset x + (glyph advance x)) setY: offset y.
-	^{x. y + h. texcoord origin x.  texcoord origin y.            
-      x. y.  texcoord origin x.  texcoord corner y.
-      x + w. y.  texcoord corner x.  texcoord corner y.
+	^{x. y. texcoord origin x.  texcoord origin y.            
+      x. y + h.  texcoord origin x.  texcoord corner y.
+      x + w. y + h.  texcoord corner x.  texcoord corner y.
 		"x. y + h.  texcoord origin x.  texcoord origin y.
       x + w. y.  texcoord corner x.  texcoord corner y."
-      x + w. y + h.  texcoord corner x.  texcoord origin y.  }.
+      x + w. y.  texcoord corner x.  texcoord origin y.  }.
 ]
 
 { #category : #accessing }
@@ -170,6 +171,7 @@ DiyaText >> getLineAt: index to: line with: tex2D [
 			line add: glyph.
 		].
 	].
+	maxLineWidth := maxLineWidth max: w.
 	^ (data size + 1) @ w
 ]
 
@@ -186,7 +188,9 @@ DiyaText >> initialize [
 	wrap := false.
 	texheight := 0.
 	style set: #border value: 0.
+	"style set: #bgcolor value: Color red."
 	type := GL_QUADS.
+	maxLineWidth := 0.
 ]
 
 { #category : #'as yet unclassified' }
@@ -200,6 +204,17 @@ DiyaText >> lastSeparatorFrom: index [
 { #category : #accessing }
 DiyaText >> lines [
 	^ lines
+]
+
+{ #category : #accessing }
+DiyaText >> maxLineHeight [
+	texture ifNil: [ ^0].
+	^ texture linespace
+]
+
+{ #category : #accessing }
+DiyaText >> maxLineWidth [
+	^ maxLineWidth
 ]
 
 { #category : #accessing }
@@ -236,6 +251,7 @@ DiyaText >> update [
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
 	vbuffer autoRelease.
 	self drawText.
+	dirty := false.
 	^true
 ]
 
@@ -252,8 +268,8 @@ DiyaText >> valign: v [
 
 { #category : #accessing }
 DiyaText >> valignText:h [
-	self valign = #middle ifTrue:[^ (0 max:((self extent y - h) / 2 ) asFloat) negated].
-	self valign = #bottom ifTrue:[^ (0 max:(self extent y - h )) negated].
+	self valign = #middle ifTrue:[^ (0 max:((self extent y - h) / 2 ) asFloat)].
+	self valign = #bottom ifTrue:[^ (0 max:(self extent y - h ))].
 	^0
 ]
 

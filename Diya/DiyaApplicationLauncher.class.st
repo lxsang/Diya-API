@@ -26,6 +26,7 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 	root on: #quit do: [:e| running := false].
 	root on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
+		"Transcript show: e mapped worldPosition asString;cr."
 		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
 	].
 ]
@@ -79,8 +80,8 @@ DiyaApplicationLauncher >> running [
 { #category : #initialization }
 DiyaApplicationLauncher >> setup [
 	event := SDL_Event new.
-	root addNode: (Diya2DNode new) at: 0@10.
-	txtFPS := root addNode:(DiyaText data: '') at: ( self context resolution x - 80)@40.
+	root addNode: (Diya2DNode new) at: 0@0.
+	txtFPS := root addNode:(DiyaText data: '') at: ( self context resolution x - 80)@(self context resolution y - 40).
 	txtFPS extent: 80@40.
 	txtFPS fontSize: 18.
 	txtFPS color: Color red.

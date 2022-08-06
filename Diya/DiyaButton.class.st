@@ -29,7 +29,8 @@ DiyaButton >> initialize [
 	super initialize.
 	style 
 		set:#textAlign value: #center;
-		set:#textVAlign value: #middle.
+		set:#textVAlign value: #middle;
+		set:#border value: 1.
 	rec := self addNode: (DiyaRectangle new).
 	label := self addNode: (DiyaLabel new).
 	label txt
@@ -49,6 +50,6 @@ DiyaButton >> text: string [
 { #category : #accessing }
 DiyaButton >> updateLayout [
 	rec extent: self extent.
-	label position: 0@(self extent y).
+	label position: 0@0.
 	label extent: self extent.
 ]

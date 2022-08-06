@@ -95,13 +95,13 @@ DiyaEllipse >> setUpShader [
 DiyaEllipse >> update [
 	bbox := Rectangle origin: ((rx negated) @ (ry negated)) corner: (rx @ ry).
 	{
-		bbox origin x. bbox corner y. 0.0. 0.0.            
-      bbox origin x. bbox origin y. 0.0. 1.0.
-      bbox corner x. bbox origin y. 1.0. 1.0.
+		bbox origin x. bbox origin y. 0.0. 0.0.            
+      bbox origin x. bbox corner y. 0.0. 1.0.
+      bbox corner x. bbox corner y. 1.0. 1.0.
 
-		bbox corner x. bbox origin y. 1.0. 1.0.
-		bbox corner x. bbox corner y. 1.0. 0.0.
-		bbox origin x. bbox corner y. 0.0. 0.0.      
+		bbox corner x. bbox corner y. 1.0. 1.0.
+		bbox corner x. bbox origin y. 1.0. 0.0.
+		bbox origin x. bbox origin y. 0.0. 0.0.      
 	} doWithIndex: [:e :i| vbuffer at: i put: e].
 	^true
 ]

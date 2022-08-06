@@ -10,17 +10,17 @@ Diya2DShader class >> fragmentShader [
 #ifdef GL_ES
   precision highp float;
 #endif
-
 uniform vec2 u_resolution;
 uniform vec2 u_mouse;
 uniform float u_time;
 // 2D uniforms
 uniform int u_texture_type;
 uniform vec4 u_color;
+uniform vec4 u_bg_color;
 uniform sampler2D u_texture;
 varying vec2 texcoord;
 void main(void) {
-	vec4 texcolor = vec4(1,1,1,1);
+	vec4 texcolor = vec4(0,0,0,0);
 	// alpha
 	if(u_texture_type == 0x1906) { 
 		texcolor = vec4(1, 1, 1, texture2D(u_texture, texcoord).a);
@@ -29,7 +29,19 @@ void main(void) {
 	else if (u_texture_type == 0x1908){ 
 		texcolor =  texture2D(u_texture, texcoord);
 	}
-  	gl_FragColor =  texcolor * u_color;
+	else if(u_texture_type == 1)
+	{
+		texcolor = vec4(1,1,1,1);
+	}
+  	vec4 pxcolor =  texcolor * u_color;
+	if(pxcolor.a > 0.0)
+	{
+		gl_FragColor = pxcolor;
+	}
+	else
+	{
+	   gl_FragColor = u_bg_color;
+	}
 }'
 ]
 
@@ -55,6 +67,7 @@ Diya2DShader >> setUpUniforms [
 	self addUniform: #u_texture of: Uniform1i.
 	self addUniform: #u_texture_type of: Uniform1i.
 	self addUniform: #u_color of: Uniform4F.
+	self addUniform: #u_bg_color of: Uniform4F.
 	self addUniform: #u_border_color of: Uniform4F.
 	self addUniform: #u_border of: Uniform1F.
 ]

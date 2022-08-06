@@ -10,8 +10,13 @@ Class {
 }
 
 { #category : #accessing }
-Diya2DPrimShape >> border [
-	^style get: #border
+Diya2DPrimShape >> bgColor [
+	^style get: #bgcolor
+]
+
+{ #category : #accessing }
+Diya2DPrimShape >> bgColor: c [
+	^style set: #bgcolor value: c
 ]
 
 { #category : #accessing }
@@ -22,6 +27,11 @@ Diya2DPrimShape >> borderColor [
 { #category : #accessing }
 Diya2DPrimShape >> borderColor: c [
 	style set: #borderColor value: c.
+]
+
+{ #category : #accessing }
+Diya2DPrimShape >> borderWidth [
+	^style get: #border
 ]
 
 { #category : #accessing }
@@ -36,14 +46,12 @@ Diya2DPrimShape >> boundingBox [
 
 { #category : #accessing }
 Diya2DPrimShape >> color [
-	self texture ifNotNil: [ ^ self style get: #color. ].
-	^ self style get: #bgcolor.
+	^ self style get: #color.
 ]
 
 { #category : #accessing }
 Diya2DPrimShape >> color: value [
-	self texture ifNotNil: [ ^ self style set: #color value: value. ].
-	^ self style set: #bgcolor value: value.
+	^ self style set: #color value: value
 ]
 
 { #category : #initialization }
@@ -61,7 +69,7 @@ Diya2DPrimShape >> draw [
 	OpenGL drawArrays: type first:0  count:((vbuffer size )>> 2 ).
 	"reset value"
 	self texture ifNotNil: [self texture drop.].
-	self border > 0 ifTrue: [ self drawBorder ].
+	self borderWidth > 0 ifTrue: [ self drawBorder ].
 	context vao disableAttribute: 0.
 ]
 
@@ -69,9 +77,9 @@ Diya2DPrimShape >> draw [
 Diya2DPrimShape >> drawBorder [
 	"Diya2DShader uniqueInstance use."
 	shader setUniform: #u_color value: self borderColor  asGL4FArray;
-	setUniform: #u_texture_type value: 0.
+	setUniform: #u_texture_type value: 1.
 	OpenGL
-		lineWidth: self border.
+		lineWidth: self borderWidth.
 	self drawLines.
 	OpenGL lineWidth: 1.0.
 ]
@@ -111,6 +119,7 @@ Diya2DPrimShape >> setUpShader [
 	super setUpShader.
 	self shader
 			setUniform: #u_color value: self color asGL4FArray;
+			setUniform: #u_bg_color value: self bgColor asGL4FArray;
 			setUniform: #u_texture_type value:
 				(self texture ifNil: [ 0 ] ifNotNil:[self texture format]).
 ]

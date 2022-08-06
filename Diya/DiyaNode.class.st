@@ -13,7 +13,8 @@ Class {
 		'dirty',
 		'ehandlers',
 		'root',
-		'style'
+		'style',
+		'id'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -69,6 +70,11 @@ DiyaNode >> extent [
 	^  self subclassResponsibility  
 ]
 
+{ #category : #accessing }
+DiyaNode >> id [
+	^ id
+]
+
 { #category : #initialization }
 DiyaNode >> initialize [
 	super initialize.
@@ -80,6 +86,7 @@ DiyaNode >> initialize [
 	ehandlers := Dictionary new.
 	style := DiyaNodeStyle new.
 	root := nil.
+	id := Random new nextInt: 1e6
 ]
 
 { #category : #'as yet unclassified' }
@@ -185,7 +192,7 @@ DiyaNode >> setUpShader [
 			"in shader, window origin is bottom left conor of the window
 			the mouse position should be transformed to this coodinate"
 			shader setUniform: #u_mouse value:
-				{ context mouse x. context resolution y - context mouse y }.
+				{ context mouse x. context mouse y }.
 		].
 		mem free.
 ]

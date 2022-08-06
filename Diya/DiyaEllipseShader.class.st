@@ -89,8 +89,8 @@ void draw_ellipse(inout vec4 c, vec2 p, Ellipse e, float border)
 
 vec2 rotate_point(vec2 center, vec2 p,float angle)
 {
-  float s = sin(angle);
-  float c = cos(angle);
+  float s = sin(-angle);
+  float c = cos(-angle);
 
   // translate point back to origin:
   p.x -= center.x;
@@ -110,7 +110,7 @@ void main() {
     vec4 color = vec4(0);
     //defining ellipse
     Ellipse e = create_ellipse(middle, u_ry, u_rx);
-    draw_ellipse(color, rotate_point(middle, gl_FragCoord.xy, rotation), e, u_border);
+    draw_ellipse(color,rotate_point(middle, gl_FragCoord.xy, rotation), e, u_border);
     // Output to screen
     gl_FragColor = color;
 }
@@ -125,6 +125,7 @@ precision mediump float;
 #endif
 uniform mat4 u_projection;
 uniform mat3 u_transform;
+uniform vec2 u_resolution;
 varying float rotation;
 varying vec2 middle;
 varying vec2 texcoord;
@@ -133,7 +134,8 @@ void main()
 	vec3 coord_global = u_transform * vec3(gl_Vertex.xy, 1.0);
 	gl_Position = u_projection * vec4(coord_global.xy, 0, 1.0);
 	rotation = atan(u_transform[1][0], u_transform[0][0]);
-	middle = (u_transform * vec3(0.0,0.0,1.0)).xy;
+	vec2 org = (u_transform * vec3(0.0,0.0,1.0)).xy;
+	middle = vec2(org.x, u_resolution.y - org.y);
 	texcoord = gl_Vertex.zw;
 }'
 ]

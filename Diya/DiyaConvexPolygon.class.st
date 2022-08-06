@@ -11,7 +11,7 @@ DiyaConvexPolygon >> calculateVertices [
 	vbuffer ifNotNil: [ vbuffer free ].
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size:size.
 	vbuffer autoRelease.
-	points sort:[:a :b| a angle < b angle]. 
+	points sort:[:a :b| a angle > b angle]. 
 	index := 1.
 	points do:[:point|
 		texcoord := self texcoordOf: point.
@@ -19,7 +19,7 @@ DiyaConvexPolygon >> calculateVertices [
 			at: index put: point x;
 			at: index + 1 put: point y;
 			at: index + 2 put: texcoord x;
-			at: index + 3 put: 1.0 - texcoord y.
+			at: index + 3 put: texcoord y.
 		index := index + 4.
 	].
 	p := points at: 2.
@@ -28,7 +28,7 @@ DiyaConvexPolygon >> calculateVertices [
 			at: index put:  p x;
 			at: index + 1 put: p y;
 			at: index + 2 put: texcoord x;
-			at: index + 3 put: 1.0 - texcoord y.
+			at: index + 3 put: texcoord y.
 ]
 
 { #category : #initialization }

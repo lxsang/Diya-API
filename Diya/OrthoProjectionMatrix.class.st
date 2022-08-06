@@ -27,10 +27,10 @@ OrthoProjectionMatrix >> bottom [
 { #category : #initialization }
 OrthoProjectionMatrix >> calculate [
 	self at:1 at:1 put: (2.0 /(self right - self left)).
-	self at:2 at:2 put: (2.0 / (self top - self bottom)).
+	self at:2 at:2 put: (2.0 / (self bottom - self top)).
 	self at:3 at:3 put: (2.0 / (self far - self near)) negated.
 	self at:4 at:1 put: ((self right + self left)/ (self right - self left)) negated.
-	self at:4 at:2 put: ((self top + self bottom) / (self top - self bottom)) negated.
+	self at:4 at:2 put: ((self top + self bottom) / (self bottom - self top)) negated.
 	self at:4 at:3 put: ((self far + self near)/(self far - self near)) negated.
 ]
 

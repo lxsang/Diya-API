@@ -17,9 +17,14 @@ DiyaLabel >> fontSize [
 { #category : #accessing }
 DiyaLabel >> fontSize: value [
 	txt fontSize: value.
-	icon ifNotNil: [ icon fontSize: value ].
+	"icon ifNotNil: [ icon fontSize: value ]."
 	"dirty := true."
 
+]
+
+{ #category : #accessing }
+DiyaLabel >> getHAlign: offset [
+	^ 0 max: (txt alignLine: ( txt maxLineWidth)).
 ]
 
 { #category : #accessing }
@@ -33,31 +38,24 @@ DiyaLabel >> icon: anObject [
 	anObject isNumber ifTrue: [
 		icon := self addNode: (DiyaFontIcon data: anObject).
 		icon align: #left].
-	anObject isString ifTrue: [ icon := self addNode: (DiyaImageView from: anObject)].
+	anObject isString ifTrue: [
+		icon := self addNode: (DiyaImageIcon from: anObject).
+	].
 	icon ifNil: [ ^ DiyaCoreAPIError signal: 'Invalid icon identification'].
 	dirty := true.
 ]
 
 { #category : #accessing }
-DiyaLabel >> iconPosition: offset [
-	|xpos|
-	txt splitLines.
-	txt lines ifEmpty: [ ^0@0 ].
-	xpos := txt alignLine: txt lines first key.
-	^xpos@0
-]
-
-{ #category : #accessing }
 DiyaLabel >> iconSize [
 	icon ifNil: [ ^0 ].
-	^icon fontSize.
+	^ icon iconSize
 
 ]
 
 { #category : #accessing }
 DiyaLabel >> iconSize: v [
 	icon ifNil: [ ^self ].
-	icon fontSize: v.
+	icon iconSize: v
 
 ]
 
@@ -82,16 +80,21 @@ DiyaLabel >> txt: anObject [
 
 { #category : #accessing }
 DiyaLabel >> updateLayout [
-	|offset isize|
+	|offset isize align|
 	offset := 0.
 	icon ifNotNil: [
-		isize := icon fontSize.
-		offset :=  isize + (isize >> 1).
-		icon extent:offset @ (extent y).
+		isize := self iconSize.
+		offset :=  isize + (isize >> 2).
+		"icon extent:offset @ (extent y)."
 	].
 	txt extent: (extent x - offset) @ (extent y).
-	txt position: offset @ 0.
+	"lookahead update"
+	txt update.
+	align := self getHAlign: offset.
+	txt position: offset  @ ( (self extent y - txt extent y ) >> 1).
+	
 	icon ifNil: [ ^self ].
-	icon position: (self iconPosition: offset).
+	"{ offset. txt extent. txt maxLineWidth. align } inspect."
+	icon position: (align @( (self extent y - self iconSize ) >> 1)).
 	
 ]
