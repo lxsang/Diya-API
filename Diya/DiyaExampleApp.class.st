@@ -70,9 +70,10 @@ DiyaExampleApp >> setup [
 	node textureNamed: 'mrsang.png'.
 	node borderWidth: 3.0.
 	
-	"icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 10@24.
+	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 240@500.
 	icon fontSize: 24.
-	icon color: (Color r: 209/255 g: 66/255  b:245/255 )."
+	icon bgColor: Color transparent.
+	icon color: (Color r: 209/255 g: 66/255  b:245/255 ).
 	
 	button := root addNode: (DiyaButton text: 'Click me !') at: 240@460.
 	button extent: 200@40.
