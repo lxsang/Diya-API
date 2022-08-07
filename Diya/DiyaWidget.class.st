@@ -43,14 +43,3 @@ DiyaWidget >> extent: size [
 DiyaWidget >> initialize [
 	super initialize.
 ]
-
-{ #category : #accessing }
-DiyaWidget >> update [
-	self updateLayout.
-	^ true
-]
-
-{ #category : #accessing }
-DiyaWidget >> updateLayout [
-	self subclassResponsibility 
-]

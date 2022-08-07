@@ -89,7 +89,7 @@ DiyaNode >> initialize [
 	id := Random new nextInt: 1e6
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DiyaNode >> inner: aPoint [
 	^ self subclassResponsibility 
 ]
@@ -140,7 +140,7 @@ DiyaNode >> register: aBlock to: eventName [
 DiyaNode >> render [
 	dirty ifTrue:[
 		dirty := self update not].
-	shader ifNotNil: [ self setUpShader  ].
+	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
 	children do: [:c  | c render  ]. 
@@ -176,6 +176,16 @@ DiyaNode >> scale [
 DiyaNode >> scale: anObject [
 	scale := anObject.
 	self updateTF.
+]
+
+{ #category : #initialization }
+DiyaNode >> setClean [
+	dirty := false
+]
+
+{ #category : #initialization }
+DiyaNode >> setDirty [
+	dirty := true
 ]
 
 { #category : #accessing }
@@ -227,7 +237,7 @@ DiyaNode >> tf [
 	^ tf
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'event handling' }
 DiyaNode >> trigger: evt [
 	evt enable ifFalse:[^self].
 	ehandlers at: evt mapped type ifPresent:[:handler| handler value: evt].

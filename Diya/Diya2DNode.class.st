@@ -45,7 +45,7 @@ Diya2DNode >> initialize [
 	vbuffer := nil.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Diya2DNode >> inner: aPoint [
 	^ self boundingBox containsPoint: (self local: aPoint)
 ]
@@ -57,7 +57,7 @@ Diya2DNode >> local: aPoint [
 	
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Diya2DNode >> recFromBuffer [
 	|maxX maxY minX minY x y|
 	maxX := minX := vbuffer at: 1.
