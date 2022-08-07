@@ -1,5 +1,5 @@
 Class {
 	#name : #DiyaTableLayout,
-	#superclass : #DiyaWidget,
+	#superclass : #DiyaLayout,
 	#category : #'Diya-Widgets'
 }

@@ -79,7 +79,7 @@ DiyaLabel >> txt: anObject [
 ]
 
 { #category : #accessing }
-DiyaLabel >> updateLayout [
+DiyaLabel >> update [
 	|offset isize align|
 	offset := 0.
 	icon ifNotNil: [
@@ -96,5 +96,6 @@ DiyaLabel >> updateLayout [
 	icon ifNil: [ ^self ].
 	"{ offset. txt extent. txt maxLineWidth. align } inspect."
 	icon position: (align @( (self extent y - self iconSize ) >> 1)).
+	^ true
 	
 ]

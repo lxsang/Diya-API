@@ -14,9 +14,9 @@ DiyaButton class >> text: string [
 ]
 
 { #category : #accessing }
-DiyaButton >> icon: id [
-	label icon: id.
-	label updateLayout.
+DiyaButton >> icon: ico [
+	label icon: ico.
+	label setDirty.
 ]
 
 { #category : #accessing }
@@ -48,8 +48,9 @@ DiyaButton >> text: string [
 ]
 
 { #category : #accessing }
-DiyaButton >> updateLayout [
+DiyaButton >> update [
 	rec extent: self extent.
 	label position: 0@0.
 	label extent: self extent.
+	^true
 ]
