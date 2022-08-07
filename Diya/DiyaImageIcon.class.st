@@ -5,17 +5,24 @@ Class {
 }
 
 { #category : #accessing }
-DiyaImageIcon >> iconSize [
-	^ self extent x
+DiyaImageIcon >> borderWidth [
+	^0
 ]
 
 { #category : #accessing }
-DiyaImageIcon >> iconSize:v [
-	^ self extent: v@v
+DiyaImageIcon >> iconSize [
+	^ self ? #iconSize
 ]
 
 { #category : #accessing }
 DiyaImageIcon >> initialize [
 	super initialize.
-	style set: #border value: 0
+]
+
+{ #category : #accessing }
+DiyaImageIcon >> update [
+	|v|
+	v := self iconSize.
+	self extent: (v@v).
+	^super update
 ]

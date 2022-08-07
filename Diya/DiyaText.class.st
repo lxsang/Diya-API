@@ -27,13 +27,7 @@ DiyaText class >> data: string shader: s [
 
 { #category : #'menu messages' }
 DiyaText >> align [
-	^ self style get: #textAlign
-]
-
-{ #category : #'menu messages' }
-DiyaText >> align: v [
-	self style set: #textAlign value: v.
-	self formatText
+	^ self ? #xAlign
 ]
 
 { #category : #accessing }
@@ -55,6 +49,11 @@ DiyaText >> allocMemory [
 ]
 
 { #category : #accessing }
+DiyaText >> borderWidth [
+	^0
+]
+
+{ #category : #accessing }
 DiyaText >> data [
 	^ data
 ]
@@ -62,7 +61,7 @@ DiyaText >> data [
 { #category : #accessing }
 DiyaText >> data: anObject [
 	data := anObject.
-	dirty := true
+	self setDirty
 ]
 
 { #category : #initialization }
@@ -84,36 +83,22 @@ DiyaText >> drawText [
 { #category : #accessing }
 DiyaText >> extent: v [
 	bbox := Rectangle origin: 0@0 corner: (v x) @ (v y negated ). 
-	dirty := true
+	self setDirty
 ]
 
 { #category : #accessing }
 DiyaText >> fontName [
-	^ self style get: #fontFamily
-]
-
-{ #category : #initialization }
-DiyaText >> fontName: name style: face size: size [
-	name  ifNotNil: [style set:#fontFamily value: name].
-	face ifNotNil: [style set: #fontStyle value:face].
-	style set: #fontSize value: size.
-	dirty := true.
-	self initTexture
+	^ self ? #fontFamily
 ]
 
 { #category : #accessing }
 DiyaText >> fontSize [
-	^ self style get:#fontSize
-]
-
-{ #category : #initialization }
-DiyaText >> fontSize: size [
-	self fontName: nil style:nil  size: size
+	^ self ? #fontSize
 ]
 
 { #category : #accessing }
 DiyaText >> fontStyle [
-	^ self style get: #fontStyle
+	^ self ? #fontStyle
 ]
 
 { #category : #accessing }
@@ -187,8 +172,6 @@ DiyaText >> initialize [
 	data := nil.
 	wrap := false.
 	texheight := 0.
-	style set: #border value: 0.
-	"style set: #bgcolor value: Color red."
 	type := GL_QUADS.
 	maxLineWidth := 0.
 ]
@@ -237,7 +220,7 @@ DiyaText >> texture [
 	texheight = texture height ifFalse: [
 		texheight := texture height.
 		self update.
-		dirty := false.	
+		self setClean.
 	].
 	^texture
 ]
@@ -251,19 +234,12 @@ DiyaText >> update [
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
 	vbuffer autoRelease.
 	self drawText.
-	dirty := false.
 	^true
 ]
 
 { #category : #'menu messages' }
 DiyaText >> valign [
-	^ self style get: #textVAlign
-]
-
-{ #category : #'menu messages' }
-DiyaText >> valign: v [
-	self style set: #textVAlign value: v.
-	self formatText.
+	^ self ? #yAlign
 ]
 
 { #category : #accessing }

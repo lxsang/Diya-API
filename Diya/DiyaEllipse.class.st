@@ -67,7 +67,7 @@ DiyaEllipse >> rx [
 { #category : #accessing }
 DiyaEllipse >> rx: anObject [
 	rx := anObject.
-	dirty := true.
+	self setDirty
 ]
 
 { #category : #accessing }
@@ -78,15 +78,15 @@ DiyaEllipse >> ry [
 { #category : #accessing }
 DiyaEllipse >> ry: anObject [
 	ry := anObject.
-	dirty := true
+	self setDirty
 ]
 
 { #category : #initialization }
 DiyaEllipse >> setUpShader [
 	super setUpShader.
 	self shader
-		setUniform: #u_border value: (style get: #border);
-		setUniform: #u_border_color value: (style get:#borderColor) asGL4FArray;
+		setUniform: #u_border value: (self ? #border);
+		setUniform: #u_border_color value: ( self ? #borderColor) asGL4FArray;
 		setUniform: #u_rx value: rx;
 		setUniform: #u_ry value: ry.
 ]

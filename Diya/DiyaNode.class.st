@@ -13,7 +13,7 @@ Class {
 		'dirty',
 		'ehandlers',
 		'root',
-		'style',
+		'styleName',
 		'id'
 	],
 	#pools : [
@@ -30,6 +30,20 @@ DiyaNode class >> with: shader [
 ]
 
 { #category : #accessing }
+DiyaNode >> ? style [
+	| styles value|
+	styleName ifNotNil: [ 
+		styles := DiyaUIThemesManager uniqueInstance currentTheme ? (self styleName).
+		value := styles at: style ifAbsent:[nil].
+		value ifNotNil: [ ^value ].
+	].
+	"try to look at parent"
+	parent ifNil:[self styleNotFound: style].
+	"parent styleName  = self styleName ifTrue: [self styleNotFound: style]."
+	^ parent ? style
+]
+
+{ #category : #accessing }
 DiyaNode >> addNode: node [
 	^self addNode: node at: 0@0 
 ]
@@ -41,7 +55,6 @@ DiyaNode >> addNode: node at: pos [
 	node position: pos.
 	children add: node.
 	node root: self root.
-	node style parent: style.
 	^ node
 ]
 
@@ -84,7 +97,7 @@ DiyaNode >> initialize [
 	children := OrderedCollection new.
 	dirty := false.
 	ehandlers := Dictionary new.
-	style := DiyaNodeStyle new.
+	styleName := nil.
 	root := nil.
 	id := Random new nextInt: 1e6
 ]
@@ -92,6 +105,11 @@ DiyaNode >> initialize [
 { #category : #accessing }
 DiyaNode >> inner: aPoint [
 	^ self subclassResponsibility 
+]
+
+{ #category : #testing }
+DiyaNode >> isDirty [
+	^ dirty
 ]
 
 { #category : #testing }
@@ -221,15 +239,23 @@ DiyaNode >> shader: anObject [
 ]
 
 { #category : #accessing }
-DiyaNode >> style [
-	^style
+DiyaNode >> styleName [
+	^ styleName
 ]
 
 { #category : #accessing }
-DiyaNode >> style: aStyle [
-	style := aStyle.
-	dirty := true.
-	parent ifNotNil: [ style parent: parent style ]
+DiyaNode >> styleName: anObject [
+	styleName := anObject.
+	self setDirty
+]
+
+{ #category : #'event handling' }
+DiyaNode >> styleNotFound: style [
+	"looking for default theme in global"
+	^(DiyaUIThemesManager uniqueInstance defaultTheme ? (self styleName))
+		at: style ifAbsent:[
+			DiyaCoreAPIError signal: 'Query undefined style ', style, ' in', styleName.
+		]
 ]
 
 { #category : #accessing }

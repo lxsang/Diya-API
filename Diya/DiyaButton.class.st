@@ -27,10 +27,6 @@ DiyaButton >> iconSize: size [
 { #category : #initialization }
 DiyaButton >> initialize [
 	super initialize.
-	style 
-		set:#textAlign value: #center;
-		set:#textVAlign value: #middle;
-		set:#border value: 1.
 	rec := self addNode: (DiyaRectangle new).
 	label := self addNode: (DiyaLabel new).
 	label txt

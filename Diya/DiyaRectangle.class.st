@@ -23,7 +23,7 @@ DiyaRectangle >> drawLines [
 { #category : #accessing }
 DiyaRectangle >> extent: v [
 	bbox := Rectangle origin:0@0 corner: v.
-	dirty := true
+	self setDirty
 ]
 
 { #category : #accessing }

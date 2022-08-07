@@ -19,9 +19,7 @@ DiyaApplicationLauncher >> appNode [
 DiyaApplicationLauncher >> bindGlobalEvent [
 	|pointer |
 	pointer := root addNode: (DiyaCircle r: 10) at: 200@200. 
-	pointer color: Color orange.
-	pointer borderColor: Color red.
-	pointer borderWidth: 2.
+	pointer styleName: #pointer.
 	root on: #keydown do:[:e| Transcript show: 'keydown...';cr. running := false.].
 	root on: #quit do: [:e| running := false].
 	root on: #(fingerdown fingermotion mousemotion) do:[:e|
@@ -80,11 +78,21 @@ DiyaApplicationLauncher >> running [
 { #category : #initialization }
 DiyaApplicationLauncher >> setup [
 	event := SDL_Event new.
+	DiyaUIThemesManager uniqueInstance currentTheme
+		define: #fps_text styles: { 
+			#color -> Color red.
+			#fontSize -> 18.
+			#bgColor -> Color transparent.
+		};
+		define: #pointer styles: { 
+			#borderColor -> Color red.
+			#bgColor -> Color orange.
+			#border -> 3
+		}.
 	root addNode: (Diya2DNode new) at: 0@0.
 	txtFPS := root addNode:(DiyaText data: '') at: ( self context resolution x - 80)@(self context resolution y - 40).
 	txtFPS extent: 80@40.
-	txtFPS fontSize: 18.
-	txtFPS color: Color red.
+	txtFPS styleName: #fps_text.
 	self bindGlobalEvent.
 	running := true.
 	self launch: self defaultApplication.

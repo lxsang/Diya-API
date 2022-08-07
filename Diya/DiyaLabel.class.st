@@ -15,14 +15,6 @@ DiyaLabel >> fontSize [
 ]
 
 { #category : #accessing }
-DiyaLabel >> fontSize: value [
-	txt fontSize: value.
-	"icon ifNotNil: [ icon fontSize: value ]."
-	"dirty := true."
-
-]
-
-{ #category : #accessing }
 DiyaLabel >> getHAlign: offset [
 	^ 0 max: (txt alignLine: ( txt maxLineWidth)).
 ]
@@ -36,26 +28,18 @@ DiyaLabel >> icon [
 DiyaLabel >> icon: anObject [
 	icon := nil.
 	anObject isNumber ifTrue: [
-		icon := self addNode: (DiyaFontIcon data: anObject).
-		icon align: #left].
+		icon := self addNode: (DiyaFontIcon data: anObject).].
 	anObject isString ifTrue: [
 		icon := self addNode: (DiyaImageIcon from: anObject).
 	].
 	icon ifNil: [ ^ DiyaCoreAPIError signal: 'Invalid icon identification'].
-	dirty := true.
+	self setDirty
 ]
 
 { #category : #accessing }
 DiyaLabel >> iconSize [
 	icon ifNil: [ ^0 ].
 	^ icon iconSize
-
-]
-
-{ #category : #accessing }
-DiyaLabel >> iconSize: v [
-	icon ifNil: [ ^self ].
-	icon iconSize: v
 
 ]
 
@@ -75,7 +59,7 @@ DiyaLabel >> txt [
 { #category : #accessing }
 DiyaLabel >> txt: anObject [
 	txt data: anObject.
-	dirty := true
+	self setDirty
 ]
 
 { #category : #accessing }

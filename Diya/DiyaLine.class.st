@@ -62,7 +62,7 @@ DiyaLine >> from [
 { #category : #accessing }
 DiyaLine >> from: anObject [
 	from := anObject.
-	dirty := true.
+	self setDirty
 ]
 
 { #category : #initialization }
@@ -74,10 +74,9 @@ DiyaLine >> initialize [
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size:8.
 	vbuffer autoRelease.
 	type := GL_LINES.
-	style set: #border value: 0
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DiyaLine >> inner: aPoint [
 		^false
 ]
@@ -90,7 +89,7 @@ DiyaLine >> to [
 { #category : #accessing }
 DiyaLine >> to: anObject [
 	to := anObject.
-	dirty := true.
+	self setDirty
 ]
 
 { #category : #accessing }

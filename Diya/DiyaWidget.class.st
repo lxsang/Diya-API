@@ -12,22 +12,6 @@ DiyaWidget class >> fromStyle: aStyle [
 	^self new style: aStyle; yourself 
 ]
 
-{ #category : #accessing }
-DiyaWidget >> bgColor:v [
-	^style set: #bgcolor value: v
-
-]
-
-{ #category : #accessing }
-DiyaWidget >> color [
-	^style get: #color
-]
-
-{ #category : #accessing }
-DiyaWidget >> color: value [
-	style set: #color value: value
-]
-
 { #category : #geometry }
 DiyaWidget >> extent [
 	^extent
@@ -36,7 +20,7 @@ DiyaWidget >> extent [
 { #category : #geometry }
 DiyaWidget >> extent: size [
 	extent := size.
-	dirty := true.
+	self setDirty.
 ]
 
 { #category : #initialization }

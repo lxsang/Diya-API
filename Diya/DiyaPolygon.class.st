@@ -37,7 +37,7 @@ DiyaPolygon >> points [
 { #category : #accessing }
 DiyaPolygon >> points: anObject [
 	points := anObject.
-	dirty := true
+	self setDirty
 ]
 
 { #category : #accessing }

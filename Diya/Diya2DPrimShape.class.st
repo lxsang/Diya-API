@@ -10,48 +10,13 @@ Class {
 }
 
 { #category : #accessing }
-Diya2DPrimShape >> bgColor [
-	^style get: #bgcolor
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> bgColor: c [
-	^style set: #bgcolor value: c
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> borderColor [
-	^style get: #borderColor
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> borderColor: c [
-	style set: #borderColor value: c.
-]
-
-{ #category : #accessing }
 Diya2DPrimShape >> borderWidth [
-	^style get: #border
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> borderWidth: w [
-	style set: #border value: w.
+	^ self ? #border
 ]
 
 { #category : #accessing }
 Diya2DPrimShape >> boundingBox [ 
 	^ bbox applyTf: self tf.
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> color [
-	^ self style get: #color.
-]
-
-{ #category : #accessing }
-Diya2DPrimShape >> color: value [
-	^ self style set: #color value: value
 ]
 
 { #category : #initialization }
@@ -76,7 +41,7 @@ Diya2DPrimShape >> draw [
 { #category : #initialization }
 Diya2DPrimShape >> drawBorder [
 	"Diya2DShader uniqueInstance use."
-	shader setUniform: #u_color value: self borderColor  asGL4FArray;
+	shader setUniform: #u_color value: (self ? #borderColor)  asGL4FArray;
 	setUniform: #u_texture_type value: 1.
 	OpenGL
 		lineWidth: self borderWidth.
@@ -108,7 +73,7 @@ Diya2DPrimShape >> initialize [
 	bbox := Rectangle origin: 0@0 corner: 0@0.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 Diya2DPrimShape >> inner: aPoint [
 	bbox ifNil: [ ^false ].
 	^ bbox containsPoint: (self local: aPoint)
@@ -118,8 +83,8 @@ Diya2DPrimShape >> inner: aPoint [
 Diya2DPrimShape >> setUpShader [
 	super setUpShader.
 	self shader
-			setUniform: #u_color value: self color asGL4FArray;
-			setUniform: #u_bg_color value: self bgColor asGL4FArray;
+			setUniform: #u_color value: (self ? #color) asGL4FArray;
+			setUniform: #u_bg_color value: (self ? #bgColor) asGL4FArray;
 			setUniform: #u_texture_type value:
 				(self texture ifNil: [ 0 ] ifNotNil:[self texture format]).
 ]
