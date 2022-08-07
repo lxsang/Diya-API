@@ -24,7 +24,7 @@ DiyaExampleApp >> defineStyleSheet [
 			#borderColor -> Color red
 		};
 		define: #text_view styles: { 
-			#color -> Color green.
+			#color -> Color orange.
 			#fontSize -> 16.
 			#bgColor -> Color transparent.
 			#xAlign -> #center
@@ -103,12 +103,12 @@ DiyaExampleApp >> setup [
 	node textureNamed: 'mrsang.png'.
 	node styleName: #poly_view.
 	
-	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 240@500.
-	icon styleName: #text_icon_1 .
+	"icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 240@500.
+	icon styleName: #text_icon_1 ."
 	
 	button := root addNode: (DiyaButton text: 'Click me !') at: 240@460.
 	button extent: 200@40.
-	button icon:"16rF185"'mrsang.png'.
+	button icon:16rF185"'mrsang.png'".
 	button styleName: #button_view.
 	^ root 
 ]

@@ -14,6 +14,7 @@ Class {
 		'ehandlers',
 		'root',
 		'styleName',
+		'style',
 		'id'
 	],
 	#pools : [
@@ -30,17 +31,18 @@ DiyaNode class >> with: shader [
 ]
 
 { #category : #accessing }
-DiyaNode >> ? style [
-	| styles value|
-	styleName ifNotNil: [ 
-		styles := DiyaUIThemesManager uniqueInstance currentTheme ? (self styleName).
-		value := styles at: style ifAbsent:[nil].
+DiyaNode >> ? styleAttr [
+	| value|
+	styleName ifNotNil: [
+		style ifNil: [
+			style := DiyaUIThemesManager uniqueInstance currentTheme ? (self styleName).
+		].
+		value := style at: styleAttr ifAbsent:[nil].
 		value ifNotNil: [ ^value ].
 	].
-	"try to look at parent"
-	parent ifNil:[self styleNotFound: style].
-	"parent styleName  = self styleName ifTrue: [self styleNotFound: style]."
-	^ parent ? style
+	"try to look at parent style"
+	parent ifNil:[self styleNotFound: styleAttr].
+	^ parent ? styleAttr
 ]
 
 { #category : #accessing }
@@ -98,6 +100,7 @@ DiyaNode >> initialize [
 	dirty := false.
 	ehandlers := Dictionary new.
 	styleName := nil.
+	style := nil.
 	root := nil.
 	id := Random new nextInt: 1e6
 ]
@@ -246,16 +249,13 @@ DiyaNode >> styleName [
 { #category : #accessing }
 DiyaNode >> styleName: anObject [
 	styleName := anObject.
+	style := nil.
 	self setDirty
 ]
 
 { #category : #'event handling' }
-DiyaNode >> styleNotFound: style [
-	"looking for default theme in global"
-	^(DiyaUIThemesManager uniqueInstance defaultTheme ? (self styleName))
-		at: style ifAbsent:[
-			DiyaCoreAPIError signal: 'Query undefined style ', style, ' in', styleName.
-		]
+DiyaNode >> styleNotFound: styleAttr [
+	DiyaCoreAPIError signal: 'Query undefined style ', styleAttr, ' in', styleName.
 ]
 
 { #category : #accessing }
