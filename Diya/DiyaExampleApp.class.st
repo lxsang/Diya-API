@@ -49,9 +49,9 @@ DiyaExampleApp >> setup [
 	node bgColor: Color transparent.
 	node align: #center.
 	
-	"node := root addNode: (DiyaLine from: 10@10 to: 200@200).
+	node := root addNode: (DiyaLine from: 10@10 to: 200@200).
 	node color: (Color red).
-	node borderWidth: 2.0."
+	node borderWidth: 2.0.
 		
 	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 100@300.
 	ell borderColor: Color red.
