@@ -22,6 +22,10 @@ Diya2DPrimShape >> boundingBox [
 { #category : #initialization }
 Diya2DPrimShape >> draw [
 	vbuffer ifNil: [ ^self ].
+	OpenGL
+		enable: GL_CULL_FACE;
+		enable: GL_BLEND;
+		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	"configure vao vbo for texture QUAD"
 	self texture ifNotNil: [
 		self texture setup.
@@ -36,6 +40,9 @@ Diya2DPrimShape >> draw [
 	self texture ifNotNil: [self texture drop.].
 	self borderWidth > 0 ifTrue: [ self drawBorder ].
 	context vao disableAttribute: 0.
+	OpenGL
+		disable: GL_CULL_FACE;
+		disable: GL_BLEND.
 ]
 
 { #category : #initialization }

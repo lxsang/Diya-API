@@ -50,7 +50,7 @@ DiyaUIThemesManager >> defineDefaultTheme [
 			#xAlign -> #left.
 			#yAlign -> #middle.
 			#iconSize -> 24.
-	 	} 
+	 	}; yourself
 	)
 ]
 

@@ -24,16 +24,6 @@ DiyaEllipse class >> rx: rx ry: ry shader: s [
 ]
 
 { #category : #initialization }
-DiyaEllipse >> draw [
-	OpenGL
-		enable: GL_BLEND;
-		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
-	super draw.
-	OpenGL
-		disable: GL_BLEND
-]
-
-{ #category : #initialization }
 DiyaEllipse >> drawBorder [
 	"do nothing"
 ]

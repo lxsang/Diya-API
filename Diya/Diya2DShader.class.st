@@ -20,7 +20,13 @@ uniform vec4 u_bg_color;
 uniform sampler2D u_texture;
 varying vec2 texcoord;
 void main(void) {
-	vec4 texcolor = vec4(0,0,0,0);
+	if(u_texture_type == 1)
+	{
+		// draw border
+		gl_FragColor = u_color;
+		return;
+	}
+	vec4 texcolor = u_bg_color;
 	// alpha
 	if(u_texture_type == 0x1906) { 
 		texcolor = vec4(1, 1, 1, texture2D(u_texture, texcoord).a);
@@ -28,19 +34,15 @@ void main(void) {
 	// rgba
 	else if (u_texture_type == 0x1908){ 
 		texcolor =  texture2D(u_texture, texcoord);
-	}
-	else if(u_texture_type == 1)
-	{
-		texcolor = vec4(1,1,1,1);
-	}
+	} 
   	vec4 pxcolor =  texcolor * u_color;
 	if(pxcolor.a > 0.0)
-	{
+	{ 
 		gl_FragColor = pxcolor;
 	}
 	else
 	{
-	   gl_FragColor = u_bg_color;
+		gl_FragColor =  u_bg_color;
 	}
 }'
 ]

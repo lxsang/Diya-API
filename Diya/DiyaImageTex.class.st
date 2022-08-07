@@ -18,9 +18,9 @@ DiyaImageTex class >> fromFile: path [
 
 { #category : #accessing }
 DiyaImageTex >> drop [
-	OpenGL
+	"OpenGL
 		disable: GL_CULL_FACE;
-		disable: GL_BLEND.
+		disable: GL_BLEND."
 ]
 
 { #category : #'instance creation' }
@@ -72,10 +72,6 @@ DiyaImageTex >> path [
 
 { #category : #accessing }
 DiyaImageTex >> setup [
-	OpenGL
-		enable: GL_CULL_FACE;
-		enable: GL_BLEND;
-		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	OpenGLTexture
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_S param: GL_CLAMP_TO_EDGE;
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_T param: GL_CLAMP_TO_EDGE;

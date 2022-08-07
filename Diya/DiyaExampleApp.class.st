@@ -17,11 +17,17 @@ DiyaExampleApp >> defineStyleSheet [
 			#fontSize -> 24.
 			#bgColor -> Color transparent.
 		};
+		define: #text_icon_2 extend:#text_icon_1  styles: {
+			#fontSize -> 16.
+		 };
 		define: #image_view styles: { 
-			#color -> (Color r: 1.0 g:1.0  b:1.0  alpha:1.0 ).
-			#border -> 3.
+			#color -> Color white.
+			#border -> 1.
 			#bgColor -> Color cyan.
 			#borderColor -> Color red
+		};
+		define: #rect_view extend: #image_view styles: { 
+			#bgColor -> Color transparent.
 		};
 		define: #text_view styles: { 
 			#color -> Color orange.
@@ -36,18 +42,18 @@ DiyaExampleApp >> defineStyleSheet [
 		define: #ell_view styles: { 
 			#borderColor -> Color red.
 			#color -> Color white.
-			#bgColor -> Color cyan.
-			#border -> 3.
+			#border -> 2.
 		};
 		define: #poly_view styles: { 
 			#borderColor -> Color red.
 			#color -> Color green.
-			#border -> 3.
+			#border -> 1.
+			#bgColor -> Color transparent.
 		};
 		define: #button_view styles: { 
-			#borderColor -> Color red.
+			#borderColor -> (Color r: 0.051 g: 0.051  b: 0.051).
 			#color -> Color white.
-			#bgColor -> Color magenta.
+			#bgColor -> (Color r: 0.1529 g: 0.1529  b: 0.1529).
 			#border -> 1.
 			#yAlign -> #middle.
 			#xAlign -> #center
@@ -80,7 +86,7 @@ DiyaExampleApp >> setup [
 	node extent:200@200.
 	
 	node := root addNode: (DiyaRectangle new) at: 10@80.
-	node styleName: #image_view.
+	node styleName: #rect_view.
 	node extent: 240@320.
 	
 	node := root addNode: (DiyaText data: String loremIpsum) at: 10@80.
@@ -103,12 +109,13 @@ DiyaExampleApp >> setup [
 	node textureNamed: 'mrsang.png'.
 	node styleName: #poly_view.
 	
-	"icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 240@500.
-	icon styleName: #text_icon_1 ."
+	icon := root addNode: (DiyaFontIcon data: #(16rF101 16rF155 16rF185 16rF21B 16rF298 16rF254)) at: 240@500.
+	icon styleName: #text_icon_2.
 	
 	button := root addNode: (DiyaButton text: 'Click me !') at: 240@460.
 	button extent: 200@40.
 	button icon:16rF185"'mrsang.png'".
+	"button rotation: Float pi / 2.0."
 	button styleName: #button_view.
 	^ root 
 ]
