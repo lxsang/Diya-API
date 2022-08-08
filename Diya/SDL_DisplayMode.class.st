@@ -30,6 +30,11 @@ SDL_DisplayMode >> asString [
 	^ 'SDL display: ', self width asString, 'x', self height asString, ' - ', self depth asString, ' bits depth'.
 ]
 
+{ #category : #'color mapping' }
+SDL_DisplayMode >> colormapIfNeededFor: dest [
+	^ Color colorMapIfNeededFrom: self depth to: dest depth
+]
+
 { #category : #'accessing structure variables' }
 SDL_DisplayMode >> depth [
 	|format depth|
@@ -49,6 +54,11 @@ SDL_DisplayMode >> driverdata [
 SDL_DisplayMode >> driverdata: anObject [
 	"This method was automatically generated"
 	handle pointerAt: OFFSET_DRIVERDATA put: anObject getHandle.
+]
+
+{ #category : #'accessing structure variables' }
+SDL_DisplayMode >> extent [
+	^ self w @ self height
 ]
 
 { #category : #other }

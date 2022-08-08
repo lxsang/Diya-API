@@ -19,7 +19,17 @@ AssetManager class >> fromLocation: loc [
 	^self new from: loc; yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
+AssetManager >> addAsset: value [
+	assets at: value name put: value
+]
+
+{ #category : #adding }
+AssetManager >> addAssetName: name value: value [
+	assets at: name put: value
+]
+
+{ #category : #'instance creation' }
 AssetManager >> from: location [
 	base := location
 ]
@@ -31,12 +41,18 @@ AssetManager >> initialize [
 	base := self class defaultAssetLocation
 ]
 
-{ #category : #'as yet unclassified' }
-AssetManager >> name: fileName of: type [
-	^assets at: fileName ifAbsentPut: [(type fromFile: (base / fileName))].
+{ #category : #accessing }
+AssetManager >> name: name [ 
+	^assets at: name.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+AssetManager >> name: name of: type [
+	^assets at: name ifAbsentPut: [
+		(type fromFile: (base / name))].
+]
+
+{ #category : #accessing }
 AssetManager >> texture: name [
 	^self name: name of: DiyaImageTex
 ]

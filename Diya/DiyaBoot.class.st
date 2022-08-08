@@ -90,6 +90,8 @@ DiyaBoot >> init [
 	SDL2 showCursor: 0.
 	DiyaSingleton resetAll.
 	DiyaFontManager uniqueInstance loadFonts.
+
+Form class removeSelector: #serviceImageAsBackground
 ]
 
 { #category : #events }

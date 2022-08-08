@@ -2,7 +2,8 @@ Class {
 	#name : #DiyaImageTex,
 	#superclass : #OpenGLTexImage2D,
 	#instVars : [
-		'path'
+		'name',
+		'surface'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -25,28 +26,15 @@ DiyaImageTex >> drop [
 
 { #category : #'instance creation' }
 DiyaImageTex >> fromFile: aPath [
-	|form color index|
-	path := aPath.
-	Transcript show: 'Loading texture from ', path fullName;cr.
-	form := ImageReadWriter formFromFileNamed: path.
-	data := FFIExternalArray externalNewType: GLubyte size:(form width) * (form height) * 4.
-	LibC memset: data getHandle value: 0 size: data size.
-	data autoRelease.
-	width := form width.
-	height := form height.
-	index := 1.
-	0 to: height -1 do:[:y|
-		0 to: width - 1 do:[:x|
-			color := (form colorAt: x@y) as4bytesRGB.
-			data
-				at: index put: color first;
-				at: index + 1 put: (color at: 2);
-				at: index +2 put: (color at: 3);
-				at: index + 3 put: color last.
-			index := index + 4.
-		]
-	].
-	
+	Transcript show: 'Loading texture from ', aPath fullName;cr.
+	aPath exists ifFalse: [ ^DiyaCoreAPIError signal:'File not found ', aPath fullName ].
+	surface := SDL2Image SDLImgLoad: aPath fullName.
+	surface ifNil: [ ^DiyaCoreAPIError signal:'Unable to load ', aPath fullName ].
+	width := surface w.
+	height := surface h.
+	data := surface pixels.
+	surface autoRelease.
+	Transcript show: 'Loaded ', aPath fullName;cr.
 ]
 
 { #category : #'instance creation' }
@@ -66,8 +54,8 @@ DiyaImageTex >> mipmap [
 ]
 
 { #category : #accessing }
-DiyaImageTex >> path [
-	^ path
+DiyaImageTex >> name [
+	^ name
 ]
 
 { #category : #accessing }
@@ -77,4 +65,9 @@ DiyaImageTex >> setup [
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_T param: GL_CLAMP_TO_EDGE;
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MIN_FILTER param: GL_LINEAR;
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MAG_FILTER param: GL_LINEAR.
+]
+
+{ #category : #accessing }
+DiyaImageTex >> surface [
+	^ surface
 ]

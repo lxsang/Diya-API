@@ -68,12 +68,15 @@ DiyaExampleApp >> main [
 { #category : #accessing }
 DiyaExampleApp >> setup [
 	|node node1 ell label icon button|
+
+	"DiyaRendererContext uniqueInstance assets
+		addAsset:
+			((Form fromDisplay: ( Rectangle origin: 0@0 corner: 300@300 )) asDiyaTexture: 'display')."
 	self defineStyleSheet.
 	label := root addNode: (DiyaLabel new) at: 10@40.
 	label extent: 250@24.
 	label styleName:#text_icon_1.
 	label icon: 16rF254.
-	
 	
 	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
 	"node1 rotation: (Float pi / 8.0)."

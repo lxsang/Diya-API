@@ -11,6 +11,8 @@ Class {
 		'GL_ARRAY_BUFFER',
 		'GL_ARRAY_BUFFER_BINDING',
 		'GL_ATTACHED_SHADERS',
+		'GL_BGR',
+		'GL_BGRA',
 		'GL_BLEND',
 		'GL_BLUE',
 		'GL_BYTE',
@@ -115,6 +117,8 @@ OpenGLConstants class >> initCommonConstants [
 	GL_ALPHA := 16r1906.
 	GL_RGB := 16r1907.
 	GL_RGBA := 16r1908.
+	GL_BGR := 16r80E0.
+	GL_BGRA := 16r80E1.
 	GL_LINE_SMOOTH := 16r0B20.
 	GL_LINE_SMOOTH_HINT := 16r0C52
 ]

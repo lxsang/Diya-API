@@ -22,9 +22,11 @@ DiyaFFIBase class >> libNames [
 { #category : #accessing }
 DiyaFFIBase class >> moduleName [
 	self libNames do:[:aName|
-		(ExternalAddress loadSymbol: self checkSymbol from: aName) ifNotNil: [ 
-			^ aName
-		].
+		[
+			(ExternalAddress loadSymbol: self checkSymbol from: aName) ifNotNil: [ 
+				^ aName
+			]
+		] on: Error do: [  ]
 	].
 	DiyaCoreAPIError signal: 'Unable to find FFI library (', self checkSymbol, ')'.
 ]
