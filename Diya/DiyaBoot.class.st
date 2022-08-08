@@ -16,6 +16,11 @@ Class {
 	#category : #'Diya-Runtime'
 }
 
+{ #category : #'class initialization' }
+DiyaBoot class >> initialize [
+	Smalltalk globals at: #DiyaDisplay put: nil
+]
+
 { #category : #'instance creation' }
 DiyaBoot class >> maxFPS [
 	^60
@@ -79,6 +84,8 @@ DiyaBoot >> init [
 	status = 0 
 		ifFalse: [ ^ DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
+	Smalltalk globals at: #Display ifAbsentPut:display.
+	Smalltalk globals at: #DiyaDisplay put:display.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	SDL2 showCursor: 0.
 	DiyaSingleton resetAll.
@@ -181,10 +188,7 @@ DiyaBoot >> showSystemInfo [
 		 stream nextPutAll:  rinfo name readString; nextPutAll:' '.
 	].
 	stream cr.
-	stream nextPutAll:'Display resolution: ';
-		nextPutAll:display w asString;
-		nextPutAll: 'x';
-		nextPutAll: display h asString; cr. 
+	stream nextPutAll: DiyaDisplay asString; cr.
 	self stdout nextPutAll: stream contents
 	
 ]

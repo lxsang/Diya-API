@@ -1,8 +1,20 @@
 Extension { #name : #SDL2 }
 
 { #category : #'*Diya' }
+SDL2 class >> SDLAllocFormat: pixel_format [
+	^ self ffiCall: #(SDL_PixelFormat * SDL_AllocFormat(Uint32 pixel_format))
+	
+]
+
+{ #category : #'*Diya' }
 SDL2 class >> SDLClearError [
 	^ self ffiCall: #(void SDL_ClearError(void))
+	
+]
+
+{ #category : #'*Diya' }
+SDL2 class >> SDLFreeFormat: handle [
+	^ self ffiCall: #(void SDL_FreeFormat(SDL_PixelFormat *handle))
 	
 ]
 

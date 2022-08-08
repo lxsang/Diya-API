@@ -25,6 +25,20 @@ SDL_DisplayMode class >> fieldsDesc [
 	)
 ]
 
+{ #category : #converting }
+SDL_DisplayMode >> asString [
+	^ 'SDL display: ', self width asString, 'x', self height asString, ' - ', self depth asString, ' bits depth'.
+]
+
+{ #category : #'accessing structure variables' }
+SDL_DisplayMode >> depth [
+	|format depth|
+	format := SDL2 SDLAllocFormat: self format.
+	depth := format BitsPerPixel.
+	SDL2 SDLFreeFormat: format.
+	^depth
+]
+
 { #category : #'accessing structure variables' }
 SDL_DisplayMode >> driverdata [
 	"This method was automatically generated"
@@ -35,6 +49,11 @@ SDL_DisplayMode >> driverdata [
 SDL_DisplayMode >> driverdata: anObject [
 	"This method was automatically generated"
 	handle pointerAt: OFFSET_DRIVERDATA put: anObject getHandle.
+]
+
+{ #category : #other }
+SDL_DisplayMode >> forceDisplayUpdate [
+	
 ]
 
 { #category : #'accessing structure variables' }
@@ -62,6 +81,11 @@ SDL_DisplayMode >> h: anObject [
 ]
 
 { #category : #'accessing structure variables' }
+SDL_DisplayMode >> height [
+	^ self h
+]
+
+{ #category : #'accessing structure variables' }
 SDL_DisplayMode >> refresh_rate [
 	"This method was automatically generated"
 	^handle signedLongAt: OFFSET_REFRESH_RATE
@@ -83,4 +107,9 @@ SDL_DisplayMode >> w [
 SDL_DisplayMode >> w: anObject [
 	"This method was automatically generated"
 	handle signedLongAt: OFFSET_W put: anObject
+]
+
+{ #category : #'accessing structure variables' }
+SDL_DisplayMode >> width [
+	^ self w
 ]

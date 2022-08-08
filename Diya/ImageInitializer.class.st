@@ -51,8 +51,7 @@ ImageInitializer >> initializeImage [
 		do: [ :c | 
 			[ c initialize ]
 				on: Error
-				do: [ c = Cursor
-						ifFalse: [ retryList add: c ] ] ].
+				do: [ retryList add: c ] ].
 	retryList
 		do: [ :c | 
 			Transcript
