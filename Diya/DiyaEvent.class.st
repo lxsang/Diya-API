@@ -3,7 +3,8 @@ Class {
 	#superclass : #DiyaBaseObject,
 	#instVars : [
 		'enable',
-		'mapped'
+		'mapped',
+		'target'
 	],
 	#category : #'Diya-Events'
 }
@@ -37,4 +38,14 @@ DiyaEvent >> mapped: anObject [
 { #category : #initialization }
 DiyaEvent >> preventDefault [
 	enable := false
+]
+
+{ #category : #accessing }
+DiyaEvent >> target [
+	^ target
+]
+
+{ #category : #accessing }
+DiyaEvent >> target: anObject [
+	target := anObject
 ]

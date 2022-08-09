@@ -67,7 +67,7 @@ DiyaExampleApp >> main [
 
 { #category : #accessing }
 DiyaExampleApp >> setup [
-	|node node1 ell label icon button|
+	|node node1 img ell label icon button|
 
 	"DiyaRendererContext uniqueInstance assets
 		addAsset:
@@ -84,9 +84,19 @@ DiyaExampleApp >> setup [
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
 		label txt: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
-	node := root addNode: (DiyaImageView from:'mrsang.png') at: 10 @ 400.
-	node styleName: #image_view.
-	node extent:200@200.
+	img := root addNode: (DiyaImageView from:'mrsang.png') at: 10 @ 400.
+	img styleName: #image_view.
+	img extent:200@200.
+	root on: #(mousebuttondown fingerdown) do:[:e|
+		"change texture"
+		|p|
+		p := e mapped worldPosition.
+		label txt: 'Mouse ', p asIntegerPoint asString.
+		DiyaRendererContext uniqueInstance assets
+			addAsset:(DiyaImageTex fromDisplay: (Rectangle origin: ((p x - 100) @ (p y - 100)) extent: 200@200 ) as: 'capture').
+		img textureNamed: 'capture'.
+		
+	].
 	
 	node := root addNode: (DiyaRectangle new) at: 10@80.
 	node styleName: #rect_view.

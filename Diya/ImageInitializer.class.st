@@ -62,6 +62,7 @@ ImageInitializer >> initializeImage [
 	FFIMethodRegistry resetAll.
 	Smalltalk garbageCollect.
 	SourceFiles := SourceFileArray new.
+	"Smalltalk vm parameterAt: 45 put: (Smalltalk vm parameterAt: 44) * 2."
 	Transcript show: 'Image initialized'; cr.
 ]
 

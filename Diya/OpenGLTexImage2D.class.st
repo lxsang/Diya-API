@@ -59,7 +59,7 @@ OpenGLTexImage2D >> drop [
 
 { #category : #accessing }
 OpenGLTexImage2D >> extent [
-	^ width @ height 
+	^ self width @ self height
 ]
 
 { #category : #accessing }

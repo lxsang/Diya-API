@@ -93,6 +93,11 @@ OpenGL class >> pixelstorei: pname param: param [
 	^self ffiCall: #(void glPixelStorei(	GLenum pname,GLint param))
 ]
 
+{ #category : #geometry }
+OpenGL class >> readPixelsOn: buffer x:x y: y w:w h:h format: fmt type: type [
+	^ self ffiCall: #(void glReadPixels(	GLint x,GLint y,GLsizei w,GLsizei h,GLenum fmt,GLenum type,void * buffer))
+]
+
 { #category : #accessing }
 OpenGL class >> vertex3fX:x Y:y Z:z [
 	^self ffiCall: #(void glVertex3f(	GLfloat x,GLfloat y,GLfloat z))

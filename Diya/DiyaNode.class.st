@@ -266,7 +266,9 @@ DiyaNode >> tf [
 { #category : #'event handling' }
 DiyaNode >> trigger: evt [
 	evt enable ifFalse:[^self].
-	ehandlers at: evt mapped type ifPresent:[:handler| handler value: evt].
+	ehandlers at: evt mapped type ifPresent:[:handler|
+		evt target: self.
+		handler value: evt].
 	children ifNil: [^self].
 	evt enable ifTrue: [
 		"evt mapped triggableOn: children first."
