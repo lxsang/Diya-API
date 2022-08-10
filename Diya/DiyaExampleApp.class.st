@@ -67,8 +67,8 @@ DiyaExampleApp >> main [
 
 { #category : #accessing }
 DiyaExampleApp >> setup [
-	|node node1 img ell label icon button|
-
+	|node node1 img ell label icon button texture|
+	texture := DiyaImageTex new.
 	"DiyaRendererContext uniqueInstance assets
 		addAsset:
 			((Form fromDisplay: ( Rectangle origin: 0@0 corner: 300@300 )) asDiyaTexture: 'display')."
@@ -79,8 +79,8 @@ DiyaExampleApp >> setup [
 	label icon: 16rF254.
 	
 	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
-	"node1 rotation: (Float pi / 8.0)."
-	node1 scale: 1.2@1.2.
+	node1 rotation: 45.
+	node1 scale: 2.0@2.0.
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
 		label txt: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
@@ -93,7 +93,7 @@ DiyaExampleApp >> setup [
 		p := e mapped worldPosition.
 		label txt: 'Mouse ', p asIntegerPoint asString.
 		DiyaRendererContext uniqueInstance assets
-			addAsset:(DiyaImageTex fromDisplay: (Rectangle origin: ((p x - 100) @ (p y - 100)) extent: 200@200 ) as: 'capture').
+			addAsset:(texture fromDisplay: (Rectangle origin: ((p x - 100) @ (p y - 100)) extent: 200@200 ) as: 'capture').
 		img textureNamed: 'capture'.
 		
 	].
@@ -111,7 +111,7 @@ DiyaExampleApp >> setup [
 	node styleName: #line_view.
 		
 	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 100@300.
-	ell rotation: Float pi / 6.0.
+	ell rotation: 30.
 	ell styleName: #ell_view.
 	"node rotation: Float pi / 2.0."
 	ell textureNamed:'mrsang.png'.

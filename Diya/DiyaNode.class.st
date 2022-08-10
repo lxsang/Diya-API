@@ -116,7 +116,7 @@ DiyaNode >> initialize [
 	styleName := nil.
 	style := nil.
 	root := nil.
-	id := Random new nextInt: 1e6
+	id := self className,'#',(Random new nextInt: 1e6) asString.
 ]
 
 { #category : #accessing }

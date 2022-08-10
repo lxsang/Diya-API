@@ -40,7 +40,7 @@ Diya2DNode >> initialize [
 	translation := 0@0.
 	scale := 1@1.
 	rotation := 0.
-	tf := Array2D identity: 3.
+	tf := MatrixTransform2x3 identity .
 	shader := Diya2DShader uniqueInstance.
 	vbuffer := nil.
 ]
@@ -75,18 +75,15 @@ Diya2DNode >> recFromBuffer [
 
 { #category : #accessing }
 Diya2DNode >> updateTF [
-	tf := Array2D identity:3.
+	tf := MatrixTransform2x3 identity.
 	"translation"
-	translation = (0@0) ifFalse:[
-		tf := tf +* (Array2D translateMatrix2D: translation)].
+	tf setOffset: translation.
 	"rotation"
-	rotation = 0 ifFalse:[
-		tf := tf +* (Array2D rotationMatrix2D: rotation )].
+	rotation = 0 ifFalse:[tf setAngle: rotation ].
 	"scale"
-	scale = (1@1) ifFalse:[
-		tf := tf +* (Array2D scaleMatrix2D: scale)].
+	tf setScale: scale.
 	self parent ifNil: [ ^self ].
-	self parent isRoot ifFalse: [tf := self parent tf +* tf ].
+	self parent isRoot ifFalse: [tf := self parent tf composedWithLocal:  tf ].
 	children ifNotNil: [children do:[:c| c updateTF ]].
 	
 ]
