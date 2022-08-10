@@ -130,5 +130,6 @@ DiyaExampleApp >> setup [
 	button icon:16rF185"'mrsang.png'".
 	"button rotation: Float pi / 2.0."
 	button styleName: #button_view.
+	Transcript show: 'Application setup';cr.
 	^ root 
 ]

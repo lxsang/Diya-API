@@ -82,18 +82,7 @@ DiyaLine >> inner: aPoint [
 ]
 
 { #category : #accessing }
-DiyaLine >> to [
-	^ to
-]
-
-{ #category : #accessing }
-DiyaLine >> to: anObject [
-	to := anObject.
-	self setDirty
-]
-
-{ #category : #accessing }
-DiyaLine >> update [
+DiyaLine >> process [
 	|extent|
 	bbox := (Rectangle origin: from corner: to ).
 	bbox origin = translation ifFalse:[self position: bbox origin].
@@ -107,4 +96,15 @@ DiyaLine >> update [
       extent x. extent y. 0.0. 0.0.
 	} doWithIndex: [:e :i| vbuffer at: i put: e].
 	^true
+]
+
+{ #category : #accessing }
+DiyaLine >> to [
+	^ to
+]
+
+{ #category : #accessing }
+DiyaLine >> to: anObject [
+	to := anObject.
+	self setDirty
 ]

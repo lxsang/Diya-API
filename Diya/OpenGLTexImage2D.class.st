@@ -30,6 +30,11 @@ OpenGLTexImage2D >> border: anObject [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> bytesSize [
+	^(width * height) << 2 
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> data [
 	^ data
 ]

@@ -50,6 +50,21 @@ DiyaEllipse >> inner: aPoint [
 ]
 
 { #category : #accessing }
+DiyaEllipse >> process [
+	bbox := Rectangle origin: ((rx negated) @ (ry negated)) corner: (rx @ ry).
+	{
+		bbox origin x. bbox origin y. 0.0. 0.0.            
+      bbox origin x. bbox corner y. 0.0. 1.0.
+      bbox corner x. bbox corner y. 1.0. 1.0.
+
+		bbox corner x. bbox corner y. 1.0. 1.0.
+		bbox corner x. bbox origin y. 1.0. 0.0.
+		bbox origin x. bbox origin y. 0.0. 0.0.      
+	} doWithIndex: [:e :i| vbuffer at: i put: e].
+	^true
+]
+
+{ #category : #accessing }
 DiyaEllipse >> rx [
 	^ rx
 ]
@@ -79,19 +94,4 @@ DiyaEllipse >> setUpShader [
 		setUniform: #u_border_color value: ( self ? #borderColor) asGL4FArray;
 		setUniform: #u_rx value: rx;
 		setUniform: #u_ry value: ry.
-]
-
-{ #category : #accessing }
-DiyaEllipse >> update [
-	bbox := Rectangle origin: ((rx negated) @ (ry negated)) corner: (rx @ ry).
-	{
-		bbox origin x. bbox origin y. 0.0. 0.0.            
-      bbox origin x. bbox corner y. 0.0. 1.0.
-      bbox corner x. bbox corner y. 1.0. 1.0.
-
-		bbox corner x. bbox corner y. 1.0. 1.0.
-		bbox corner x. bbox origin y. 1.0. 0.0.
-		bbox origin x. bbox origin y. 0.0. 0.0.      
-	} doWithIndex: [:e :i| vbuffer at: i put: e].
-	^true
 ]

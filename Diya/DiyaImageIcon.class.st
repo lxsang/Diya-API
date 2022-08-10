@@ -20,9 +20,9 @@ DiyaImageIcon >> initialize [
 ]
 
 { #category : #accessing }
-DiyaImageIcon >> update [
+DiyaImageIcon >> process [
 	|v|
 	v := self iconSize.
 	self extent: (v@v).
-	^super update
+	^super process
 ]

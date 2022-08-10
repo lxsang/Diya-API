@@ -59,8 +59,8 @@ DiyaFontIcon >> lastSeparatorFrom: i [
 ]
 
 { #category : #initialization }
-DiyaFontIcon >> update [
+DiyaFontIcon >> process [
 	data ifNil: [ ^self ].
 	bbox := Rectangle origin: 0@0 corner: ((data size) * (self fontSize) ) @ self fontSize.
-	^ super update.
+	^ super process.
 ]

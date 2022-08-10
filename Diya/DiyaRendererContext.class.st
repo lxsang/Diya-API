@@ -8,7 +8,8 @@ Class {
 		'vao',
 		'texture0',
 		'projection',
-		'assets'
+		'assets',
+		'window'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -105,4 +106,14 @@ DiyaRendererContext >> vao [
 { #category : #accessing }
 DiyaRendererContext >> vbo [
 	^ vbo
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> window [
+	^ window
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> window: anObject [
+	window := anObject
 ]

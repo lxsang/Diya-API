@@ -41,6 +41,16 @@ DiyaPolygon >> points: anObject [
 ]
 
 { #category : #accessing }
+DiyaPolygon >> process [
+	bbox := self recFromPoints.
+	translation = bbox origin ifFalse:[ self position: bbox origin].
+	points := points collect:[:e | e - bbox origin].
+	bbox := self recFromPoints.
+	self calculateVertices.
+	^true
+]
+
+{ #category : #accessing }
 DiyaPolygon >> recFromPoints [
 	|maxX maxY minX minY x y|
 	maxX := minX := (points at: 1) x.
@@ -54,14 +64,4 @@ DiyaPolygon >> recFromPoints [
 		minY := minY min: y.
 	].
 	^ Rectangle origin: minX@minY corner: maxX @ maxY
-]
-
-{ #category : #accessing }
-DiyaPolygon >> update [
-	bbox := self recFromPoints.
-	translation = bbox origin ifFalse:[ self position: bbox origin].
-	points := points collect:[:e | e - bbox origin].
-	bbox := self recFromPoints.
-	self calculateVertices.
-	^true
 ]

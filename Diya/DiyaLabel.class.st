@@ -52,18 +52,7 @@ DiyaLabel >> initialize [
 ]
 
 { #category : #accessing }
-DiyaLabel >> txt [
-	^ txt
-]
-
-{ #category : #accessing }
-DiyaLabel >> txt: anObject [
-	txt data: anObject.
-	self setDirty
-]
-
-{ #category : #accessing }
-DiyaLabel >> update [
+DiyaLabel >> process [
 	|offset isize align|
 	offset := 0.
 	icon ifNotNil: [
@@ -73,7 +62,7 @@ DiyaLabel >> update [
 	].
 	txt extent: (extent x - offset) @ (extent y).
 	"lookahead update"
-	txt update.
+	txt process.
 	align := self getHAlign: offset.
 	txt position: offset  @ ( (self extent y - txt extent y ) >> 1).
 	
@@ -82,4 +71,15 @@ DiyaLabel >> update [
 	icon position: (align @( (self extent y - self iconSize ) >> 1)).
 	^ true
 	
+]
+
+{ #category : #accessing }
+DiyaLabel >> txt [
+	^ txt
+]
+
+{ #category : #accessing }
+DiyaLabel >> txt: anObject [
+	txt data: anObject.
+	self setDirty
 ]

@@ -57,7 +57,21 @@ DiyaNode >> addNode: node at: pos [
 	node position: pos.
 	children add: node.
 	node root: self root.
-	^ node
+	Transcript show:'Added node #', self id asString; cr.
+	^ node 
+]
+
+{ #category : #accessing }
+DiyaNode >> allChildren [
+	|nodes|
+	nodes := OrderedCollection new.
+	children ifNil: [ ^ nodes ].
+	children do:[:c|
+		nodes add: c.
+		c allChildren do:[:e| nodes add:e].
+	].
+	^nodes
+	
 ]
 
 { #category : #accessing }
@@ -148,6 +162,11 @@ DiyaNode >> position: anObject [
 	self updateTF.
 ]
 
+{ #category : #accessing }
+DiyaNode >> process [
+	^self subclassResponsibility 
+]
+
 { #category : #convenience }
 DiyaNode >> register: aBlock to: eventName [
 	|evtCode|
@@ -159,12 +178,13 @@ DiyaNode >> register: aBlock to: eventName [
 
 { #category : #accessing }
 DiyaNode >> render [
+	self step.
 	dirty ifTrue:[
-		dirty := self update not].
+		dirty := self process not].
 	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
-	children do: [:c  | c render  ]. 
+	children do: [:c  | c render  ].
 ]
 
 { #category : #accessing }
@@ -241,6 +261,10 @@ DiyaNode >> shader: anObject [
 	shader := anObject
 ]
 
+{ #category : #stepping }
+DiyaNode >> step [
+]
+
 { #category : #accessing }
 DiyaNode >> styleName [
 	^ styleName
@@ -274,11 +298,6 @@ DiyaNode >> trigger: evt [
 		"evt mapped triggableOn: children first."
 		children select: [:node | evt mapped triggableOn: node ] thenDo:[:node| node trigger: evt]
 	].
-]
-
-{ #category : #accessing }
-DiyaNode >> update [
-	^self subclassResponsibility 
 ]
 
 { #category : #accessing }

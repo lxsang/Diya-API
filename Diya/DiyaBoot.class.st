@@ -84,14 +84,12 @@ DiyaBoot >> init [
 	status = 0 
 		ifFalse: [ ^ DiyaCoreAPIError signal: SDL2 getErrorMessage ].
 	display := SDL_DisplayMode externalNew autoRelease.
-	Smalltalk globals at: #Display ifAbsentPut:display.
-	Smalltalk globals at: #DiyaDisplay put:display.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	SDL2 showCursor: 0.
+	Smalltalk globals at: #Display ifAbsentPut:display.
+	Smalltalk globals at: #DiyaDisplay put:display.
 	DiyaSingleton resetAll.
 	DiyaFontManager uniqueInstance loadFonts.
-
-Form class removeSelector: #serviceImageAsBackground
 ]
 
 { #category : #events }
@@ -191,6 +189,7 @@ DiyaBoot >> showSystemInfo [
 	].
 	stream cr.
 	stream nextPutAll: DiyaDisplay asString; cr.
+	stream cr.
 	self stdout nextPutAll: stream contents
 	
 ]
@@ -203,8 +202,10 @@ DiyaBoot >> startx [
 	"SDL2 glMakeCurrent: window  context: context." 
 	self showSystemInfo.
 	DiyaRendererContext
-		uniqueInstance display: display;
-		useProjection: OrthoProjectionMatrix.
+		uniqueInstance
+			display: display;
+			window: window;
+			useProjection: OrthoProjectionMatrix.
 	self render.
 	context delete.
 	window destroy.

@@ -37,7 +37,7 @@ DiyaRectangle >> initialize [
 ]
 
 { #category : #accessing }
-DiyaRectangle >> update [
+DiyaRectangle >> process [
 	|extent|
 	extent := self extent.
 	{

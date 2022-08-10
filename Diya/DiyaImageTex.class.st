@@ -36,32 +36,28 @@ DiyaImageTex >> drop [
 
 { #category : #capture }
 DiyaImageTex >> flipY [
-	|buffer idx idxf|
-	buffer := FFIExternalArray externalNewType: GLubyte size: width * height * 4.
+	|buffer size linesize top bottom|
+	size := self bytesSize.
+	linesize := width << 2.
+	buffer := FFIExternalArray externalNewType: GLubyte size: linesize.
 	LibC memset: buffer getHandle value: 0 size: buffer size.
-	buffer autoRelease.
-	0 to: height - 1 do:[:y|
-		0 to: width - 1 do:[:x|
-			idx := ((y * width) + x)*4 + 1.
-			idxf := ((height - y)*width + x)*4 + 1.
-			buffer at: idx put: (data at: idxf).
-			buffer at: idx+1 put: (data at: idxf+1).
-			buffer at: idx+2 put: (data at: idxf+2).
-			buffer at: idx+3 put: (data at: idxf+3).
-		].	
+	0 to: (height >> 1) -1 do: [ :line|
+		top := line * linesize.
+		bottom := (size - (linesize * (line + 1))).
+		LibC memCopy: (data getHandle) + top to: buffer getHandle size: linesize.
+		LibC memCopy: (data getHandle) + bottom to: (data getHandle) + top size: linesize.
+		LibC memCopy: buffer getHandle to: (data getHandle) + bottom size: linesize.
 	].
-	data free.
-	data := buffer.
-	
-	
+	buffer free
 ]
 
 { #category : #capture }
 DiyaImageTex >> fromDisplay:  aRect as: assetName [
 	surface ifNotNil: [ surface free ] ifNil: [data ifNotNil: [data free]].
 	surface := nil.
-	Transcript show:'allocate ', ((aRect extent x) * (aRect extent y) * 4) asInteger asString,' bytes';cr.
-	data := FFIExternalArray externalNewType: GLubyte size:((aRect extent x) * (aRect extent y) * 4) asInteger.
+	width := aRect extent x asInteger.
+	height := aRect extent y asInteger.
+	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
 	LibC memset: data getHandle value: 0 size: data size.
 	data autoRelease.
 	OpenGL readPixelsOn: data getHandle
@@ -71,11 +67,8 @@ DiyaImageTex >> fromDisplay:  aRect as: assetName [
 		h: aRect extent y
 		format:GL_RGBA
 		type: GL_UNSIGNED_BYTE.
-	width := aRect extent x.
-	height := aRect extent y.
 	name := assetName.
 	self flipY.
-	
 ]
 
 { #category : #capture }

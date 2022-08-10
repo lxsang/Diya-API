@@ -34,7 +34,7 @@ DiyaApplicationLauncher >> defaultApplication [
 	^DiyaExampleApp
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DiyaApplicationLauncher >> delta: delta [
 	|fps|
 	delta = 0 ifTrue:[^self].

@@ -39,14 +39,14 @@ DiyaButton >> label [
 ]
 
 { #category : #accessing }
-DiyaButton >> text: string [
-	label txt: string.
-]
-
-{ #category : #accessing }
-DiyaButton >> update [
+DiyaButton >> process [
 	rec extent: self extent.
 	label position: 0@0.
 	label extent: self extent.
 	^true
+]
+
+{ #category : #accessing }
+DiyaButton >> text: string [
+	label txt: string.
 ]

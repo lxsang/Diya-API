@@ -200,6 +200,18 @@ DiyaText >> maxLineWidth [
 	^ maxLineWidth
 ]
 
+{ #category : #initialization }
+DiyaText >> process [
+	bbox ifNil: [ ^true ].
+	data ifNil:[^true].
+	data ifEmpty:[^true].
+	vbuffer ifNotNil: [vbuffer free].
+	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
+	vbuffer autoRelease.
+	self drawText.
+	^true
+]
+
 { #category : #accessing }
 DiyaText >> splitLines [
 	|line ret tex2D|
@@ -219,22 +231,10 @@ DiyaText >> texture [
 	texture ifNil: [ self initTexture ].
 	texheight = texture height ifFalse: [
 		texheight := texture height.
-		self update.
+		self process.
 		self setClean.
 	].
 	^texture
-]
-
-{ #category : #initialization }
-DiyaText >> update [
-	bbox ifNil: [ ^true ].
-	data ifNil:[^true].
-	data ifEmpty:[^true].
-	vbuffer ifNotNil: [vbuffer free].
-	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
-	vbuffer autoRelease.
-	self drawText.
-	^true
 ]
 
 { #category : #'menu messages' }

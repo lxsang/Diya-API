@@ -7,6 +7,11 @@ SDL2 class >> SDLAllocFormat: pixel_format [
 ]
 
 { #category : #'*Diya' }
+SDL2 class >> SDLBlitSurface: src srcRect: srcrect dest: dst dstRect: dstrect [
+	^ self ffiCall: #(int SDL_UpperBlit(SDL_Surface* src,SDL_Rect* srcrect,SDL_Surface* dst,SDL_Rect* dstrect))
+]
+
+{ #category : #'*Diya' }
 SDL2 class >> SDLClearError [
 	^ self ffiCall: #(void SDL_ClearError(void))
 	

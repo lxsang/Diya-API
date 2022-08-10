@@ -43,7 +43,7 @@ DiyaRootNode >> isRoot [
 ]
 
 { #category : #initialization }
-DiyaRootNode >> update [
+DiyaRootNode >> process [
 	^true
 ]
 
