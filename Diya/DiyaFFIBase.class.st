@@ -28,7 +28,7 @@ DiyaFFIBase class >> moduleName [
 			]
 		] on: Error do: [  ]
 	].
-	DiyaCoreAPIError signal: 'Unable to find FFI library (', self checkSymbol, ')'.
+	DiyaFFILibNotFound signal: 'Unable to find FFI library (', self checkSymbol, ')'.
 ]
 
 { #category : #'library path' }

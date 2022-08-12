@@ -2,8 +2,7 @@ Class {
 	#name : #DiyaImageTex,
 	#superclass : #OpenGLTexImage2D,
 	#instVars : [
-		'name',
-		'surface'
+		'name'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -34,7 +33,7 @@ DiyaImageTex >> drop [
 		disable: GL_BLEND."
 ]
 
-{ #category : #capture }
+{ #category : #conversion }
 DiyaImageTex >> flipY [
 	|buffer size linesize top bottom|
 	size := self bytesSize.
@@ -51,10 +50,9 @@ DiyaImageTex >> flipY [
 	buffer free
 ]
 
-{ #category : #capture }
+{ #category : #'instance creation' }
 DiyaImageTex >> fromDisplay:  aRect as: assetName [
-	surface ifNotNil: [ surface free ] ifNil: [data ifNotNil: [data free]].
-	surface := nil.
+	data ifNotNil: [data free].
 	width := aRect extent x asInteger.
 	height := aRect extent y asInteger.
 	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
@@ -71,23 +69,43 @@ DiyaImageTex >> fromDisplay:  aRect as: assetName [
 	self flipY.
 ]
 
-{ #category : #capture }
+{ #category : #'instance creation' }
 DiyaImageTex >> fromDisplayAs: assetName [
 	self fromDisplay: (Rectangle origin: 0@0 extent: DiyaDisplay extent ) as: assetName 
 ]
 
 { #category : #'instance creation' }
 DiyaImageTex >> fromFile: aPath [
+	|surface|
 	Transcript show: 'Loading texture from ', aPath fullName;cr.
-	name := aPath.
-	aPath exists ifFalse: [ ^DiyaCoreAPIError signal:'File not found ', aPath fullName ].
-	surface := SDL2Image SDLImgLoad: aPath fullName.
-	surface ifNil: [ ^DiyaCoreAPIError signal:'Unable to load ', aPath fullName ].
+	data ifNotNil: [ data free ].
+	name := aPath fullName.
+	surface := self surfaceFromFile: aPath.
 	width := surface w.
 	height := surface h.
-	data := surface pixels.
-	surface autoRelease.
+	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
+	LibC memset: data getHandle value: 0 size: data size.
+	data autoRelease.
+	LibC memCopy: surface pixels getHandle to: data getHandle size: data size.
+	SDL2 
+		freeSurface: surface.
 	Transcript show: 'Loaded ', aPath fullName;cr.
+]
+
+{ #category : #'instance creation' }
+DiyaImageTex >> fromForm: aForm name: aName [
+	|surface|
+	name := aName.
+	data ifNotNil: [ data free ].
+	surface := self surfaceFromForm: aForm.
+	width := surface w.
+	height := surface h.
+	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
+	LibC memset: data getHandle value: 0 size: data size.
+	data autoRelease.
+	LibC memCopy: surface pixels getHandle to: data getHandle size: data size.
+	SDL2 
+		freeSurface: surface.
 ]
 
 { #category : #'instance creation' }
@@ -120,7 +138,37 @@ DiyaImageTex >> setup [
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_MAG_FILTER param: GL_LINEAR.
 ]
 
-{ #category : #accessing }
-DiyaImageTex >> surface [
-	^ surface
+{ #category : #conversion }
+DiyaImageTex >> surfaceFromFile: aPath [
+	aPath exists ifFalse: [ ^DiyaCoreAPIError signal:'File not found ', aPath fullName ].
+	[^ SDL2Image SDLImgLoad: aPath fullName] on: Error do: [
+		Transcript show: 'FALLLING BACCCCCCCCCCCCCCCCCCCCCCCCK'; cr.
+		^  self surfaceFromForm:  (ImageReadWriter formFromFileNamed: aPath)
+	].
+]
+
+{ #category : #conversion }
+DiyaImageTex >> surfaceFromForm: aForm [
+	|srcSurface destSurface  form|
+	form := aForm asFormOfDepth: 32.
+	srcSurface :=
+		SDL2 createRGBSurfaceFromPixels: form bits
+			width: form width height: form height
+			depth: 32 pitch: (form width << 2)
+			rmask: 16r00ff0000 
+			gmask: 16r000ff00
+			bmask: 16r00000ff
+			amask: 16rff000000.
+	destSurface :=
+		SDL2 createRGBSurfaceFromPixels: srcSurface pixels getHandle
+			width: form width height: form height
+			depth: 32 pitch: (form width << 2)
+			rmask: 16r000000ff 
+			gmask: 16r0000ff00
+			bmask: 16r00ff0000
+			amask: 16rff000000.
+	SDL2 SDLBlitSurface: srcSurface srcRect: nil dest: destSurface  dstRect: nil.
+	SDL2 
+		freeSurface: srcSurface.
+	^ destSurface
 ]
