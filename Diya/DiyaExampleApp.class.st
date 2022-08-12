@@ -89,7 +89,7 @@ DiyaExampleApp >> setup [
 	node1 rotation: 45.
 	node1 scale: 2.0@2.0.
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
-		label txt: 'Mouse ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
+		label txt: 'RECT ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
 	img := root addNode: (DiyaImageView from:'mrsang.png') at: 10 @ 400.
 	img styleName: #image_view.
@@ -117,15 +117,17 @@ DiyaExampleApp >> setup [
 	node := root addNode: (DiyaLine from: 10@10 to: 200@200).
 	node styleName: #line_view.
 		
-	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 100@300.
-	ell rotation: 30.
+	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 120@300.
+	ell scale: 1.2 @ 1.2.
 	ell styleName: #ell_view.
-	"node rotation: Float pi / 2.0."
 	ell textureNamed:'mrsang.png'.
+	ell addNode: (DiyaTimerNode timeout: 1000 / 6 do:[:n |
+		n parent rotation: n parent rotation + 10.	
+	] ).
 	ell on: #(mousebuttondown fingerdown) do:[:e|
 		label txt: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
 
-	node := root addNode: (DiyaConvexPolygon points:{250@100. 400@250. 450@80. 350@60}).
+	node := root addNode: (DiyaConvexPolygon points:{0@40. 150@190. 200@20. 100@0}) at: 250@60.
 	node textureNamed: 'mrsang.png'.
 	node styleName: #poly_view.
 	
@@ -133,8 +135,13 @@ DiyaExampleApp >> setup [
 	icon styleName: #text_icon_2.
 	
 	button := root addNode: (DiyaButton text: 'Click me !') at: 240@460.
+	icon := DiyaFontIcon data: 16rF130.
+	"icon := DiyaImageIcon from:  'mrsang.png'."
+	icon addNode:(DiyaTimerNode timeout: 1000 / 12 do:[:n |
+		n parent rotation: n parent rotation + 10 pivot: n parent extent / 2.	
+	] ).
 	button extent: 200@40.
-	button icon:16rF185"'mrsang.png'".
+	button icon: icon "'mrsang.png'".
 	"button rotation: Float pi / 2.0."
 	button styleName: #button_view.
 	Transcript show: 'Application setup';cr.

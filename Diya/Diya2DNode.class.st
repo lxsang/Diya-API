@@ -77,11 +77,22 @@ Diya2DNode >> recFromBuffer [
 Diya2DNode >> updateTF [
 	tf := MatrixTransform2x3 identity.
 	"translation"
-	tf setOffset: translation.
+	tf setOffset: translation + pivot.
 	"rotation"
 	rotation = 0 ifFalse:[tf setAngle: rotation ].
-	"scale"
-	tf setScale: scale.
+	"translate back to pivot"
+	pivot isZero ifFalse:[
+		tf := tf composedWithLocal:
+			(MatrixTransform2x3 identity
+				setOffset: pivot negated;
+				yourself)
+	].
+	scale isZero ifFalse: [
+		tf := tf composedWithLocal:
+			(MatrixTransform2x3 identity
+				setScale: scale;
+				yourself)
+	].
 	self parent ifNil: [ ^self ].
 	self parent isRoot ifFalse: [tf := self parent tf composedWithLocal:  tf ].
 	children ifNotNil: [children do:[:c| c updateTF ]].

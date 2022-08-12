@@ -9,8 +9,7 @@ Class {
 		'texture0',
 		'projection',
 		'assets',
-		'window',
-		'rqueue'
+		'window'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -67,7 +66,6 @@ DiyaRendererContext >> initialize [
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
 	assets := AssetManager new.
-	rqueue := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -78,11 +76,6 @@ DiyaRendererContext >> mouse [
 { #category : #accessing }
 DiyaRendererContext >> mouse: anObject [
 	mouse := anObject
-]
-
-{ #category : #accessing }
-DiyaRendererContext >> processQueue [
-	^ rqueue
 ]
 
 { #category : #accessing }

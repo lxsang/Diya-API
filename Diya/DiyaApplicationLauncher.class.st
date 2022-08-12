@@ -47,9 +47,11 @@ DiyaApplicationLauncher >> launch: app [
 		root empty.
 	].
 	currapp := app uniqueInstance.
-	self appNode addNode: currapp root.
+	currapp setup.
+	currapp root forceReload.
+	Transcript show: 'APPLICATION INIT'; cr.
 	self context assets: currapp am.
-	currapp setup
+	self appNode addNode: currapp root.
 ]
 
 { #category : #initialization }
@@ -64,7 +66,7 @@ DiyaApplicationLauncher >> main [
 	].
 	currapp ifNotNil: [currapp main.].
 	"root render."
-	[ root stepDown  ] fork.
+	root stepDown.
 	self process.
 	root render.
 ]
@@ -73,11 +75,12 @@ DiyaApplicationLauncher >> main [
 DiyaApplicationLauncher >> process [
 	|Q  node maxProcessingTime|
 	maxProcessingTime := 1000 / DiyaBoot maxFPS - 100.
-	Q := DiyaRendererContext uniqueInstance processQueue.
+	Q := root processingQueue select:[:e| e visibility].
 	Q ifEmpty:[^ self].
 	[
 		node := Q removeFirst.
 		node process.
+		root cleanDirtyNode: node.
 	 	Q isNotEmpty and: DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime
 	] whileTrue
 	
@@ -102,7 +105,7 @@ DiyaApplicationLauncher >> setup [
 			#bgColor -> Color orange.
 			#border -> 3
 		}.
-	root addNode: (Diya2DNode new) at: 0@0.
+	root addNode: (DiyaCompositeNode new) at: 0@0.
 	txtFPS := root addNode:(DiyaText data: '') at: ( self context resolution x - 80)@(self context resolution y - 40).
 	txtFPS extent: 80@40.
 	txtFPS styleName: #fps_text.

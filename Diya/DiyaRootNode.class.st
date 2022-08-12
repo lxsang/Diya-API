@@ -13,13 +13,13 @@ DiyaRootNode >> Q [
 ]
 
 { #category : #accessing }
-DiyaRootNode >> Q: v [
-	Q := v
-]
-
-{ #category : #accessing }
 DiyaRootNode >> boundingBox [
 	^ Rectangle origin: 0@0 corner: context resolution 
+]
+
+{ #category : #'add/remove' }
+DiyaRootNode >> cleanDirtyNode: aNode [
+	Q remove: aNode ifAbsent:[]
 ]
 
 { #category : #accessing }
@@ -29,6 +29,11 @@ DiyaRootNode >> draw [
 	OpenGL clearColorR: c red G: c green B: c blue  A: c alpha.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
 	context vbo bind: GL_ARRAY_BUFFER.
+]
+
+{ #category : #'add/remove' }
+DiyaRootNode >> enqueueDirtyNode: aNode [
+	(Q includes: aNode ) ifFalse:[ Q add: aNode].
 ]
 
 { #category : #accessing }
@@ -58,12 +63,25 @@ DiyaRootNode >> isRoot [
 
 { #category : #initialization }
 DiyaRootNode >> process [
-	^true
+	
 ]
 
 { #category : #accessing }
 DiyaRootNode >> processingQueue [
 	^ Q
+]
+
+{ #category : #initialization }
+DiyaRootNode >> setClean [
+	
+	
+	
+]
+
+{ #category : #initialization }
+DiyaRootNode >> setDirty [
+	
+	
 ]
 
 { #category : #accessing }

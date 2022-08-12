@@ -32,7 +32,7 @@ DiyaLabel >> icon: anObject [
 	anObject isString ifTrue: [
 		icon := self addNode: (DiyaImageIcon from: anObject).
 	].
-	icon ifNil: [ ^ DiyaCoreAPIError signal: 'Invalid icon identification'].
+	icon ifNil: [ icon := self addNode: anObject ].
 	self setDirty
 ]
 

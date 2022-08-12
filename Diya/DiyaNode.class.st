@@ -14,7 +14,9 @@ Class {
 		'root',
 		'styleName',
 		'style',
-		'id'
+		'id',
+		'visibility',
+		'pivot'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -53,23 +55,11 @@ DiyaNode >> addNode: node [
 DiyaNode >> addNode: node at: pos [
 	children ifNil: [ ^self ].
 	node parent: self.
-	node position: pos.
 	children add: node.
+	node position: pos.
 	node root: self root.
+	node setDirtyAll.
 	^ node 
-]
-
-{ #category : #accessing }
-DiyaNode >> allChildren [
-	|nodes|
-	nodes := OrderedCollection new.
-	children ifNil: [ ^ nodes ].
-	children do:[:c|
-		nodes add: c.
-		c allChildren do:[:e| nodes add:e].
-	].
-	^nodes
-	
 ]
 
 { #category : #accessing }
@@ -82,7 +72,7 @@ DiyaNode >> children [
 	^children
 ]
 
-{ #category : #accessing }
+{ #category : #rendering }
 DiyaNode >> draw [
 	self subclassResponsibility 
 ]
@@ -95,6 +85,15 @@ DiyaNode >> empty [
 { #category : #accessing }
 DiyaNode >> extent [
 	^  self subclassResponsibility  
+]
+
+{ #category : #processing }
+DiyaNode >> forceReload [
+	self process.
+	children ifNotNil: [
+	children do:[:c|
+		c forceReload
+	]]
 ]
 
 { #category : #accessing }
@@ -113,10 +112,12 @@ DiyaNode >> initialize [
 	styleName := nil.
 	style := nil.
 	root := nil.
+	visibility := true.
+	pivot := 0@0.
 	id := self className,'#',(Random new nextInt: 1e6) asString.
 ]
 
-{ #category : #accessing }
+{ #category : #testing }
 DiyaNode >> inner: aPoint [
 	^ self subclassResponsibility 
 ]
@@ -144,6 +145,11 @@ DiyaNode >> parent: anObject [
 ]
 
 { #category : #accessing }
+DiyaNode >> pivot [
+	^ pivot
+]
+
+{ #category : #accessing }
 DiyaNode >> position [
 	^ translation
 ]
@@ -154,7 +160,7 @@ DiyaNode >> position: anObject [
 	self updateTF.
 ]
 
-{ #category : #accessing }
+{ #category : #processing }
 DiyaNode >> process [
 	^self subclassResponsibility 
 ]
@@ -163,13 +169,26 @@ DiyaNode >> process [
 DiyaNode >> register: aBlock to: eventName [
 	|evtCode|
 	evtCode := SDL2Constants bindingOf: ('SDL_', eventName asUppercase).
-	evtCode ifNil: [ ^DiyaCoreAPIError signal: 'Unknow event ', eventName ].
+	evtCode ifNil: [ evtCode := eventName  ].
 	ehandlers at: evtCode value put: aBlock.
 	
 ]
 
-{ #category : #accessing }
+{ #category : #removing }
+DiyaNode >> remove [
+	self setClean.
+	root := nil.
+	parent ifNotNil: [ parent removeChild: self ]
+]
+
+{ #category : #removing }
+DiyaNode >> removeChild: c [
+	children ifNotNil: [ children remove: c ifAbsent:[  ]]
+]
+
+{ #category : #rendering }
 DiyaNode >> render [
+	visibility ifFalse:[^self].
 	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
@@ -202,6 +221,13 @@ DiyaNode >> rotation: anObject [
 ]
 
 { #category : #accessing }
+DiyaNode >> rotation: anObject pivot: p [
+	rotation := anObject.
+	pivot := p.
+	self updateTF.
+]
+
+{ #category : #accessing }
 DiyaNode >> scale [
 	^ scale
 ]
@@ -212,21 +238,26 @@ DiyaNode >> scale: anObject [
 	self updateTF.
 ]
 
-{ #category : #initialization }
+{ #category : #'changing state' }
 DiyaNode >> setClean [
-	|Q|
-	Q := DiyaRendererContext uniqueInstance processQueue.
-	Q remove: self ifAbsent: [  ]
+	 root ifNil: [ ^self ].
+	root cleanDirtyNode: self.
 ]
 
-{ #category : #initialization }
+{ #category : #'changing state' }
 DiyaNode >> setDirty [
-	|Q|
-	Q := DiyaRendererContext uniqueInstance processQueue.
-	(Q includes: self ) ifFalse:[ Q add: self].
+	root ifNil: [ ^self ].
+	self root enqueueDirtyNode: self.
 ]
 
-{ #category : #accessing }
+{ #category : #'changing state' }
+DiyaNode >> setDirtyAll [
+	self setDirty.
+	children ifNotNil: [
+		children do:[:c| c setDirtyAll] ]
+]
+
+{ #category : #rendering }
 DiyaNode >> setUpShader [
 	|mem|
 		mem := self tf asGLBuffer.
@@ -264,7 +295,7 @@ DiyaNode >> step [
 
 { #category : #stepping }
 DiyaNode >> stepDown [
-	self step
+	self step.
 	children ifNotNil: [ children do:[:c | c stepDown ] ]
 ]
 
@@ -303,7 +334,17 @@ DiyaNode >> trigger: evt [
 	].
 ]
 
-{ #category : #accessing }
+{ #category : #processing }
 DiyaNode >> updateTF [
 	self subclassResponsibility 
+]
+
+{ #category : #accessing }
+DiyaNode >> visibility [
+	^ visibility
+]
+
+{ #category : #accessing }
+DiyaNode >> visibility: anObject [
+	visibility := anObject
 ]

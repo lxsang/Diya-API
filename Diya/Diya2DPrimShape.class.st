@@ -75,7 +75,6 @@ Diya2DPrimShape >> extent [
 Diya2DPrimShape >> initialize [
 	super initialize.
 	texture := nil.
-	children := nil.
 	type := GL_TRIANGLES.
 	bbox := Rectangle origin: 0@0 corner: 0@0.
 ]

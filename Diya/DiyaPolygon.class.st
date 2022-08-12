@@ -43,9 +43,6 @@ DiyaPolygon >> points: anObject [
 { #category : #accessing }
 DiyaPolygon >> process [
 	bbox := self recFromPoints.
-	translation = bbox origin ifFalse:[ self position: bbox origin].
-	points := points collect:[:e | e - bbox origin].
-	bbox := self recFromPoints.
 	self calculateVertices.
 	^true
 ]
