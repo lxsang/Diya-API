@@ -85,9 +85,7 @@ DiyaLine >> inner: aPoint [
 DiyaLine >> process [
 	|extent|
 	bbox := (Rectangle origin: from corner: to ).
-	bbox origin = translation ifFalse:[self position: bbox origin].
-	from := from - bbox origin.
-	to  := to - bbox origin.
+	self position: bbox origin.
 	extent := bbox extent.
 	bbox := (Rectangle origin: 0@0 corner:  extent ).
 	
