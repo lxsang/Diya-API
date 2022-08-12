@@ -3,14 +3,15 @@ Class {
 	#superclass : #DiyaSingleton,
 	#instVars : [
 		'monotonic',
-		'lastTick'
+		'lastTick',
+		'lapTime'
 	],
 	#category : #'Diya-Runtime'
 }
 
 { #category : #initialization }
 DiyaClock >> delta [
-	 ^(DateAndTime now) - lastTick 
+	 ^ self lapDelta + self lapTime
 ]
 
 { #category : #initialization }
@@ -22,9 +23,21 @@ DiyaClock >> elapsedTime [
 DiyaClock >> initialize [
 	monotonic := DateAndTime now.
 	lastTick := monotonic.
+	lapTime := 0 asDuration.
+]
+
+{ #category : #initialization }
+DiyaClock >> lapDelta [
+	 ^ ((DateAndTime now) - lastTick)
+]
+
+{ #category : #initialization }
+DiyaClock >> lapTime [
+	^ lapTime
 ]
 
 { #category : #initialization }
 DiyaClock >> tick [
+	lapTime := (DateAndTime now) - lastTick.
 	lastTick := DateAndTime now.
 ]

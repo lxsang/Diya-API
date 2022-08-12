@@ -24,7 +24,6 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 	root on: #quit do: [:e| running := false].
 	root on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
-		"Transcript show: e mapped worldPosition asString;cr."
 		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
 	].
 ]
@@ -32,14 +31,6 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 { #category : #initialization }
 DiyaApplicationLauncher >> defaultApplication [
 	^DiyaExampleApp
-]
-
-{ #category : #accessing }
-DiyaApplicationLauncher >> delta: delta [
-	|fps|
-	delta = 0 ifTrue:[^self].
-	fps := ((1000/delta) asInteger).
-	txtFPS data: ('FPS:', fps asString).
 ]
 
 { #category : #initialization }
@@ -58,16 +49,38 @@ DiyaApplicationLauncher >> launch: app [
 	currapp := app uniqueInstance.
 	self appNode addNode: currapp root.
 	self context assets: currapp am.
-	currapp setup.
+	currapp setup
 ]
 
 { #category : #initialization }
 DiyaApplicationLauncher >> main [
+	| fps delta|
+	delta := DiyaClock uniqueInstance delta asMilliSeconds.
+	fps := DiyaBoot maxFPS.
+	delta = 0 ifFalse:[ fps :=  (1000/ delta) asInteger].
+	txtFPS data: ('FPS:', fps asString).
 	[(SDL2 pollEvent: event) > 0] whileTrue: [
 		root trigger: (DiyaEvent from: event mapped).
 	].
 	currapp ifNotNil: [currapp main.].
+	"root render."
+	[ root stepDown  ] fork.
+	self process.
 	root render.
+]
+
+{ #category : #initialization }
+DiyaApplicationLauncher >> process [
+	|Q  node maxProcessingTime|
+	maxProcessingTime := 1000 / DiyaBoot maxFPS - 100.
+	Q := DiyaRendererContext uniqueInstance processQueue.
+	Q ifEmpty:[^ self].
+	[
+		node := Q removeFirst.
+		node process.
+	 	Q isNotEmpty and: DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime
+	] whileTrue
+	
 ]
 
 { #category : #accessing }

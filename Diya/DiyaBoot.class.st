@@ -102,19 +102,18 @@ DiyaBoot >> initialize [
 
 { #category : #events }
 DiyaBoot >> render [
-	|delta launcher|
+	|launcher|
 	DiyaRendererContext uniqueInstance.
 	launcher := DiyaApplicationLauncher uniqueInstance.
 	launcher setup.
 	self GLinit.
 	[ launcher running ] whileTrue: [
-		delta := DiyaClock uniqueInstance delta asMilliSeconds.
-		launcher delta: delta.
 		DiyaClock uniqueInstance tick.
 		launcher main.
 		SDL2 glSwapWindow: window.
-		delta := DiyaClock uniqueInstance delta asMilliSeconds.
-		SDL2 delay: (0 max: (1000/ self class maxFPS) asInteger - delta).
+		SDL2 delay:
+			(0 max:
+				(1000/ self class maxFPS) asInteger - (DiyaClock uniqueInstance lapDelta asMilliSeconds)).
 	].
 ]
 

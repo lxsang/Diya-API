@@ -101,7 +101,7 @@ DiyaText >> fontStyle [
 	^ self ? #fontStyle
 ]
 
-{ #category : #accessing }
+{ #category : #'text-processing' }
 DiyaText >> formatText [
 	|offset index line|
 	lines ifNil: [^self].
@@ -176,7 +176,7 @@ DiyaText >> initialize [
 	maxLineWidth := 0.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'text-processing' }
 DiyaText >> lastSeparatorFrom: index [
 	index to: 1 by: -1 do: [:i|
 		(data at: i) isSeparator ifTrue:[^i].
@@ -205,6 +205,10 @@ DiyaText >> process [
 	bbox ifNil: [ ^true ].
 	data ifNil:[^true].
 	data ifEmpty:[^true].
+	texture ifNil: [ self initTexture ].
+	texheight = texture height ifFalse: [
+		texheight := texture height.
+	].
 	vbuffer ifNotNil: [vbuffer free].
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
 	vbuffer autoRelease.
@@ -227,13 +231,13 @@ DiyaText >> splitLines [
 ]
 
 { #category : #accessing }
+DiyaText >> styleName: aName [
+	super styleName: aName.
+	texture := nil.
+]
+
+{ #category : #accessing }
 DiyaText >> texture [
-	texture ifNil: [ self initTexture ].
-	texheight = texture height ifFalse: [
-		texheight := texture height.
-		self process.
-		self setClean.
-	].
 	^texture
 ]
 
@@ -252,5 +256,5 @@ DiyaText >> valignText:h [
 { #category : #initialization }
 DiyaText >> wordWrap: aBool [
 	wrap := aBool.
-	dirty := true
+	self setDirty
 ]

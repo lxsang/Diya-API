@@ -11,6 +11,13 @@ DiyaExampleApp >> cleanup [
 
 { #category : #accessing }
 DiyaExampleApp >> defineStyleSheet [
+	|fmgr style|
+	fmgr := DiyaFontManager uniqueInstance.
+	#(16 24) do:[:fontSize|
+		Transcript show: 'Init font size ', fontSize asString, ' of ', fmgr defaultFamily; cr.
+		style := fmgr style: fmgr defaultStyle   from: fmgr defaultFamily.
+		style textureOf: fontSize.
+	].
 	DiyaUIThemesManager uniqueInstance currentTheme
 		define: #text_icon_1 styles: { 
 			#color -> Color orange.

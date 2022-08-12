@@ -1,8 +1,21 @@
 Class {
 	#name : #DiyaRootNode,
 	#superclass : #DiyaNode,
+	#instVars : [
+		'Q'
+	],
 	#category : #'Diya-Graphics'
 }
+
+{ #category : #accessing }
+DiyaRootNode >> Q [
+	^ Q
+]
+
+{ #category : #accessing }
+DiyaRootNode >> Q: v [
+	Q := v
+]
 
 { #category : #accessing }
 DiyaRootNode >> boundingBox [
@@ -29,10 +42,11 @@ DiyaRootNode >> initialize [
 	parent := self.
 	shader := nil.
 	root := self.
-	styleName := #global
+	styleName := #global.
+	Q := OrderedCollection new
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 DiyaRootNode >> inner: aPoint [
 	^true
 ]
@@ -45,6 +59,11 @@ DiyaRootNode >> isRoot [
 { #category : #initialization }
 DiyaRootNode >> process [
 	^true
+]
+
+{ #category : #accessing }
+DiyaRootNode >> processingQueue [
+	^ Q
 ]
 
 { #category : #accessing }

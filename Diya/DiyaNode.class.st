@@ -10,7 +10,6 @@ Class {
 		'tf',
 		'shader',
 		'context',
-		'dirty',
 		'ehandlers',
 		'root',
 		'styleName',
@@ -57,7 +56,6 @@ DiyaNode >> addNode: node at: pos [
 	node position: pos.
 	children add: node.
 	node root: self root.
-	Transcript show:'Added node #', self id asString; cr.
 	^ node 
 ]
 
@@ -111,7 +109,6 @@ DiyaNode >> initialize [
 	shader := nil.
 	context := DiyaRendererContext uniqueInstance.
 	children := OrderedCollection new.
-	dirty := false.
 	ehandlers := Dictionary new.
 	styleName := nil.
 	style := nil.
@@ -122,11 +119,6 @@ DiyaNode >> initialize [
 { #category : #accessing }
 DiyaNode >> inner: aPoint [
 	^ self subclassResponsibility 
-]
-
-{ #category : #testing }
-DiyaNode >> isDirty [
-	^ dirty
 ]
 
 { #category : #testing }
@@ -178,13 +170,10 @@ DiyaNode >> register: aBlock to: eventName [
 
 { #category : #accessing }
 DiyaNode >> render [
-	self step.
-	dirty ifTrue:[
-		dirty := self process not].
 	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
-	children do: [:c  | c render  ].
+	children do: [:c| c render  ].
 ]
 
 { #category : #accessing }
@@ -194,7 +183,11 @@ DiyaNode >> root [
 
 { #category : #accessing }
 DiyaNode >> root: anObject [
-	root := anObject
+	root = anObject ifTrue:[^self].
+	root := anObject.
+	children ifNotNil: [ 
+		children do:[:c | c root: root]	
+	]
 ]
 
 { #category : #accessing }
@@ -221,12 +214,16 @@ DiyaNode >> scale: anObject [
 
 { #category : #initialization }
 DiyaNode >> setClean [
-	dirty := false
+	|Q|
+	Q := DiyaRendererContext uniqueInstance processQueue.
+	Q remove: self ifAbsent: [  ]
 ]
 
 { #category : #initialization }
 DiyaNode >> setDirty [
-	dirty := true
+	|Q|
+	Q := DiyaRendererContext uniqueInstance processQueue.
+	(Q includes: self ) ifFalse:[ Q add: self].
 ]
 
 { #category : #accessing }
@@ -263,6 +260,12 @@ DiyaNode >> shader: anObject [
 
 { #category : #stepping }
 DiyaNode >> step [
+]
+
+{ #category : #stepping }
+DiyaNode >> stepDown [
+	self step
+	children ifNotNil: [ children do:[:c | c stepDown ] ]
 ]
 
 { #category : #accessing }

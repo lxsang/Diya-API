@@ -142,7 +142,6 @@ DiyaImageTex >> setup [
 DiyaImageTex >> surfaceFromFile: aPath [
 	aPath exists ifFalse: [ ^DiyaCoreAPIError signal:'File not found ', aPath fullName ].
 	[^ SDL2Image SDLImgLoad: aPath fullName] on: Error do: [
-		Transcript show: 'FALLLING BACCCCCCCCCCCCCCCCCCCCCCCCK'; cr.
 		^  self surfaceFromForm:  (ImageReadWriter formFromFileNamed: aPath)
 	].
 ]

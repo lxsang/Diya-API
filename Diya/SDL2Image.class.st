@@ -22,8 +22,8 @@ SDL2Image class >> checkSymbol [
 { #category : #accessing }
 SDL2Image class >> libNames [
 	^#(
-		'libSDL2_image-2.0.so.0'
 		'libSDL2_image.so'
+		'libSDL2_image-2.0.so.0'
 		'libSDL2_image-2.0.so'
 		'libSDL2_image-2.0.so.0.2.3'
 	)
