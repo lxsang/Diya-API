@@ -5,7 +5,7 @@ Class {
 		'parent',
 		'style'
 	],
-	#category : #'Diya-Graphics'
+	#category : #'Diya-UIThemes'
 }
 
 { #category : #accessing }

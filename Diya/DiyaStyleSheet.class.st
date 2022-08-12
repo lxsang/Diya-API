@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'stylesheet'
 	],
-	#category : #'Diya-Graphics'
+	#category : #'Diya-UIThemes'
 }
 
 { #category : #convenience }

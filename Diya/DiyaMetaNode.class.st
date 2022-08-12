@@ -11,7 +11,7 @@ DiyaMetaNode >> addNode: node at: pos [
 
 { #category : #accessing }
 DiyaMetaNode >> boundingBox [
-	^ 0@0
+	^ Rectangle origin: 0@0 extent: 0@0
 ]
 
 { #category : #rendering }

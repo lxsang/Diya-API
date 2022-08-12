@@ -52,8 +52,7 @@ Diya2DNode >> inner: aPoint [
 
 { #category : #accessing }
 Diya2DNode >> local: aPoint [
-	^((aPoint - (0@0 applyTf: self tf) )/ scale)
-			rotateBy: rotation about: 0@0.
+	^ self tf globalPointToLocal: aPoint
 	
 ]
 

@@ -5,7 +5,7 @@ Class {
 		'themes',
 		'currentThemeName'
 	],
-	#category : #'Diya-Graphics'
+	#category : #'Diya-UIThemes'
 }
 
 { #category : #adding }
@@ -37,21 +37,7 @@ DiyaUIThemesManager >> defaultTheme [
 
 { #category : #initialization }
 DiyaUIThemesManager >> defineDefaultTheme [
-	self addTheme: #default stylesheet: (DiyaStyleSheet new
-		define: #global styles: {
-			#bgColor -> (Color r: 0.2118 g: 0.2118  b: 0.2118).
-			#color -> Color white.
-			#border -> 0.
-			#fontSize -> 18.
-			#fontFamily -> DiyaFontManager uniqueInstance defaultFamily.
-			#textIconFamily -> 'bootstrap-icons'.
-			#fontStyle -> DiyaFontManager uniqueInstance defaultStyle.
-			#borderColor -> Color transparent.
-			#xAlign -> #left.
-			#yAlign -> #middle.
-			#iconSize -> 24.
-	 	}; yourself
-	)
+	self addTheme: #default stylesheet: DiyaDefaultTheme new. 
 ]
 
 { #category : #initialization }

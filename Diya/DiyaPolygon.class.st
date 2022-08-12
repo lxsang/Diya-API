@@ -42,23 +42,7 @@ DiyaPolygon >> points: anObject [
 
 { #category : #accessing }
 DiyaPolygon >> process [
-	bbox := self recFromPoints.
+	bbox := Rectangle encompassing: points.
 	self calculateVertices.
 	^true
-]
-
-{ #category : #accessing }
-DiyaPolygon >> recFromPoints [
-	|maxX maxY minX minY x y|
-	maxX := minX := (points at: 1) x.
-	maxY := minY := (points at: 1) y.
-	points  do: [ :p|
-		x := p x.
-		y := p y.
-		maxX := maxX max: x.
-		maxY := maxY max: y.
-		minX := minX min: x.
-		minY := minY min: y.
-	].
-	^ Rectangle origin: minX@minY corner: maxX @ maxY
 ]

@@ -1,11 +1,6 @@
 Extension { #name : #Point }
 
 { #category : #'*Diya' }
-Point >> applyTf: tf [
-	^ tf localPointToGlobal: self
-]
-
-{ #category : #'*Diya' }
 Point >> asArray3F [
 	^ self asArray3F: 1.0
 ]

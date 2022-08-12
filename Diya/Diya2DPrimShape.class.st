@@ -16,7 +16,7 @@ Diya2DPrimShape >> borderWidth [
 
 { #category : #accessing }
 Diya2DPrimShape >> boundingBox [ 
-	^ bbox applyTf: self tf.
+	^ self tf localBoundsToGlobal: bbox.
 ]
 
 { #category : #initialization }
