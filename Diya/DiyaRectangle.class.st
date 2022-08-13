@@ -16,7 +16,7 @@ DiyaRectangle class >> size: size shader:s [
 
 { #category : #initialization }
 DiyaRectangle >> drawLines [
-	OpenGL drawArrays: GL_LINE_LOOP first:0  count: (vbuffer size >> 2).
+	OpenGL drawArrays: GL_LINE_LOOP first:voffset  count: (vbuffer size >> 2).
 	
 ]
 

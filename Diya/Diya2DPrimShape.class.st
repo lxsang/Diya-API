@@ -28,18 +28,13 @@ Diya2DPrimShape >> draw [
 		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA.
 	"configure vao vbo for texture QUAD"
 	self texture ifNotNil: [
-		self texture setup.
-		context texture0 setImage2D: self texture.
-		context texture0 active. 	
+		context setTexture: self texture.	
 	].
-	context vao enableAttribute: 0.
-	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil.
-	context vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_DYNAMIC_DRAW.
-	OpenGL drawArrays: type first:0  count:((vbuffer size )>> 2 ).
+	voffset := context submitData: vbuffer.
+	OpenGL drawArrays: type first: voffset  count:((vbuffer size )>> 2 ).
 	"reset value"
 	self texture ifNotNil: [self texture drop.].
 	self borderWidth > 0 ifTrue: [ self drawBorder ].
-	context vao disableAttribute: 0.
 	OpenGL
 		disable: GL_CULL_FACE;
 		disable: GL_BLEND.

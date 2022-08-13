@@ -33,7 +33,7 @@ DiyaConvexPolygon >> calculateVertices [
 
 { #category : #initialization }
 DiyaConvexPolygon >> drawLines [
-	OpenGL drawArrays: GL_LINE_LOOP first:0  count: (vbuffer size >> 2) - 1.
+	OpenGL drawArrays: GL_LINE_LOOP first:voffset  count: (vbuffer size >> 2) - 1.
 ]
 
 { #category : #initialization }

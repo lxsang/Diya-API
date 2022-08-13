@@ -26,7 +26,7 @@ OpenGLVertexBuffer class >> deleteBuffersSize:n buffers: buffers [
 	^self ffiCall: #(void glDeleteBuffers(	GLsizei n,const GLuint * buffers))
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'library path' }
 OpenGLVertexBuffer class >> ffiLibraryName [ 
 	^ OpenGL ffiLibraryName 
 ]
@@ -78,7 +78,8 @@ OpenGLVertexBuffer >> initialize [
 	vertexBufferID := FFIExternalArray externalNewType: GLint size:1. 
 	vertexBufferID at:1 put: -1.
 	vertexBufferID autoRelease.
-	OpenGLVertexBuffer genVertexBuffersSize: 1 buffers: vertexBufferID getHandle
+	OpenGLVertexBuffer genVertexBuffersSize: 1 buffers: vertexBufferID getHandle.
+	
 ]
 
 { #category : #'as yet unclassified' }

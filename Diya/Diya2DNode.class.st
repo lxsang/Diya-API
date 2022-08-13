@@ -2,7 +2,8 @@ Class {
 	#name : #Diya2DNode,
 	#superclass : #DiyaNode,
 	#instVars : [
-		'vbuffer'
+		'vbuffer',
+		'voffset'
 	],
 	#category : #'Diya-Graphics'
 }
@@ -43,6 +44,7 @@ Diya2DNode >> initialize [
 	tf := MatrixTransform2x3 identity .
 	shader := Diya2DShader uniqueInstance.
 	vbuffer := nil.
+	voffset := 0.
 ]
 
 { #category : #accessing }
