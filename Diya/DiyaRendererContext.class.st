@@ -41,6 +41,7 @@ DiyaRendererContext >> assets: anObject [
 
 { #category : #accessing }
 DiyaRendererContext >> destroy [ 
+	vao disableAttribute: 0.
 	vao delete.
 	vbo delete.
 	texture0 delete.
@@ -66,6 +67,8 @@ DiyaRendererContext >> initialize [
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
 	assets := AssetManager new.
+	vao enableAttribute: 0.
+	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil.
 ]
 
 { #category : #accessing }

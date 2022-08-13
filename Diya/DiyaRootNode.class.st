@@ -28,7 +28,7 @@ DiyaRootNode >> draw [
 	c := self ? #bgColor.
 	OpenGL clearColorR: c red G: c green B: c blue  A: c alpha.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
-	context vbo bind: GL_ARRAY_BUFFER.
+	"context vbo bind: GL_ARRAY_BUFFER."
 ]
 
 { #category : #'add/remove' }
