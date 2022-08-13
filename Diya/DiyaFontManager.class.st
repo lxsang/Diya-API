@@ -74,7 +74,7 @@ DiyaFontManager >> loadFile: aFile [
 		index: i.
 	face newFaceFromFile: path index: i.
 	face loadFields.
-	Transcript show: 'Loaded font face ', face styleName;cr.
+	self stdlog: 'Loaded font face ', face styleName.
 	numfaces ifNil: [ numfaces := face numFaces ].
 	self loadFace: face.
 	i := i + 1.

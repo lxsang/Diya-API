@@ -77,7 +77,7 @@ DiyaImageTex >> fromDisplayAs: assetName [
 { #category : #'instance creation' }
 DiyaImageTex >> fromFile: aPath [
 	|surface|
-	Transcript show: 'Loading texture from ', aPath fullName;cr.
+	self stdlog: 'Loading texture from ', aPath fullName.
 	data ifNotNil: [ data free ].
 	name := aPath fullName.
 	surface := self surfaceFromFile: aPath.
@@ -89,7 +89,7 @@ DiyaImageTex >> fromFile: aPath [
 	LibC memCopy: surface pixels getHandle to: data getHandle size: data size.
 	SDL2 
 		freeSurface: surface.
-	Transcript show: 'Loaded ', aPath fullName;cr.
+	self stdlog: 'Loaded ', aPath fullName.
 ]
 
 { #category : #'instance creation' }

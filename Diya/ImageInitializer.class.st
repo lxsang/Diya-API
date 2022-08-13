@@ -54,9 +54,7 @@ ImageInitializer >> initializeImage [
 				do: [ retryList add: c ] ].
 	retryList
 		do: [ :c | 
-			Transcript
-				show: 'CLASS: ' , c asString , ' is not initialized';
-				cr.
+			self stdlog: 'CLASS: ' , c asString , ' is not initialized, retry'.
 			c initialize ].
 	DiyaSingleton resetAll.
 	FFIMethodRegistry resetAll.

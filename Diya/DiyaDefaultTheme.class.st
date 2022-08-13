@@ -30,8 +30,6 @@ DiyaDefaultTheme >> defineLoadingBar [
 	 	}; 
 		define: #loadingProgress styles: {
 			#bgColor -> Color white.
-			#border -> 0.
-			#fontSize -> 18.
 	 	}
 ]
 

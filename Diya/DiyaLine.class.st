@@ -88,11 +88,16 @@ DiyaLine >> process [
 	self position: bbox origin.
 	extent := bbox extent.
 	bbox := (Rectangle origin: 0@0 corner:  extent ).
-	
-	{
-		0.0. 0.0. 0.0. 0.0.            
-      extent x. extent y. 0.0. 0.0.
-	} doWithIndex: [:e :i| vbuffer at: i put: e].
+	vbuffer
+		at: 1  put: 0.0;
+		at: 2  put: 0.0;
+		at: 3  put: 0.0;
+		at: 4  put: 0.0;
+		
+		at: 5  put: extent x;
+		at: 6  put: extent y;
+		at: 7  put: 0.0;
+		at: 8  put: 0.0.
 	^true
 ]
 

@@ -20,7 +20,7 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 	|pointer |
 	pointer := root addNode: (DiyaCircle r: 10) at: 200@200. 
 	pointer styleName: #pointer.
-	root on: #keydown do:[:e| Transcript show: 'keydown...';cr. running := false.].
+	root on: #keydown do:[:e| self stdlog: 'keydown...'. running := false.].
 	root on: #quit do: [:e| running := false].
 	root on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
@@ -47,11 +47,16 @@ DiyaApplicationLauncher >> launch: app [
 		root empty.
 	].
 	currapp := app uniqueInstance.
-	currapp setup.
-	currapp root forceReload.
-	Transcript show: 'APPLICATION INIT'; cr.
 	self context assets: currapp am.
-	self appNode addNode: currapp root.
+	[
+		self stdlog: 'Loading application'.
+		currapp root visibility: false.
+		currapp setup.
+		self appNode addNode: currapp root.
+		self process: true.
+		currapp root visibility: true.
+		self stdlog: 'Application LOADED'.
+	] fork.
 ]
 
 { #category : #initialization }
@@ -65,23 +70,22 @@ DiyaApplicationLauncher >> main [
 		root trigger: (DiyaEvent from: event mapped).
 	].
 	currapp ifNotNil: [currapp main.].
-	"root render."
 	root stepDown.
-	self process.
+	self process: false.
 	root render.
 ]
 
 { #category : #initialization }
-DiyaApplicationLauncher >> process [
+DiyaApplicationLauncher >> process: force [
 	|Q  node maxProcessingTime|
-	maxProcessingTime := 1000 / DiyaBoot maxFPS - 100.
-	Q := root processingQueue select:[:e| e visibility].
+	maxProcessingTime := (1000 / DiyaBoot maxFPS) asInteger >> 1.
+	Q := root processingQueue.
 	Q ifEmpty:[^ self].
 	[
 		node := Q removeFirst.
 		node process.
-		root cleanDirtyNode: node.
-	 	Q isNotEmpty and: DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime
+	 	Q isNotEmpty and: (
+		(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime) or: force)
 	] whileTrue
 	
 ]

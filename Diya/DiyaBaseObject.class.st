@@ -13,11 +13,6 @@ DiyaBaseObject >> checkGLError: mark [
 	].
 ]
 
-{ #category : #accessing }
-DiyaBaseObject >> logError: string [
-	self stderr nextPutAll: string; cr
-]
-
 { #category : #asserting }
 DiyaBaseObject >> shouldNotBeCalled [
 	^DiyaCoreAPIError signal: 'Should not be called'
@@ -30,12 +25,19 @@ DiyaBaseObject >> stderr [
 
 { #category : #accessing }
 DiyaBaseObject >> stderror: string [
-	self stderr nextPutAll: string; nextPutAll: Character cr asString.
+	self stderr
+		nextPutAll: DateAndTime now asString;
+		nextPutAll: ': ';
+		nextPutAll: string;
+		nextPutAll: Character cr asString.
 ]
 
 { #category : #accessing }
 DiyaBaseObject >> stdlog: string [
-	self stdout nextPutAll: string;
+	self stdout
+			nextPutAll: DateAndTime now asString;
+			nextPutAll: ': ';
+			nextPutAll: string;
 			nextPutAll: Character cr asString.
 ]
 

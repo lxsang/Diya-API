@@ -45,12 +45,8 @@ DiyaLoadingBar >> percent: anObject [
 
 { #category : #processing }
 DiyaLoadingBar >> process [
-	|border|
-	border := bar ? #border.
 	bar extent: self extent.
-	progress position: border@border.
-	progress extent: ((self percent) * (self extent x) / 100 -( border << 1)) @ (self extent y - (border << 1)).
-	"label extent: self extent."
+	progress extent: ((self percent) * (self extent x) / 100) @ (self extent y).
 ]
 
 { #category : #accessing }

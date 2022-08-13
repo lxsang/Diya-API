@@ -41,7 +41,6 @@ DiyaButton >> label [
 { #category : #accessing }
 DiyaButton >> process [
 	rec extent: self extent.
-	label position: 0@0.
 	label extent: self extent.
 	^true
 ]

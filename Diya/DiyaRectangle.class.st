@@ -40,11 +40,25 @@ DiyaRectangle >> initialize [
 DiyaRectangle >> process [
 	|extent|
 	extent := self extent.
-	{
-		0. 0. 0.0. 0.0.            
-      0. extent y. 0.0. 1.0.
-      extent x. extent y. 1.0. 1.0.
-		extent x. 0. 1.0. 0.0.
-	} doWithIndex: [:e :i| vbuffer at: i put: e].
+	vbuffer
+		at: 1 put: 0.0;
+		at: 2 put: 0.0;
+		at: 3 put: 0.0;
+		at: 4 put: 0.0;
+		
+		at: 5 put: 0.0;
+		at: 6 put: extent y;
+		at: 7 put: 0.0;
+		at: 8 put: 1.0;
+		
+		at: 9 put: extent x;
+		at: 10 put: extent y;
+		at: 11 put: 1.0;
+		at: 12 put: 1.0;
+		
+		at: 13 put: extent x;
+		at: 14 put: 0.0;
+		at: 15 put: 1.0;
+		at: 16 put: 0.0.
 	^true
 ]

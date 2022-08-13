@@ -44,5 +44,5 @@ DiyaSingleton class >> uniqueInstance [
 { #category : #initialization }
 DiyaSingleton >> initialize [
 	super initialize.
-	Transcript show: 'Initialise unique instance of ', self className; cr.
+	self stdlog: 'Initialise unique instance of ', self className.
 ]

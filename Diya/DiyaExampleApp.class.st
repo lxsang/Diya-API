@@ -14,7 +14,7 @@ DiyaExampleApp >> defineStyleSheet [
 	|fmgr style|
 	fmgr := DiyaFontManager uniqueInstance.
 	#(16 24) do:[:fontSize|
-		Transcript show: 'Init font size ', fontSize asString, ' of ', fmgr defaultFamily; cr.
+		self stdlog: 'Init font size ', fontSize asString, ' of ', fmgr defaultFamily.
 		style := fmgr style: fmgr defaultStyle   from: fmgr defaultFamily.
 		style textureOf: fontSize.
 	].
@@ -85,11 +85,11 @@ DiyaExampleApp >> setup [
 	label styleName:#text_icon_1.
 	label icon: 16rF254.
 	
-	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
+	"node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
 	node1 rotation: 45.
 	node1 scale: 2.0@2.0.
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
-		label txt: 'RECT ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
+		label txt: 'RECT ', (node1 local: e mapped worldPosition) asIntegerPoint asString]."
 	
 	img := root addNode: (DiyaImageView from:'mrsang.png') at: 10 @ 400.
 	img styleName: #image_view.
@@ -120,11 +120,11 @@ DiyaExampleApp >> setup [
 	ell := root addNode: (DiyaEllipse rx:100  ry: 70) at: 120@300.
 	ell scale: 1.2 @ 1.2.
 	ell styleName: #ell_view.
-	ell rotation: 30.
+	"ell rotation: 30."
 	ell textureNamed:'mrsang.png'.
-	"ell addNode: (DiyaTimerNode timeout: 1000 / 6 do:[:n |
+	ell addNode: (DiyaTimerNode timeout: 1000 / 6 do:[:n |
 		n parent rotation: n parent rotation + 10.	
-	] )".
+	] ).
 	ell on: #(mousebuttondown fingerdown) do:[:e|
 		label txt: 'Ellipse clicked', (ell local:e mapped worldPosition) asIntegerPoint asString].
 
@@ -155,7 +155,16 @@ DiyaExampleApp >> setup [
 		p > 100 ifTrue:[ p := 0].
 		n parent percent: p.
 	] ).
-	
-	Transcript show: 'Application setup';cr.
+
+
+	loading := root addNode: (DiyaLoadingBar new) at: 240@580.
+	loading extent: 200 @ 20.
+	 
+	loading addNode: (DiyaTimerNode timeout: 1000 do:[:n |
+		|p|
+		p := (n parent percent + 10).
+		p > 100 ifTrue:[ p := 0].
+		n parent percent: p.
+	] ).
 	^ root 
 ]
