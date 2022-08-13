@@ -2,15 +2,11 @@ Class {
 	#name : #DiyaRootNode,
 	#superclass : #DiyaNode,
 	#instVars : [
-		'Q'
+		'Q',
+		'R'
 	],
 	#category : #'Diya-Graphics'
 }
-
-{ #category : #accessing }
-DiyaRootNode >> Q [
-	^ Q
-]
 
 { #category : #accessing }
 DiyaRootNode >> boundingBox [
@@ -28,12 +24,11 @@ DiyaRootNode >> draw [
 	c := self ? #bgColor.
 	OpenGL clearColorR: c red G: c green B: c blue  A: c alpha.
 	OpenGL clear: GL_COLOR_BUFFER_BIT.
-	"context vbo bind: GL_ARRAY_BUFFER."
 ]
 
 { #category : #'add/remove' }
 DiyaRootNode >> enqueueDirtyNode: aNode [
-	(Q includes: aNode ) ifFalse:[ Q add: aNode].
+	Q addIfNotPresent: aNode
 ]
 
 { #category : #accessing }
@@ -48,7 +43,8 @@ DiyaRootNode >> initialize [
 	shader := nil.
 	root := self.
 	styleName := #global.
-	Q := OrderedCollection new
+	Q := OrderedCollection new.
+	R := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -66,9 +62,37 @@ DiyaRootNode >> process [
 	
 ]
 
-{ #category : #accessing }
-DiyaRootNode >> processingQueue [
-	^ Q
+{ #category : #testing }
+DiyaRootNode >> readyForSwap [
+	^ R isEmpty 
+]
+
+{ #category : #rendering }
+DiyaRootNode >> render [
+	|node maxProcessingTime|
+	self stepDown.
+	R ifEmpty: [
+		self draw.
+		self renderNext: children 
+	].
+	maxProcessingTime := (1000 / DiyaBoot maxFPS) asInteger.
+	[
+		Q ifNotEmpty: [ 
+			node := Q removeFirst.
+			node process.
+		].
+		R ifNotEmpty: [ 
+			node := R removeFirst.
+			node render.	 
+		].
+	 	(R isNotEmpty or: Q isNotEmpty) and:
+			(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime) 
+	] whileTrue
+]
+
+{ #category : #rendering }
+DiyaRootNode >> renderNext: nodes [
+	R addAllFirstUnlessAlreadyPresent: nodes.
 ]
 
 { #category : #initialization }

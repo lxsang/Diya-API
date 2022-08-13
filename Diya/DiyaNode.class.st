@@ -90,6 +90,7 @@ DiyaNode >> extent [
 { #category : #processing }
 DiyaNode >> forceReload [
 	self process.
+	self setClean.
 	children ifNotNil: [
 	children do:[:c|
 		c forceReload
@@ -189,10 +190,11 @@ DiyaNode >> removeChild: c [
 { #category : #rendering }
 DiyaNode >> render [
 	visibility ifFalse:[^self].
+	root ifNil: [ ^self ].
 	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
-	children do: [:c| c render  ].
+	root renderNext: children 
 ]
 
 { #category : #accessing }

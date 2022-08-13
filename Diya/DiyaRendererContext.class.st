@@ -9,7 +9,8 @@ Class {
 		'texture0',
 		'projection',
 		'assets',
-		'window'
+		'window',
+		'root'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -86,9 +87,26 @@ DiyaRendererContext >> projection [
 	^ projection
 ]
 
+{ #category : #rendering }
+DiyaRendererContext >> render [
+	root render.
+	root readyForSwap ifTrue: [  
+		SDL2 glSwapWindow: window.
+	]
+]
+
 { #category : #accessing }
 DiyaRendererContext >> resolution [
 	^ (display w) @ (display h)
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> root [
+	root ifNil: [ root := DiyaRootNode new ].
+	^ root
+
+
+
 ]
 
 { #category : #accessing }
@@ -96,7 +114,7 @@ DiyaRendererContext >> texture0 [
 	^ texture0
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'transformation matrices' }
 DiyaRendererContext >> useProjection: aClass [
 	projection := aClass fromDisplay: self display
 ]

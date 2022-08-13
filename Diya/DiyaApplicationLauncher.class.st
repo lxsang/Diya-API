@@ -36,7 +36,7 @@ DiyaApplicationLauncher >> defaultApplication [
 { #category : #initialization }
 DiyaApplicationLauncher >> initialize [
 	super initialize.
-	root := DiyaRootNode new.
+	root := DiyaRendererContext uniqueInstance root.
 	currapp := nil.
 ]
 
@@ -52,8 +52,8 @@ DiyaApplicationLauncher >> launch: app [
 		self stdlog: 'Loading application'.
 		currapp root visibility: false.
 		currapp setup.
+		currapp root forceReload.
 		self appNode addNode: currapp root.
-		self process: true.
 		currapp root visibility: true.
 		self stdlog: 'Application LOADED'.
 	] fork.
@@ -70,24 +70,6 @@ DiyaApplicationLauncher >> main [
 		root trigger: (DiyaEvent from: event mapped).
 	].
 	currapp ifNotNil: [currapp main.].
-	root stepDown.
-	self process: false.
-	root render.
-]
-
-{ #category : #initialization }
-DiyaApplicationLauncher >> process: force [
-	|Q  node maxProcessingTime|
-	maxProcessingTime := (1000 / DiyaBoot maxFPS) asInteger >> 1.
-	Q := root processingQueue.
-	Q ifEmpty:[^ self].
-	[
-		node := Q removeFirst.
-		node process.
-	 	Q isNotEmpty and: (
-		(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime) or: force)
-	] whileTrue
-	
 ]
 
 { #category : #accessing }
