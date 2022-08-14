@@ -24,6 +24,11 @@ DiyaMetaNode >> extent [
 	^  0@0
 ]
 
+{ #category : #initialization }
+DiyaMetaNode >> initialize [
+		visibility := false.
+]
+
 { #category : #testing }
 DiyaMetaNode >> inner: aPoint [
 	^ false
