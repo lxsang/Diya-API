@@ -37,12 +37,6 @@ DiyaBoot class >> startx [
 ]
 
 { #category : #events }
-DiyaBoot >> GLinit. [
-	OpenGL viewportX: 0 Y:0 W: display w H: display h.
-	OpenGL enable: GL_TEXTURE_2D.
-]
-
-{ #category : #events }
 DiyaBoot >> createGLContext [
 	context :=  SDL2 glCreateContext:  window.
 	context ifNil: [ ^DiyaCoreAPIError signal: SDL2 getErrorMessage ].
@@ -105,7 +99,9 @@ DiyaBoot >> render [
 	|launcher|
 	launcher := DiyaApplicationLauncher uniqueInstance.
 	launcher setup.
-	self GLinit.
+	"Init the Open  GL view port and enable 2D texture"
+	OpenGL viewportX: 0 Y:0 W: display w H: display h.
+	OpenGL enable: GL_TEXTURE_2D.
 	[ launcher running ] whileTrue: [
 		DiyaClock uniqueInstance tick.
 		launcher main.
