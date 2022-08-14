@@ -162,16 +162,6 @@ DiyaRendererContext >> useTexture: aTexture [
 ]
 
 { #category : #accessing }
-DiyaRendererContext >> vao [
-	^ vao
-]
-
-{ #category : #accessing }
-DiyaRendererContext >> vbo [
-	^ vbo
-]
-
-{ #category : #accessing }
 DiyaRendererContext >> window [
 	^ window
 ]
