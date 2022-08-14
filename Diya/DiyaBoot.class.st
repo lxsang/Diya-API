@@ -18,7 +18,10 @@ Class {
 
 { #category : #'class initialization' }
 DiyaBoot class >> initialize [
-	Smalltalk globals at: #DiyaDisplay put: nil
+	Smalltalk globals at: #DiyaDisplay put: nil.
+	Smalltalk globals at: #DiyaSystemClock put: nil.
+	Smalltalk globals at: #DiyaRenderer put: nil.
+	Smalltalk globals at: #DiyaSystemSettings put: nil.
 ]
 
 { #category : #'instance creation' }
