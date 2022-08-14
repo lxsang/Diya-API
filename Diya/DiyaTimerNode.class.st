@@ -26,7 +26,7 @@ DiyaTimerNode class >> timeout: ms doOnce: aBlock [
 
 { #category : #accessing }
 DiyaTimerNode >> delta [
-	^ DiyaSystemClock delta asMilliSeconds
+	^ DiyaSystemClock delta
 ]
 
 { #category : #accessing }

@@ -330,7 +330,6 @@ DiyaNode >> trigger: evt [
 		handler value: evt].
 	children ifNil: [^self].
 	evt enable ifTrue: [
-		"evt mapped triggableOn: children first."
 		children select: [:node | evt mapped triggableOn: node ] thenDo:[:node| node trigger: evt]
 	].
 ]

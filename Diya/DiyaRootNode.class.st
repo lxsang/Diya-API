@@ -112,7 +112,7 @@ DiyaRootNode >> spinOnce: maxProcessingTime [
 	].
 	(Q isEmpty and: R isEmpty) ifTrue: [ ^false ].
 	DiyaSystemSettings renderAtOnce ifTrue: [ ^ true ].
-	^(DiyaSystemClock lapDelta asMilliSeconds  < maxProcessingTime)
+	^(DiyaSystemClock lapDelta  < maxProcessingTime)
 ]
 
 { #category : #accessing }

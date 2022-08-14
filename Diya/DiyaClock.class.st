@@ -23,12 +23,12 @@ DiyaClock >> elapsedTime [
 DiyaClock >> initialize [
 	monotonic := DateAndTime now.
 	lastTick := monotonic.
-	lapTime := 0 asDuration.
+	lapTime := 0.
 ]
 
 { #category : #initialization }
 DiyaClock >> lapDelta [
-	 ^ ((DateAndTime now) - lastTick)
+	 ^ ((DateAndTime now) - lastTick) asMilliSeconds
 ]
 
 { #category : #initialization }
@@ -38,6 +38,6 @@ DiyaClock >> lapTime [
 
 { #category : #initialization }
 DiyaClock >> tick [
-	lapTime := (DateAndTime now) - lastTick.
+	lapTime := self lapDelta.
 	lastTick := DateAndTime now.
 ]

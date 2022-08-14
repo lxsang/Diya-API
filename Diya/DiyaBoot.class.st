@@ -108,7 +108,7 @@ DiyaBoot >> render [
 		DiyaRenderer render.
 		SDL2 delay:
 			(0 max:
-				(1000/ DiyaSystemSettings maxFPS) asInteger - (DiyaSystemClock lapDelta asMilliSeconds)).
+				(1000/ DiyaSystemSettings maxFPS) asInteger - (DiyaSystemClock lapDelta)).
 	].
 ]
 

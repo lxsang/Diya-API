@@ -62,7 +62,7 @@ DiyaApplicationLauncher >> launch: app [
 { #category : #initialization }
 DiyaApplicationLauncher >> main [
 	| fps delta|
-	delta := DiyaSystemClock delta asMilliSeconds.
+	delta := DiyaSystemClock delta.
 	fps := DiyaSystemSettings maxFPS.
 	delta = 0 ifFalse:[ fps :=  (1000/ delta) asInteger].
 	txtFPS data: ('FPS:', fps asString).
