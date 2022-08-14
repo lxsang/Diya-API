@@ -9,12 +9,6 @@ Class {
 }
 
 { #category : #'instance creation' }
-AssetManager class >> defaultAssetLocation [
-	^Smalltalk imageDirectory / 'assets'
-	
-]
-
-{ #category : #'instance creation' }
 AssetManager class >> fromLocation: loc [
 	^self new from: loc; yourself
 ]
@@ -40,7 +34,7 @@ AssetManager >> from: location [
 AssetManager >> initialize [
 	super initialize.
 	assets := Dictionary new.
-	base := self class defaultAssetLocation
+	base := DiyaSystemSettings assetPath
 ]
 
 { #category : #accessing }

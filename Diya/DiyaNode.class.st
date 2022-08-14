@@ -107,7 +107,7 @@ DiyaNode >> initialize [
 	super initialize.
 	parent := nil.
 	shader := nil.
-	context := DiyaRendererContext uniqueInstance.
+	context := DiyaRenderer.
 	children := OrderedCollection new.
 	ehandlers := Dictionary new.
 	styleName := nil.
@@ -264,7 +264,7 @@ DiyaNode >> setUpShader [
 	|mem|
 		mem := self tf asGLBuffer.
 		shader use;
-			setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat;
+			setUniform: #u_time value: DiyaSystemClock elapsedTime asFloat;
 			setUniform: #u_projection value: {GL_FALSE. context projection buffer};
 			setUniform: #u_resolution value: { context resolution x. context resolution y };
 			setUniform: #u_transform value: {GL_TRUE. mem}.

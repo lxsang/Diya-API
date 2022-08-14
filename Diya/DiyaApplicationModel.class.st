@@ -20,7 +20,7 @@ DiyaApplicationModel >> cleanup [
 
 { #category : #accessing }
 DiyaApplicationModel >> context [
-	^DiyaRendererContext uniqueInstance
+	^DiyaRenderer
 ]
 
 { #category : #initialization }

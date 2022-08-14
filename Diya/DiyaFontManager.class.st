@@ -13,13 +13,6 @@ DiyaFontManager class >> cleanUpInstance: singleton [
 	singleton reset.
 ]
 
-{ #category : #'as yet unclassified' }
-DiyaFontManager class >> searchPaths [
- ^ { 
-		Smalltalk imageDirectory / 'fonts'
- }
-]
-
 { #category : #initialization }
 DiyaFontManager >> defaultFamily [
 	^'Ubuntu'
@@ -90,7 +83,9 @@ DiyaFontManager >> loadFonts [
 { #category : #initialization }
 DiyaFontManager >> loadFonts: force [
 	force ifTrue:[self reset].
-	self class searchPaths do:[:path| self loadPath: path].
+	DiyaSystemSettings fontPaths
+		select:[:p| p asFileReference exists]
+		thenDo:[:path| self loadPath: path].
 	
 ]
 

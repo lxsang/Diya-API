@@ -69,24 +69,15 @@ DiyaRootNode >> readyForSwap [
 
 { #category : #rendering }
 DiyaRootNode >> render [
-	|node maxProcessingTime|
+	| maxProcessingTime|
 	self stepDown.
 	R ifEmpty: [
 		self draw.
 		self renderNext: children 
 	].
-	maxProcessingTime := (1000 / DiyaBoot maxFPS) asInteger.
+	maxProcessingTime := (1000 / DiyaSystemSettings maxFPS) asInteger.
 	[
-		Q ifNotEmpty: [ 
-			node := Q removeFirst.
-			node process.
-		].
-		R ifNotEmpty: [ 
-			node := R removeFirst.
-			node render.	 
-		].
-	 	(R isNotEmpty or: Q isNotEmpty) and:
-			(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime)
+		self spinOnce: maxProcessingTime 
 	] whileTrue
 ]
 
@@ -106,6 +97,22 @@ DiyaRootNode >> setClean [
 DiyaRootNode >> setDirty [
 	
 	
+]
+
+{ #category : #rendering }
+DiyaRootNode >> spinOnce: maxProcessingTime [ 
+	|node|
+	Q ifNotEmpty: [ 
+		node := Q removeFirst.
+		node process.
+	].
+	R ifNotEmpty: [ 
+		node := R removeFirst.
+		node render.	
+	].
+	(Q isEmpty and: R isEmpty) ifTrue: [ ^false ].
+	DiyaSystemSettings renderAtOnce ifTrue: [ ^ true ].
+	^(DiyaSystemClock lapDelta asMilliSeconds  < maxProcessingTime)
 ]
 
 { #category : #accessing }

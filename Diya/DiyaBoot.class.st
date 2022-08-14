@@ -22,11 +22,6 @@ DiyaBoot class >> initialize [
 ]
 
 { #category : #'instance creation' }
-DiyaBoot class >> maxFPS [
-	^60
-]
-
-{ #category : #'instance creation' }
 DiyaBoot class >> startUp: status [
 	self startx.
 ]
@@ -80,9 +75,11 @@ DiyaBoot >> init [
 	display := SDL_DisplayMode externalNew autoRelease.
 	SDL2 SDLGetCurrentDisplayMode: display from:0.
 	SDL2 showCursor: 0.
+	DiyaSingleton resetAll.
 	Smalltalk globals at: #Display ifAbsentPut:display.
 	Smalltalk globals at: #DiyaDisplay put:display.
-	DiyaSingleton resetAll.
+	Smalltalk globals at: #DiyaSystemSettings put: DiyaSettings uniqueInstance.
+	Smalltalk globals at: #DiyaSystemClock put: DiyaClock uniqueInstance.
 	DiyaFontManager uniqueInstance loadFonts.
 ]
 
@@ -91,7 +88,7 @@ DiyaBoot >> initialize [
 	display := nil.
 	window := nil.
 	context := nil.
-	clock := DiyaClock uniqueInstance.
+	clock := DiyaSystemClock.
 ]
 
 { #category : #events }
@@ -103,12 +100,12 @@ DiyaBoot >> render [
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	OpenGL enable: GL_TEXTURE_2D.
 	[ launcher running ] whileTrue: [
-		DiyaClock uniqueInstance tick.
+		DiyaSystemClock tick.
 		launcher main.
-		DiyaRendererContext uniqueInstance render.
+		DiyaRenderer render.
 		SDL2 delay:
 			(0 max:
-				(1000/ self class maxFPS) asInteger - (DiyaClock uniqueInstance lapDelta asMilliSeconds)).
+				(1000/ DiyaSystemSettings maxFPS) asInteger - (DiyaSystemClock lapDelta asMilliSeconds)).
 	].
 ]
 
@@ -200,6 +197,7 @@ DiyaBoot >> startx [
 			display: display;
 			window: window;
 			useProjection: OrthoProjectionMatrix.
+	Smalltalk globals at: #DiyaRenderer put: DiyaRendererContext uniqueInstance.
 	self render.
 	context delete.
 	window destroy.

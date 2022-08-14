@@ -99,7 +99,7 @@ DiyaExampleApp >> setup [
 		|p|
 		p := e mapped worldPosition.
 		label txt: 'Mouse ', p asIntegerPoint asString.
-		DiyaRendererContext uniqueInstance assets
+		DiyaRenderer assets
 			addAsset:(texture fromDisplay: (Rectangle origin: ((p x - 100) @ (p y - 100)) extent: 200@200 ) as: 'capture').
 		img textureNamed: 'capture'.
 		

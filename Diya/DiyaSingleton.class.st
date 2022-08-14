@@ -25,7 +25,7 @@ DiyaSingleton class >> new [
 { #category : #'instance creation' }
 DiyaSingleton class >> reset [
 	|singleton key|
-	key := self class asString asSymbol.
+	key := self class.
 	singleton := singletons at: key ifAbsent: [ ^ self ].
 	self cleanUpInstance: singleton.
 	singletons removeKey: key
@@ -38,7 +38,7 @@ DiyaSingleton class >> resetAll [
 
 { #category : #'instance creation' }
 DiyaSingleton class >> uniqueInstance [ 
-	^singletons at: self class asString asSymbol  ifAbsentPut: [ super new ].
+	^singletons at: self class  ifAbsentPut: [ super new ].
 ]
 
 { #category : #initialization }

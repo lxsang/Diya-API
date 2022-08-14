@@ -24,7 +24,7 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 	root on: #quit do: [:e| running := false].
 	root on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
-		DiyaRendererContext uniqueInstance mouse: (e mapped x) @ (e mapped y).
+		DiyaRenderer mouse: (e mapped x) @ (e mapped y).
 	].
 ]
 
@@ -36,7 +36,7 @@ DiyaApplicationLauncher >> defaultApplication [
 { #category : #initialization }
 DiyaApplicationLauncher >> initialize [
 	super initialize.
-	root := DiyaRendererContext uniqueInstance root.
+	root := DiyaRenderer root.
 	currapp := nil.
 ]
 
@@ -62,8 +62,8 @@ DiyaApplicationLauncher >> launch: app [
 { #category : #initialization }
 DiyaApplicationLauncher >> main [
 	| fps delta|
-	delta := DiyaClock uniqueInstance delta asMilliSeconds.
-	fps := DiyaBoot maxFPS.
+	delta := DiyaSystemClock delta asMilliSeconds.
+	fps := DiyaSystemSettings maxFPS.
 	delta = 0 ifFalse:[ fps :=  (1000/ delta) asInteger].
 	txtFPS data: ('FPS:', fps asString).
 	[(SDL2 pollEvent: event) > 0] whileTrue: [

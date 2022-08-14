@@ -31,6 +31,11 @@ DiyaRendererContext class >> maxFloatBufferSize [
 ]
 
 { #category : #accessing }
+DiyaRendererContext class >> maxTextureNumber [
+	^ 32
+]
+
+{ #category : #accessing }
 DiyaRendererContext >> assets [
 	^ assets
 ]
@@ -65,7 +70,7 @@ DiyaRendererContext >> findTextureUnit [
 		e value ifNil: [ ^ i - 1]
 	].
 	"random unit value"
-	^ (Random new nextInt: 32) - 1
+	^ (Random new nextInt: self class maxTextureNumber) - 1
 ]
 
 { #category : #accessing }
@@ -87,7 +92,7 @@ DiyaRendererContext >> initialize [
 		stride: 16
 		pointer: nil.
 	textures :=
-		(1 to: 32) collect:[:i|
+		(1 to: self class maxTextureNumber ) collect:[:i|
 			(OpenGLTexture fromUnit: i - 1) -> nil] .
 ]
 
