@@ -6,7 +6,7 @@ Class {
 		'display',
 		'vbo',
 		'vao',
-		'texture0',
+		'textures',
 		'projection',
 		'assets',
 		'window',
@@ -45,7 +45,8 @@ DiyaRendererContext >> destroy [
 	vao disableAttribute: 0.
 	vao delete.
 	vbo delete.
-	texture0 delete.
+	textures do: [:e | e key delete ].
+	textures := OrderedCollection new.
 ]
 
 { #category : #accessing }
@@ -58,18 +59,36 @@ DiyaRendererContext >> display: anObject [
 	display := anObject
 ]
 
+{ #category : #rendering }
+DiyaRendererContext >> findTextureUnit [
+	textures withIndexDo: [ :e :i|
+		e value ifNil: [ ^ i - 1]
+	].
+	"random unit value"
+	^ (Random new nextInt: 32) - 1
+]
+
 { #category : #accessing }
 DiyaRendererContext >> initialize [
 	super initialize.
 	vbo := OpenGLVertexBuffer new.
 	vao := OpenGLVertexArray new.
-	texture0 := OpenGLTexture fromUnit: 0.
+	textures := Dictionary new.
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
 	assets := AssetManager new.
 	vao enableAttribute: 0.
-	OpenGLVertexArray  vertexAttributePointerIndex: 0 size:4 type: GL_FLOAT normalized: GL_FALSE stride: 16 pointer: nil.
+	OpenGLVertexArray
+		vertexAttributePointerIndex: 0
+		size:4
+		type: GL_FLOAT
+		normalized: GL_FALSE
+		stride: 16
+		pointer: nil.
+	textures :=
+		(1 to: 32) collect:[:i|
+			(OpenGLTexture fromUnit: i - 1) -> nil] .
 ]
 
 { #category : #accessing }
@@ -109,14 +128,32 @@ DiyaRendererContext >> root [
 
 ]
 
-{ #category : #accessing }
-DiyaRendererContext >> texture0 [
-	^ texture0
+{ #category : #rendering }
+DiyaRendererContext >> submitData: vbuffer [
+	vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_DYNAMIC_DRAW.
 ]
 
 { #category : #'transformation matrices' }
 DiyaRendererContext >> useProjection: aClass [
 	projection := aClass fromDisplay: self display
+]
+
+{ #category : #rendering }
+DiyaRendererContext >> useTexture: aTexture [
+	|assoc|
+	aTexture unit == -1 ifTrue:[ aTexture unit: self findTextureUnit].
+	assoc := textures at: aTexture unit + 1.
+	assoc value = aTexture ifFalse:[
+		"unregister current texture"
+		assoc value ifNotNil: [ assoc value commited: false ].
+		aTexture commited: false.
+		assoc value: aTexture.
+	].
+	assoc key active.
+	aTexture commited ifTrue:[ ^ self ].
+	"self stdlog: 'Commit data data to texture ', aTexture name, ' on Unit ', aTexture unit asString."
+	assoc key setImage2D: aTexture.
+	aTexture commited: true.
 ]
 
 { #category : #accessing }

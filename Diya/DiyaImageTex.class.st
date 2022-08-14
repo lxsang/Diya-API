@@ -1,9 +1,6 @@
 Class {
 	#name : #DiyaImageTex,
 	#superclass : #OpenGLTexImage2D,
-	#instVars : [
-		'name'
-	],
 	#pools : [
 		'OpenGLConstants',
 		'OpenGLTypes'
@@ -55,6 +52,7 @@ DiyaImageTex >> fromDisplay:  aRect as: assetName [
 	data ifNotNil: [data free].
 	width := aRect extent x asInteger.
 	height := aRect extent y asInteger.
+	commited := false.
 	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
 	LibC memset: data getHandle value: 0 size: data size.
 	data autoRelease.
@@ -89,6 +87,7 @@ DiyaImageTex >> fromFile: aPath [
 	LibC memCopy: surface pixels getHandle to: data getHandle size: data size.
 	SDL2 
 		freeSurface: surface.
+	commited := false.
 	self stdlog: 'Loaded ', aPath fullName.
 ]
 
@@ -100,6 +99,7 @@ DiyaImageTex >> fromForm: aForm name: aName [
 	surface := self surfaceFromForm: aForm.
 	width := surface w.
 	height := surface h.
+	commited := false.
 	data := FFIExternalArray externalNewType: GLubyte size: self bytesSize.
 	LibC memset: data getHandle value: 0 size: data size.
 	data autoRelease.
@@ -122,11 +122,6 @@ DiyaImageTex >> initialize [
 { #category : #accessing }
 DiyaImageTex >> mipmap [
 	^false
-]
-
-{ #category : #accessing }
-DiyaImageTex >> name [
-	^ name
 ]
 
 { #category : #accessing }

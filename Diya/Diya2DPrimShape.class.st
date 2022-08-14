@@ -29,10 +29,9 @@ Diya2DPrimShape >> draw [
 	"configure vao vbo for texture QUAD"
 	self texture ifNotNil: [
 		self texture setup.
-		context texture0 setImage2D: self texture.
-		context texture0 active. 	
+		context useTexture: self texture.	
 	].
-	context vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_DYNAMIC_DRAW.
+	context submitData: vbuffer.
 	OpenGL drawArrays: type first:0  count:((vbuffer size )>> 2 ).
 	"reset value"
 	self texture ifNotNil: [self texture drop.].
@@ -87,9 +86,16 @@ Diya2DPrimShape >> setUpShader [
 	super setUpShader.
 	self shader
 			setUniform: #u_color value: (self ? #color) asGL4FArray;
-			setUniform: #u_bg_color value: (self ? #bgColor) asGL4FArray;
-			setUniform: #u_texture_type value:
-				(self texture ifNil: [ 0 ] ifNotNil:[self texture format]).
+			setUniform: #u_bg_color value: (self ? #bgColor) asGL4FArray.
+	self texture ifNotNil: [
+			self shader
+				setUniform: #u_texture value: self texture unit;
+				setUniform: #u_texture_type value: self texture format.
+		]
+		ifNil:
+		[
+			self shader setUniform: #u_texture_type value: 0.
+		].
 ]
 
 { #category : #accessing }

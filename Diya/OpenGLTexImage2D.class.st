@@ -10,7 +10,10 @@ Class {
 		'border',
 		'format',
 		'type',
-		'data'
+		'data',
+		'unit',
+		'commited',
+		'name'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -32,6 +35,16 @@ OpenGLTexImage2D >> border: anObject [
 { #category : #accessing }
 OpenGLTexImage2D >> bytesSize [
 	^(width * height) << 2 
+]
+
+{ #category : #accessing }
+OpenGLTexImage2D >> commited [
+	^ commited
+]
+
+{ #category : #accessing }
+OpenGLTexImage2D >> commited: anObject [
+	commited := anObject
 ]
 
 { #category : #accessing }
@@ -87,6 +100,13 @@ OpenGLTexImage2D >> height: anObject [
 	height := anObject
 ]
 
+{ #category : #initialization }
+OpenGLTexImage2D >> initialize [
+	super initialize.
+	unit := -1.
+	commited := false
+]
+
 { #category : #accessing }
 OpenGLTexImage2D >> internalFormat [
 	^ internalFormat
@@ -113,6 +133,11 @@ OpenGLTexImage2D >> mipmap [
 ]
 
 { #category : #accessing }
+OpenGLTexImage2D >> name [
+	^ name
+]
+
+{ #category : #accessing }
 OpenGLTexImage2D >> setup [
 	^self subclassResponsibility
 ]
@@ -135,6 +160,16 @@ OpenGLTexImage2D >> type [
 { #category : #accessing }
 OpenGLTexImage2D >> type: anObject [
 	type := anObject
+]
+
+{ #category : #accessing }
+OpenGLTexImage2D >> unit [
+	^ unit
+]
+
+{ #category : #accessing }
+OpenGLTexImage2D >> unit: anObject [
+	unit := anObject
 ]
 
 { #category : #accessing }

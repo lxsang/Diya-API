@@ -13,7 +13,7 @@ DiyaExampleApp >> cleanup [
 DiyaExampleApp >> defineStyleSheet [
 	|fmgr style|
 	fmgr := DiyaFontManager uniqueInstance.
-	#(16 24) do:[:fontSize|
+	#(16 18 24) do:[:fontSize|
 		self stdlog: 'Init font size ', fontSize asString, ' of ', fmgr defaultFamily.
 		style := fmgr style: fmgr defaultStyle   from: fmgr defaultFamily.
 		style textureOf: fontSize.
@@ -85,11 +85,11 @@ DiyaExampleApp >> setup [
 	label styleName:#text_icon_1.
 	label icon: 16rF254.
 	
-	"node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
+	node1 := root addNode: (DiyaRectangle size:100@150 shader: DiyaExampleShader uniqueInstance) at: 300 @ 40.
 	node1 rotation: 45.
 	node1 scale: 2.0@2.0.
 	node1 on: #(mousebuttondown fingerdown) do:[:e|
-		label txt: 'RECT ', (node1 local: e mapped worldPosition) asIntegerPoint asString]."
+		label txt: 'RECT ', (node1 local: e mapped worldPosition) asIntegerPoint asString].
 	
 	img := root addNode: (DiyaImageView from:'mrsang.png') at: 10 @ 400.
 	img styleName: #image_view.

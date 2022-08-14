@@ -26,7 +26,7 @@ OpenGLFontTex class >> fromFace: face ofSize: size [
 	^self new fromFace: face ofSize: size; yourself
 ]
 
-{ #category : #'instance creation' }
+{ #category : #processing }
 OpenGLFontTex >> blitPixel8: bitmap at: offset size: size [
 	size = (0@0) ifTrue:[^self].
 	0 to: size y - 1 do: [ :i|
@@ -52,9 +52,9 @@ OpenGLFontTex >> charmap [
 { #category : #accessing }
 OpenGLFontTex >> drop [
 	OpenGL
-		pixelstorei: GL_UNPACK_ALIGNMENT param: 4;
+		pixelstorei: GL_UNPACK_ALIGNMENT param: 4";
 		disable: GL_CULL_FACE;
-		disable: GL_BLEND.
+		disable: GL_BLEND".
 ]
 
 { #category : #accessing }
@@ -67,6 +67,8 @@ OpenGLFontTex >> fromFace: aFace  ofSize: size [
 	|minhang rec iptr charcode w numw|
 	fontSize := size.
 	face := aFace.
+	commited := false.
+	name := aFace familyName, '@', aFace styleName,'@', size asString.
 	charmap := Dictionary new.
 	face setPixelWidth:0 height: self fontSize.
 	cellw := cellh := minhang := maxbearing := 0.
@@ -100,7 +102,7 @@ OpenGLFontTex >> fromFace: aFace  ofSize: size [
 	iptr free.
 ]
 
-{ #category : #accessing }
+{ #category : #processing }
 OpenGLFontTex >> genGlyph:c [
 	|rec  offset glyph gsize|
 	face setPixelWidth:0 height: self fontSize. 
@@ -122,13 +124,20 @@ OpenGLFontTex >> genGlyph:c [
 			self reallocateBuffer.
 		]. 
 	].
+	commited := false.
 	^glyph
 	
 ]
 
+{ #category : #processing }
+OpenGLFontTex >> genPrintableASCII [
+	33 to: 126 do: [ :c| self genGlyph: c ]
+]
+
 { #category : #accessing }
 OpenGLFontTex >> getGlyph: c [
-	^(self charmap at: c ifAbsentPut:[self genGlyph:c])
+	^(self charmap at: c ifAbsentPut:[
+		self genGlyph:c])
 ]
 
 { #category : #initialization }
@@ -156,7 +165,7 @@ OpenGLFontTex >> meanww [
 	^ meanww
 ]
 
-{ #category : #accessing }
+{ #category : #processing }
 OpenGLFontTex >> reallocateBuffer [
 	|newbuffer|
 	maxrows := maxrows + 4.
@@ -169,12 +178,12 @@ OpenGLFontTex >> reallocateBuffer [
 	
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 OpenGLFontTex >> setup [
 	OpenGL
-		enable: GL_CULL_FACE;
+		"enable: GL_CULL_FACE;
 		enable: GL_BLEND;
-		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA;
+		blendFnWithSfactor: GL_SRC_ALPHA dfactor: GL_ONE_MINUS_SRC_ALPHA;"
 		pixelstorei: GL_UNPACK_ALIGNMENT param: 1.
 	OpenGLTexture
 		parameteri: GL_TEXTURE_2D pname: GL_TEXTURE_WRAP_S param: GL_CLAMP_TO_EDGE;

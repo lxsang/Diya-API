@@ -86,7 +86,7 @@ DiyaRootNode >> render [
 			node render.	 
 		].
 	 	(R isNotEmpty or: Q isNotEmpty) and:
-			(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime) 
+			(DiyaClock uniqueInstance lapDelta asMilliSeconds < maxProcessingTime)
 	] whileTrue
 ]
 

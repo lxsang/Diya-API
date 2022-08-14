@@ -21,12 +21,14 @@ AssetManager class >> fromLocation: loc [
 
 { #category : #adding }
 AssetManager >> addAsset: value [
-	assets at: value name put: value
+	assets at: value name put: value.
+	^ value
 ]
 
 { #category : #adding }
 AssetManager >> addAssetName: name value: value [
-	assets at: name put: value
+	assets at: name put: value.
+	^ value
 ]
 
 { #category : #'instance creation' }

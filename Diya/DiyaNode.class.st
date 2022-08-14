@@ -267,7 +267,6 @@ DiyaNode >> setUpShader [
 			setUniform: #u_time value: DiyaClock uniqueInstance elapsedTime asFloat;
 			setUniform: #u_projection value: {GL_FALSE. context projection buffer};
 			setUniform: #u_resolution value: { context resolution x. context resolution y };
-			setUniform: #u_texture value: 0;
 			setUniform: #u_transform value: {GL_TRUE. mem}.
 		context mouse ifNotNil: [
 			"in shader, window origin is bottom left conor of the window
