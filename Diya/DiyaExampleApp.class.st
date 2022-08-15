@@ -1,6 +1,9 @@
 Class {
 	#name : #DiyaExampleApp,
 	#superclass : #DiyaBaseApplication,
+	#instVars : [
+		'loader'
+	],
 	#category : #'Diya-Applications'
 }
 
@@ -12,6 +15,7 @@ DiyaExampleApp >> cleanup [
 { #category : #accessing }
 DiyaExampleApp >> defineNodes [
 	|node2 node1 img ell label icon button texture loading|
+	node := DiyaCompositeNode new.
 	texture := DiyaImageTex new.
 	label := node addNode: (DiyaLabel new) at: 10@40.
 	label extent: 250@24.
@@ -159,18 +163,27 @@ DiyaExampleApp >> defineStyleSheet [
 		}
 ]
 
-{ #category : #initialization }
-DiyaExampleApp >> initLoader [
-	loader := DiyaDefaultAppLoader new.
+{ #category : #accessing }
+DiyaExampleApp >> initialize [
+	super initialize.
+	loader := nil
+
 ]
 
 { #category : #accessing }
 DiyaExampleApp >> onloaded: aBlock [
+	loader ifNil: [ loader := DiyaDefaultAppLoader on: target ].
 	loader job: [ self defineStyleSheet  ] name: 'Initializing themes...'.
 	loader job: [
 		self defineNodes.
-		self node forceReload
+		self loadNode.
 	] name: 'Initializing UI elements...'.
 	
-	loader onloaded: aBlock
+	loader onloaded: [
+		node children do:[:e|
+			target addNode: e at: e position.
+			node := target.
+		].
+		aBlock value
+	].
 ]

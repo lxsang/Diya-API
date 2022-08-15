@@ -19,9 +19,9 @@ DiyaApplicationLauncher >> bindGlobalEvent [
 	|pointer |
 	pointer := node addNode: (DiyaCircle r: 10) at: 200@200. 
 	pointer styleName: #pointer.
-	node on: #keydown do:[:e| self stdlog: 'keydown...'. running := false.].
-	node on: #quit do: [:e| running := false].
-	node on: #(fingerdown fingermotion mousemotion) do:[:e|
+	target on: #keydown do:[:e| self stdlog: 'keydown...'. running := false.].
+	target on: #quit do: [:e| running := false].
+	target on: #(fingerdown fingermotion mousemotion) do:[:e|
 		pointer position: e mapped worldPosition.
 		DiyaRenderer mouse: (e mapped x) @ (e mapped y).
 	].
@@ -33,37 +33,7 @@ DiyaApplicationLauncher >> defaultApplication [
 ]
 
 { #category : #initialization }
-DiyaApplicationLauncher >> initLoader [
-	
-]
-
-{ #category : #initialization }
-DiyaApplicationLauncher >> initialize [
-	super initialize.
-	node := DiyaRenderer root.
-	currapp := nil.
-]
-
-{ #category : #initialization }
-DiyaApplicationLauncher >> launch: app [
-	currapp ifNotNil: [
-		currapp quit.
-		node empty.
-	].
-	currapp := app uniqueInstance.
-	self context assets: currapp am.
-	self appNode addNode: currapp loader node.
-	currapp onloaded:[
-		self appNode empty.
-		currapp node visibility: false.
-		self appNode addNode: currapp node.
-		currapp node visibility: true.
-		self stdlog: 'Application LOADED'.
-	].
-]
-
-{ #category : #initialization }
-DiyaApplicationLauncher >> onloaded: aBlock [
+DiyaApplicationLauncher >> defineLayout [
 	DiyaUIThemesManager uniqueInstance currentTheme
 		define: #fps_text styles: { 
 			#color -> Color red.
@@ -81,9 +51,42 @@ DiyaApplicationLauncher >> onloaded: aBlock [
 	txtFPS extent: 80@40.
 	txtFPS styleName: #fps_text.
 	self bindGlobalEvent.
+	self loadNode.
+]
+
+{ #category : #initialization }
+DiyaApplicationLauncher >> initialize [
+	super initialize.
+	node := DiyaCompositeNode new.
+	currapp := nil.
+]
+
+{ #category : #initialization }
+DiyaApplicationLauncher >> launch: app [
+	currapp ifNotNil: [
+		currapp quit.
+	].
+	currapp := app uniqueInstance.
+	self context assets: currapp am.
+	currapp target: self appNode.
+	currapp onloaded:[
+		self stdlog: 'Application LOADED'.
+	].
+]
+
+{ #category : #initialization }
+DiyaApplicationLauncher >> onloaded: aBlock [
+	|loader|
 	running := true.
-	self launch: self defaultApplication.
-	aBlock value.
+	loader := DiyaDefaultSystemLoader on: target.
+	loader job: [ DiyaFontManager uniqueInstance loadFonts. ] name: 'Loading fonts...'.
+	loader job: [ self defineLayout ] name: 'Define layout...'. 
+	loader onloaded: [
+		node children do:[:c| target addNode: c at: c position].
+		node := target.
+		aBlock value.
+		self launch: self defaultApplication.
+	]
 ]
 
 { #category : #accessing }

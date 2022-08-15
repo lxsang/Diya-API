@@ -47,16 +47,16 @@ DiyaRectangle >> process [
 		at: 4 put: 0.0;
 		
 		at: 5 put: 0.0;
-		at: 6 put: extent y;
+		at: 6 put: extent y asFloat;
 		at: 7 put: 0.0;
 		at: 8 put: 1.0;
 		
-		at: 9 put: extent x;
-		at: 10 put: extent y;
+		at: 9 put: extent x asFloat;
+		at: 10 put: extent y asFloat;
 		at: 11 put: 1.0;
 		at: 12 put: 1.0;
 		
-		at: 13 put: extent x;
+		at: 13 put: extent x asFloat;
 		at: 14 put: 0.0;
 		at: 15 put: 1.0;
 		at: 16 put: 0.0.

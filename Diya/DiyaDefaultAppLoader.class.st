@@ -1,20 +1,20 @@
 Class {
 	#name : #DiyaDefaultAppLoader,
-	#superclass : #DiyaLoader,
+	#superclass : #DiyaDefaultSystemLoader,
 	#instVars : [
-		'progress',
 		'label'
 	],
 	#category : #'Diya-Applications'
 }
 
 { #category : #initialization }
-DiyaDefaultAppLoader >> init [
-	progress := node addNode: (DiyaLoadingBar new) at: 20@50.
-	progress extent: 420 @ 20.
-	label := node addNode: (DiyaText new) at: 20@80.
-	label extent: 420 @ 20.
-	label inlineStyle: #xAlign value: #center
+DiyaDefaultAppLoader >> updateLayout [
+	super updateLayout.
+	label ifNil:[
+		label := node addNode: (DiyaText new) at: (progress position + (0@25)).
+		label inlineStyle: #xAlign value: #center
+	].
+	label extent: (progress extent x) @ 40.
 ]
 
 { #category : #scheduling }

@@ -94,8 +94,8 @@ DiyaLine >> process [
 		at: 3  put: 0.0;
 		at: 4  put: 0.0;
 		
-		at: 5  put: extent x;
-		at: 6  put: extent y;
+		at: 5  put: extent x asFloat;
+		at: 6  put: extent y asFloat;
 		at: 7  put: 0.0;
 		at: 8  put: 0.0.
 	^true

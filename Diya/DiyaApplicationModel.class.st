@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'node',
 		'am',
-		'loader'
+		'target',
+		'context'
 	],
 	#category : #'Diya-Applications'
 }
@@ -25,19 +26,19 @@ DiyaApplicationModel >> context [
 ]
 
 { #category : #initialization }
-DiyaApplicationModel >> initLoader [
-	self subclassResponsibility 
-]
-
-{ #category : #initialization }
 DiyaApplicationModel >> initialize [ 
 	super initialize.
-	self initLoader.
+	context := DiyaRenderer
 ]
 
-{ #category : #accessing }
-DiyaApplicationModel >> loader [ 
-	^ loader
+{ #category : #'as yet unclassified' }
+DiyaApplicationModel >> loadNode [
+	|pseudoRoot|
+	pseudoRoot := DiyaRootNode new.
+	pseudoRoot addNode: node.
+	pseudoRoot processQueue do:[:el|
+		el process
+	].
 ]
 
 { #category : #accessing }
@@ -52,5 +53,11 @@ DiyaApplicationModel >> onloaded: aBlock [
 
 { #category : #accessing }
 DiyaApplicationModel >> quit [
+	node empty.
 	self cleanup
+]
+
+{ #category : #initialization }
+DiyaApplicationModel >> target: aNode [
+	target := aNode.
 ]

@@ -49,12 +49,12 @@ DiyaNode >> ? styleAttr [
 	^ parent ? styleAttr
 ]
 
-{ #category : #accessing }
+{ #category : #'add/remove' }
 DiyaNode >> addNode: node [
 	^self addNode: node at: 0@0 
 ]
 
-{ #category : #accessing }
+{ #category : #'add/remove' }
 DiyaNode >> addNode: node at: pos [
 	children ifNil: [ ^self ].
 	node parent: self.
@@ -82,21 +82,19 @@ DiyaNode >> draw [
 
 { #category : #requirements }
 DiyaNode >> empty [
+	children ifNotNil: [
+		children do:[:c|
+			c root: nil.
+			c setClean.
+			c visibility: false.
+		]	
+	].
 	children := OrderedCollection new.
 ]
 
 { #category : #accessing }
 DiyaNode >> extent [
 	^  self subclassResponsibility  
-]
-
-{ #category : #processing }
-DiyaNode >> forceReload [
-	self process.
-	children ifNotNil: [
-	children do:[:c|
-		c forceReload
-	]]
 ]
 
 { #category : #accessing }
@@ -183,26 +181,40 @@ DiyaNode >> register: aBlock to: eventName [
 	
 ]
 
-{ #category : #removing }
+{ #category : #'add/remove' }
 DiyaNode >> remove [
-	self setClean.
-	root := nil.
 	parent ifNotNil: [ parent removeChild: self ]
 ]
 
-{ #category : #removing }
+{ #category : #'add/remove' }
 DiyaNode >> removeChild: c [
+	c setClean.
+	c root: nil.
+	c visibility: false.
 	children ifNotNil: [ children remove: c ifAbsent:[  ]]
 ]
 
 { #category : #rendering }
 DiyaNode >> render [
 	visibility ifFalse:[^self].
-	root ifNil: [ ^self ].
 	shader ifNotNil: [self setUpShader].
 	self draw.
 	children ifNil: [ ^self ].
+	root ifNil: [ ^self ].
 	root renderNext: children 
+]
+
+{ #category : #'add/remove' }
+DiyaNode >> replaceChild: aNode with: anotherNode [
+	|index|
+	children ifNil: [ ^ self ].
+	index := children indexOf: aNode.
+	index = 0 ifTrue:[^ self].
+	children at: index put: anotherNode.
+	anotherNode parent: self.
+	anotherNode root: self root.
+	anotherNode setDirtyAll.
+	aNode root: nil.
 ]
 
 { #category : #accessing }
@@ -354,5 +366,7 @@ DiyaNode >> visibility [
 
 { #category : #accessing }
 DiyaNode >> visibility: anObject [
-	visibility := anObject
+	visibility := anObject.
+	children ifNotNil: [
+		children do:[:c| c visibility: anObject ] ]
 ]

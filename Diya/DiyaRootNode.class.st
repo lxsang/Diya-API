@@ -62,6 +62,11 @@ DiyaRootNode >> process [
 	
 ]
 
+{ #category : #controlling }
+DiyaRootNode >> processQueue [
+	^ Q
+]
+
 { #category : #testing }
 DiyaRootNode >> readyForSwap [
 	^ R isEmpty 
@@ -105,10 +110,12 @@ DiyaRootNode >> spinOnce: maxProcessingTime [
 	Q ifNotEmpty: [ 
 		node := Q removeFirst.
 		node process.
+		"context lock critical: [node process]."
 	].
 	R ifNotEmpty: [ 
 		node := R removeFirst.
-		node render.	
+		node render.
+		"context lock critical: [node render].	"
 	].
 	(Q isEmpty and: R isEmpty) ifTrue: [ ^false ].
 	DiyaSystemSettings renderAtOnce ifTrue: [ ^ true ].

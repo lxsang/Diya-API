@@ -10,7 +10,8 @@ Class {
 		'projection',
 		'assets',
 		'window',
-		'root'
+		'root',
+		'lock'
 	],
 	#pools : [
 		'OpenGLConstants',
@@ -79,6 +80,7 @@ DiyaRendererContext >> initialize [
 	vbo := OpenGLVertexBuffer new.
 	vao := OpenGLVertexArray new.
 	textures := Dictionary new.
+	lock := Mutex new.
 	vao bind.
 	vbo bind: GL_ARRAY_BUFFER.
 	projection := Array2D identity: 4.
@@ -94,6 +96,11 @@ DiyaRendererContext >> initialize [
 	textures :=
 		(1 to: self class maxTextureNumber ) collect:[:i|
 			(OpenGLTexture fromUnit: i - 1) -> nil] .
+]
+
+{ #category : #accessing }
+DiyaRendererContext >> lock [
+	^ lock
 ]
 
 { #category : #accessing }

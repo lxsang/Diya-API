@@ -83,7 +83,6 @@ DiyaBoot >> init [
 	Smalltalk globals at: #DiyaDisplay put:display.
 	Smalltalk globals at: #DiyaSystemSettings put: DiyaSettings uniqueInstance.
 	Smalltalk globals at: #DiyaSystemClock put: DiyaClock uniqueInstance.
-	DiyaFontManager uniqueInstance loadFonts.
 ]
 
 { #category : #events }
@@ -102,6 +101,7 @@ DiyaBoot >> render [
 	"Init the Open  GL view port and enable 2D texture"
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	OpenGL enable: GL_TEXTURE_2D.
+	launcher target: DiyaRenderer root.
 	launcher onloaded: [self stdlog: 'Launcher loaded'].
 	[ launcher running ] whileTrue: [
 		DiyaSystemClock tick.
