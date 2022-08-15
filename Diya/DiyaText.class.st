@@ -206,9 +206,6 @@ DiyaText >> process [
 	data ifNil:[^true].
 	data ifEmpty:[^true].
 	texture ifNil: [ self initTexture ].
-	texheight = texture height ifFalse: [
-		texheight := texture height.
-	].
 	vbuffer ifNotNil: [vbuffer free].
 	vbuffer :=  FFIExternalArray externalNewType: GLfloat size: data size * 16.
 	vbuffer autoRelease.
@@ -228,6 +225,14 @@ DiyaText >> splitLines [
 		lines add: ((ret y) -> line).
 		(ret x < data size) and: wrap
 	] whileTrue.
+]
+
+{ #category : #stepping }
+DiyaText >> step [
+	texture ifNil: [ ^self ].
+	texheight = texture height ifTrue: [ ^self].
+	texheight := texture height.
+	self setDirty
 ]
 
 { #category : #accessing }

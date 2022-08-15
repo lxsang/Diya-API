@@ -135,7 +135,7 @@ DiyaRendererContext >> root [
 
 { #category : #rendering }
 DiyaRendererContext >> submitData: vbuffer [
-	vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_DYNAMIC_DRAW.
+	vbo data: GL_ARRAY_BUFFER data: vbuffer usage: GL_STATIC_DRAW.
 ]
 
 { #category : #'transformation matrices' }

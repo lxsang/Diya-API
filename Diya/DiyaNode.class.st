@@ -14,6 +14,7 @@ Class {
 		'root',
 		'styleName',
 		'style',
+		'inlineStyle',
 		'id',
 		'visibility',
 		'pivot'
@@ -31,9 +32,11 @@ DiyaNode class >> with: shader [
 	^self new shader: shader; yourself
 ]
 
-{ #category : #accessing }
+{ #category : #styling }
 DiyaNode >> ? styleAttr [
 	| value|
+	value := inlineStyle at: styleAttr ifAbsent:[nil].
+	value ifNotNil: [ ^value ].
 	styleName ifNotNil: [
 		style ifNil: [
 			style := DiyaUIThemesManager uniqueInstance currentTheme ? (self styleName).
@@ -90,7 +93,6 @@ DiyaNode >> extent [
 { #category : #processing }
 DiyaNode >> forceReload [
 	self process.
-	self setClean.
 	children ifNotNil: [
 	children do:[:c|
 		c forceReload
@@ -113,9 +115,15 @@ DiyaNode >> initialize [
 	styleName := nil.
 	style := nil.
 	root := nil.
+	inlineStyle := Dictionary new.
 	visibility := true.
 	pivot := 0@0.
 	id := self className,'#',(Random new nextInt: 1e6) asString.
+]
+
+{ #category : #styling }
+DiyaNode >> inlineStyle: name value: value [
+	inlineStyle at: name put: value
 ]
 
 { #category : #testing }

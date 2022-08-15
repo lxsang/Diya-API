@@ -96,15 +96,18 @@ DiyaBoot >> initialize [
 
 { #category : #events }
 DiyaBoot >> render [
-	|launcher|
+	|launcher event|
+	event := SDL_Event new.
 	launcher := DiyaApplicationLauncher uniqueInstance.
-	launcher setup.
 	"Init the Open  GL view port and enable 2D texture"
 	OpenGL viewportX: 0 Y:0 W: display w H: display h.
 	OpenGL enable: GL_TEXTURE_2D.
+	launcher onloaded: [self stdlog: 'Launcher loaded'].
 	[ launcher running ] whileTrue: [
 		DiyaSystemClock tick.
-		launcher main.
+		[(SDL2 pollEvent: event) > 0] whileTrue: [
+			DiyaRenderer root trigger: (DiyaEvent from: event mapped).
+		].
 		DiyaRenderer render.
 		SDL2 delay:
 			(0 max:

@@ -7,7 +7,7 @@ Class {
 { #category : #initialization }
 DiyaBaseApplication >> initialize [
 	super initialize.
-	root := DiyaCompositeNode new.
-	root styleName: #global.
+	node := DiyaCompositeNode new.
+	node styleName: #global.
 	am := AssetManager new.
 ]

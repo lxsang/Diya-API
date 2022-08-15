@@ -2,8 +2,9 @@ Class {
 	#name : #DiyaApplicationModel,
 	#superclass : #DiyaSingleton,
 	#instVars : [
-		'root',
-		'am'
+		'node',
+		'am',
+		'loader'
 	],
 	#category : #'Diya-Applications'
 }
@@ -24,26 +25,32 @@ DiyaApplicationModel >> context [
 ]
 
 { #category : #initialization }
+DiyaApplicationModel >> initLoader [
+	self subclassResponsibility 
+]
+
+{ #category : #initialization }
 DiyaApplicationModel >> initialize [ 
 	super initialize.
+	self initLoader.
 ]
 
 { #category : #accessing }
-DiyaApplicationModel >> main [
+DiyaApplicationModel >> loader [ 
+	^ loader
+]
+
+{ #category : #accessing }
+DiyaApplicationModel >> node [
+	^ node
+]
+
+{ #category : #accessing }
+DiyaApplicationModel >> onloaded: aBlock [
 	self subclassResponsibility 
 ]
 
 { #category : #accessing }
 DiyaApplicationModel >> quit [
 	self cleanup
-]
-
-{ #category : #accessing }
-DiyaApplicationModel >> root [
-	^ root
-]
-
-{ #category : #accessing }
-DiyaApplicationModel >> setup [
-	self subclassResponsibility 
 ]
