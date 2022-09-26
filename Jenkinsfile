@@ -20,7 +20,7 @@ pipeline{
   {
     stage('Build image from SDK') {
       steps {
-        // build specific multi-branch job
+        // build specific multi-branch job on master branch
         build job: 'gitea-sync/DiyaSDK/master', propagate: true, wait: true
       }
     }
